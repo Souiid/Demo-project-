@@ -1,4 +1,4 @@
-rootProject.name = "MutiplatformTemplate"
+rootProject.name = "DemoProject"
 
 pluginManagement {
     repositories {

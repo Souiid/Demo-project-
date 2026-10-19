@@ -20,7 +20,7 @@ kotlin {
     }
     
     android {
-       namespace = "com.souiid.mutiplatformtemplate.shared"
+       namespace = "com.souiid.demoproject.shared"
        compileSdk = libs.versions.android.compileSdk.get().toInt()
        minSdk = libs.versions.android.minSdk.get().toInt()
     

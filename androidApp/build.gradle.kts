@@ -20,11 +20,11 @@ dependencies {
 }
 
 android {
-    namespace = "com.souiid.mutiplatformtemplate"
+    namespace = "com.souiid.demoproject"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
-        applicationId = "com.souiid.mutiplatformtemplate"
+        applicationId = "com.souiid.demoproject"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
