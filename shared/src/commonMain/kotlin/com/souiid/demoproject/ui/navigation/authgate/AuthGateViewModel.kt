@@ -2,8 +2,8 @@ package com.souiid.demoproject.ui.navigation.authgate
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.souiid.demoproject.domain.AuthState
-import com.souiid.demoproject.domain.ObserveAuthStateUseCase
+import com.souiid.demoproject.domain.model.AuthState
+import com.souiid.demoproject.domain.usecase.ObserveAuthStateUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch

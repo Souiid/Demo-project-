@@ -8,7 +8,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.souiid.demoproject.domain.AuthState
+import com.souiid.demoproject.domain.model.AuthState
 import com.souiid.demoproject.ui.navigation.AppNavigation
 import com.souiid.demoproject.ui.navigation.AuthNavigation
 import org.koin.compose.koinInject

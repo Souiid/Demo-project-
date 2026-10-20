@@ -1,33 +1,28 @@
 package com.souiid.demoproject.data
 
+import com.souiid.demoproject.domain.model.SignUpInfo
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 
 class SignUpRepository {
-    private val _firstName = MutableStateFlow("")
-    val firstName = _firstName.asStateFlow()
 
-    private val _lastName = MutableStateFlow("")
-    val lastName = _lastName.asStateFlow()
-
-    private val _description = MutableStateFlow("")
-    val description = _description.asStateFlow()
+    private val _signUpInfo = MutableStateFlow(SignUpInfo())
+    val signUpInfo = _signUpInfo.asStateFlow()
 
     fun updateFirstName(value: String) {
-        _firstName.value = value
+        _signUpInfo.update { it.copy(firstName = value) }
     }
 
     fun updateLastName(value: String) {
-        _lastName.value = value
+        _signUpInfo.update { it.copy(lastName = value) }
     }
 
     fun updateDescription(value: String) {
-        _description.value = value
+        _signUpInfo.update { it.copy(description = value) }
     }
 
     fun clear() {
-        _firstName.value = ""
-        _lastName.value = ""
-        _description.value = ""
+        _signUpInfo.value = SignUpInfo()
     }
 }

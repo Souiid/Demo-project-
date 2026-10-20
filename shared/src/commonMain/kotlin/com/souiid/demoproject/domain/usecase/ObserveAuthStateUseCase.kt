@@ -1,4 +1,4 @@
-package com.souiid.demoproject.domain
+package com.souiid.demoproject.domain.usecase
 
 import com.souiid.demoproject.data.AuthRepository
 import dev.gitlive.firebase.auth.FirebaseUser

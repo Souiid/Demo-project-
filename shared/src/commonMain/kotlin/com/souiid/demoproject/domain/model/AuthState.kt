@@ -1,4 +1,4 @@
-package com.souiid.demoproject.domain
+package com.souiid.demoproject.domain.model
 
 enum class AuthState {
     LOADING,
