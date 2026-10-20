@@ -1,9 +1,9 @@
 package com.souiid.demoproject.domain
 
-import com.souiid.demoproject.data.SampleRepository
+import com.souiid.demoproject.data.AuthRepository
 
 class UpdateUserNameUseCase(
-    private val sampleRepository: SampleRepository
+    private val authRepository: AuthRepository
 ) {
-     operator fun invoke(name: String) = sampleRepository.updateUserName(name)
+     operator fun invoke(name: String) = authRepository.updateUserName(name)
 }
