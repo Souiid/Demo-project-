@@ -5,7 +5,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.souiid.demoproject.ui.screens.auth.SignInScreen
-import com.souiid.demoproject.ui.screens.auth.SignUpScreen
+import com.souiid.demoproject.ui.screens.auth.signup.SignUpDescriptionScreen
+import com.souiid.demoproject.ui.screens.auth.signup.SignUpNameScreen
 
 @Composable
 fun AuthNavigation() {
@@ -17,12 +18,17 @@ fun AuthNavigation() {
     ) {
         composable<Route.SignIn> {
             SignInScreen(
-                onSignUpClick = { navController.navigate(Route.SignUp) }
+                onSignUpClick = { navController.navigate(Route.SignUpName) }
             )
         }
-        composable<Route.SignUp> {
-            SignUpScreen(
-                onSignInClick = { navController.popBackStack() }
+        composable<Route.SignUpName> {
+            SignUpNameScreen(
+                onContinueClick = { navController.navigate(Route.SignUpDescription) }
+            )
+        }
+
+        composable<Route.SignUpDescription> {
+            SignUpDescriptionScreen(
             )
         }
     }
