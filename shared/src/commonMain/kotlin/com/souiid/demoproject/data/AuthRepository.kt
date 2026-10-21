@@ -23,4 +23,8 @@ class AuthRepository {
     suspend fun signOut() {
         auth.signOut()
     }
+
+    suspend fun signIn(email: String, password: String) {
+        auth.signInWithEmailAndPassword(email, password)
+    }
 }

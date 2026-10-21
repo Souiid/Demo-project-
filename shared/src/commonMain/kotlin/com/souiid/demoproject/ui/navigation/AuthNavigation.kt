@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.souiid.demoproject.ui.screens.auth.SignInScreen
+import com.souiid.demoproject.ui.screens.auth.signin.SignInScreen
 import com.souiid.demoproject.ui.screens.auth.signup.credential.SignUpCredentialScreen
 import com.souiid.demoproject.ui.screens.auth.signup.description.SignUpDescriptionScreen
 import com.souiid.demoproject.ui.screens.auth.signup.name.SignUpNameScreen
