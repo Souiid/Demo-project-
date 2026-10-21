@@ -6,8 +6,10 @@ import com.souiid.demoproject.domain.usecase.ObserveAuthStateUseCase
 import com.souiid.demoproject.domain.usecase.signup.ObserveSignUpInfoUseCase
 import com.souiid.demoproject.domain.usecase.signup.UpdateSignUpNameUseCase
 import com.souiid.demoproject.domain.usecase.UpdateUserNameUseCase
+import com.souiid.demoproject.domain.usecase.signup.UpdateSignUpDescriptionUseCase
 import com.souiid.demoproject.ui.navigation.authgate.AuthGateViewModel
 import com.souiid.demoproject.ui.screens.HomeViewModel
+import com.souiid.demoproject.ui.screens.auth.signup.description.SignUpDescriptionViewModel
 import com.souiid.demoproject.ui.screens.auth.signup.name.SignUpNameViewModel
 import org.koin.dsl.module
 
@@ -25,6 +27,7 @@ val appModule = module {
     factory { ObserveAuthStateUseCase(get()) }
     factory { ObserveSignUpInfoUseCase(get()) }
     factory { UpdateSignUpNameUseCase(get()) }
+    factory { UpdateSignUpDescriptionUseCase(get()) }
 //________________________________________________________
 
     //VIEWMODEL
@@ -32,5 +35,5 @@ val appModule = module {
     factory { HomeViewModel(get()) }
     factory { AuthGateViewModel(get()) }
     factory { SignUpNameViewModel(get(), get()) }
-
+    factory { SignUpDescriptionViewModel(get(), get()) }
 }

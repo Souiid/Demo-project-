@@ -45,6 +45,9 @@
     <string name="password">Password</string>
     <string name="firstName">First name</string>
     <string name="lastName">Last name</string>
+
     <string name="continueLabel">Continue</string>
+    <string name="description">Description</string>
+    <string name="put_profile_description">Put your profile description here !</string>
 
 </resources>
