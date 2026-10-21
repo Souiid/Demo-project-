@@ -33,11 +33,11 @@ fun AuthNavigation() {
             }
         }
     ) { paddingValues ->
-        NavHost(
+        TNavHost(
             navController = navController,
-            startDestination = Route.SignIn,
+            startDestination = Route.SignIn::class,
             modifier = Modifier.padding(paddingValues)
-        )  {
+        ) {
             composable<Route.SignIn> {
                 SignInScreen(
                     onSignUpClick = { navController.navigate(Route.SignUpName) }

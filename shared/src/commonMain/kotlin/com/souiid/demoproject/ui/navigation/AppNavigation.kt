@@ -39,11 +39,11 @@ fun AppNavigation() {
             )
         }
     ) { paddingValues ->
-        NavHost(
+        TNavHost(
             navController = navController,
-            startDestination = Route.Home,
+            startDestination = Route.Home::class,
             modifier = Modifier.padding(paddingValues)
-        ) {
+        ){
             composable<Route.Home> {
                 HomeScreen()
             }
