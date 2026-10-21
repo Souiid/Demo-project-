@@ -63,6 +63,7 @@ kotlin {
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
             implementation(libs.gitlive.firebase.auth)
+            implementation(libs.gitlive.firebase.firestore)
 
         }
         commonTest.dependencies {
