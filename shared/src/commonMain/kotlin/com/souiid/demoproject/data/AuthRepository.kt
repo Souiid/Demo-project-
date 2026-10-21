@@ -13,12 +13,14 @@ class AuthRepository {
     private val auth: FirebaseAuth = Firebase.auth
     val authState: Flow<FirebaseUser?> = auth.authStateChanged
 
-
     private val _userName = MutableStateFlow<String?>(null)
     val userName: StateFlow<String?> = _userName
 
-
     fun updateUserName(userName: String) {
         _userName.value = userName
+    }
+
+    suspend fun signOut() {
+        auth.signOut()
     }
 }

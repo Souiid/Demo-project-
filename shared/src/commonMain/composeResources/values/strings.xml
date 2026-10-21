@@ -49,5 +49,12 @@
     <string name="continueLabel">Continue</string>
     <string name="description">Description</string>
     <string name="put_profile_description">Put your profile description here !</string>
+    <string name="confirmPassword">Confirm password</string>
+
+    <string name="errorRequired">This field is required</string>
+    <string name="errorInvalidEmail">Invalid email address</string>
+    <string name="errorPasswordTooShort">Password must contain at least 8 characters</string>
+    <string name="errorPasswordsDoNotMatch">Passwords do not match</string>
+    <string name="signOut">Sign Out</string>
 
 </resources>

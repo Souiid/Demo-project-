@@ -14,7 +14,7 @@ import com.souiid.demoproject.ui.navigation.AuthNavigation
 import org.koin.compose.koinInject
 
 @Composable
-fun AuthGateScreen() {
+fun AuthGate() {
     val viewModel: AuthGateViewModel = koinInject()
     val authState by viewModel.authState.collectAsState()
 

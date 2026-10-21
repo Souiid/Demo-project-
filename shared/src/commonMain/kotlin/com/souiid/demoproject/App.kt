@@ -5,6 +5,7 @@ import androidx.compose.runtime.remember
 import com.souiid.demoproject.di.initKoin
 import com.souiid.demoproject.ui.navigation.AppNavigation
 import com.souiid.demoproject.ui.navigation.AuthNavigation
+import com.souiid.demoproject.ui.navigation.authgate.AuthGate
 import com.souiid.demoproject.ui.theme.AppTheme
 
 @Composable
@@ -14,6 +15,6 @@ fun App() {
     }
 
     AppTheme {
-        AuthNavigation()
+        AuthGate()
     }
 }

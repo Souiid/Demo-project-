@@ -23,6 +23,7 @@ import demoproject.shared.generated.resources.save
 import demoproject.shared.generated.resources.your_actual_name_is
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
+import demoproject.shared.generated.resources.signOut
 
 @Composable
 fun HomeScreen() {
@@ -45,6 +46,13 @@ fun HomeScreen() {
             text = stringResource(Res.string.save),
             onClick = {
                 viewModel.updateUserName(nameInput)
+            }
+        )
+
+        TButton(
+            text = stringResource(Res.string.signOut),
+            onClick = {
+                viewModel.signOut()
             }
         )
     }
