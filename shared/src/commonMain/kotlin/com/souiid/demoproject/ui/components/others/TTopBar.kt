@@ -10,7 +10,7 @@ import com.souiid.demoproject.ui.components.text.TTextStyle
 
 @Composable
 fun TTopBar(
-    title: String,
+    title: String = "",
     onBack: (() -> Unit)? = null,
     actions: @Composable RowScope.() -> Unit = {}
 ) {
