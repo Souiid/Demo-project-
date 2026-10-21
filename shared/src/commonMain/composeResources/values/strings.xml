@@ -56,5 +56,11 @@
     <string name="errorPasswordTooShort">Password must contain at least 8 characters</string>
     <string name="errorPasswordsDoNotMatch">Passwords do not match</string>
     <string name="signOut">Sign Out</string>
+    <string name="errorInvalidCredentials">Invalid credentials</string>
+    <string name="errorEmailAlreadyInUse">This email address is already in use</string>
+    <string name="errorUnableToCreateAccount">Unable to create your account</string>
+    <string name="errorConnectionFailed">Unable to connect. Check your internet connection</string>
+    <string name="errorServerUnavailable">The server is temporarily unavailable</string>
+    <string name="errorUnknown">An unexpected error occurred</string>
 
 </resources>

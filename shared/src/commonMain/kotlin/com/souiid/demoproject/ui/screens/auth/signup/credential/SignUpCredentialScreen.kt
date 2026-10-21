@@ -1,6 +1,7 @@
-package com.souiid.demoproject.ui.screens.auth.signup.credentials
+package com.souiid.demoproject.ui.screens.auth.signup.credential
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.input.ImeAction
 import com.souiid.demoproject.domain.model.AppError
@@ -10,20 +11,16 @@ import com.souiid.demoproject.ui.components.text.TText
 import com.souiid.demoproject.ui.components.text.TTextStyle
 import com.souiid.demoproject.ui.components.textfield.TTextField
 import com.souiid.demoproject.ui.components.textfield.TTextFieldType
-import demoproject.shared.generated.resources.Res
-import demoproject.shared.generated.resources.email
-import demoproject.shared.generated.resources.password
-import demoproject.shared.generated.resources.signUp
+import com.souiid.demoproject.ui.utils.appErrorMessage
+import demoproject.shared.generated.resources.*
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
-import androidx.compose.material3.MaterialTheme
-import com.souiid.demoproject.ui.screens.auth.signup.credential.SignUpCredentialViewModel
-import demoproject.shared.generated.resources.confirmPassword
 
 @Composable
 fun SignUpCredentialScreen() {
     val viewModel: SignUpCredentialViewModel = koinInject()
     val validationError = viewModel.error as? AppError.Validation
+    val generalError = viewModel.error?.takeUnless { it is AppError.Validation }
 
     TScreen(verticalArrangement = Arrangement.Center) {
         TTextField(
@@ -34,9 +31,10 @@ fun SignUpCredentialScreen() {
                 if (validationError?.field == AppError.Field.EMAIL) viewModel.clearError()
             },
             type = TTextFieldType.EMAIL,
-            errorMessage = validationError?.takeIf {
-                it.field == AppError.Field.EMAIL
-            }?.message
+            imeAction = ImeAction.Next,
+            errorMessage = validationError
+                ?.takeIf { it.field == AppError.Field.EMAIL }
+                ?.let { appErrorMessage(it) }
         )
 
         TTextField(
@@ -47,10 +45,10 @@ fun SignUpCredentialScreen() {
                 if (validationError?.field == AppError.Field.PASSWORD) viewModel.clearError()
             },
             type = TTextFieldType.PASSWORD,
-            imeAction = ImeAction.Done,
-            errorMessage = validationError?.takeIf {
-                it.field == AppError.Field.PASSWORD
-            }?.message
+            imeAction = ImeAction.Next,
+            errorMessage = validationError
+                ?.takeIf { it.field == AppError.Field.PASSWORD }
+                ?.let { appErrorMessage(it) }
         )
 
         TTextField(
@@ -62,24 +60,14 @@ fun SignUpCredentialScreen() {
             },
             type = TTextFieldType.PASSWORD,
             imeAction = ImeAction.Done,
-            errorMessage = validationError?.takeIf {
-                it.field == AppError.Field.CONFIRM_PASSWORD
-            }?.message
+            errorMessage = validationError
+                ?.takeIf { it.field == AppError.Field.CONFIRM_PASSWORD }
+                ?.let { appErrorMessage(it) }
         )
 
-        val generalError = viewModel.error?.takeUnless { it is AppError.Validation }
-
         if (generalError != null) {
-            val message = when (generalError) {
-                is AppError.Authentication -> generalError.message
-                is AppError.Network -> generalError.message
-                is AppError.Server -> generalError.message
-                is AppError.Unknown -> generalError.message
-                is AppError.Validation -> ""
-            }
-
             TText(
-                text = message,
+                text = appErrorMessage(generalError),
                 style = TTextStyle.LABEL,
                 color = MaterialTheme.colorScheme.error
             )

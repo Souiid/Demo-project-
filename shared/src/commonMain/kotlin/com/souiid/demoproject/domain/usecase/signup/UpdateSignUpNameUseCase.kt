@@ -1,5 +1,6 @@
 package com.souiid.demoproject.domain.usecase.signup
 
+
 import com.souiid.demoproject.data.SignUpRepository
 import com.souiid.demoproject.domain.model.AppError
 import com.souiid.demoproject.domain.model.AppResult
@@ -12,7 +13,7 @@ class UpdateSignUpNameUseCase(
             return AppResult.Failure(
                 AppError.Validation(
                     AppError.Field.FIRST_NAME,
-                    "First name is required"
+                    AppError.ValidationReason.REQUIRED
                 )
             )
         }
@@ -21,7 +22,7 @@ class UpdateSignUpNameUseCase(
             return AppResult.Failure(
                 AppError.Validation(
                     AppError.Field.LAST_NAME,
-                    "Last name is required"
+                    AppError.ValidationReason.REQUIRED
                 )
             )
         }

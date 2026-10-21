@@ -1,6 +1,5 @@
 package com.souiid.demoproject.ui.screens.auth.signup.credential
 
-
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -14,7 +13,6 @@ import kotlinx.coroutines.launch
 class SignUpCredentialViewModel(
     private val signUpUseCase: SignUpUserUseCase
 ) : ViewModel() {
-
     var email by mutableStateOf("")
     var password by mutableStateOf("")
     var confirmPassword by mutableStateOf("")

@@ -8,6 +8,7 @@ import com.souiid.demoproject.ui.components.button.TButton
 import com.souiid.demoproject.ui.components.others.TScreen
 import com.souiid.demoproject.ui.components.textfield.TTextField
 import com.souiid.demoproject.ui.components.textfield.TTextFieldType
+import com.souiid.demoproject.ui.utils.appErrorMessage
 import demoproject.shared.generated.resources.Res
 import demoproject.shared.generated.resources.continueLabel
 import demoproject.shared.generated.resources.firstName
@@ -20,7 +21,6 @@ fun SignUpNameScreen(
     onContinueClick: () -> Unit
 ) {
     val viewModel: SignUpNameViewModel = koinInject()
-    val error = viewModel.error
 
     TScreen(verticalArrangement = Arrangement.Center) {
         TTextField(
@@ -32,9 +32,9 @@ fun SignUpNameScreen(
             },
             type = TTextFieldType.TEXT,
             imeAction = ImeAction.Next,
-            errorMessage = error?.takeIf {
-                it.field == AppError.Field.FIRST_NAME
-            }?.message
+            errorMessage = viewModel.error
+                ?.takeIf { it.field == AppError.Field.FIRST_NAME }
+                ?.let { appErrorMessage(it) }
         )
 
         TTextField(
@@ -46,9 +46,9 @@ fun SignUpNameScreen(
             },
             type = TTextFieldType.TEXT,
             imeAction = ImeAction.Done,
-            errorMessage = error?.takeIf {
-                it.field == AppError.Field.LAST_NAME
-            }?.message
+            errorMessage = viewModel.error
+                ?.takeIf { it.field == AppError.Field.LAST_NAME }
+                ?.let { appErrorMessage(it) }
         )
 
         TButton(
