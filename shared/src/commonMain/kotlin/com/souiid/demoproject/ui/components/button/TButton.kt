@@ -34,69 +34,36 @@ fun TButton(
     isTextAlignStart: Boolean = false,
     color: Color = Black
 ) {
-
+    val isEnabled = enabled && !isLoading
 
     when (type) {
+        TButtonType.PRIMARY, TButtonType.REFUSE -> {
+            val isRefuse = type == TButtonType.REFUSE
+            val containerColor = if (isRefuse) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
+            val contentColor = if (isRefuse) MaterialTheme.colorScheme.onError else MaterialTheme.colorScheme.onPrimary
 
-        TButtonType.PRIMARY -> {
             Button(
                 onClick = onClick,
                 shape = shape,
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.onPrimary,
+                    containerColor = containerColor,
+                    contentColor = contentColor,
                     disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant,
                     disabledContentColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
                 ),
-                enabled = enabled && !isLoading,
+                enabled = isEnabled,
                 modifier = modifier
             ) {
-
                 if (isLoading) {
-
                     CircularProgressIndicator(
                         modifier = Modifier.size(Dimens.progressIndicatorSize),
                         strokeWidth = Dimens.progressStrokeSize,
-                        color = MaterialTheme.colorScheme.onPrimary
+                        color = contentColor
                     )
-
                 } else {
-
                     TText(
                         text = text,
-                        style = TTextStyle.BUTTON,
-                    )
-                }
-            }
-        }
-
-        TButtonType.REFUSE -> {
-            Button(
-                onClick = onClick,
-                shape = shape,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.error,
-                    contentColor = MaterialTheme.colorScheme.onError,
-                    disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant,
-                    disabledContentColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
-                ),
-                enabled = enabled && !isLoading,
-                modifier = modifier
-            ) {
-
-                if (isLoading) {
-
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(Dimens.progressIndicatorSize),
-                        strokeWidth = Dimens.progressStrokeSize,
-                        color = MaterialTheme.colorScheme.onPrimary
-                    )
-
-                } else {
-
-                    TText(
-                        text = text,
-                        style = TTextStyle.BUTTON,
+                        style = TTextStyle.BUTTON
                     )
                 }
             }
@@ -105,25 +72,29 @@ fun TButton(
         TButtonType.TEXT -> {
             TextButton(
                 onClick = onClick,
-                modifier = if (isTextAlignStart) {
-                    modifier.fillMaxWidth()
-                } else {
-                    modifier
-                },
+                enabled = isEnabled,
+                modifier = if (isTextAlignStart) modifier.fillMaxWidth() else modifier,
                 contentPadding = PaddingValues(vertical = Dimens.tinySpace)
             ) {
                 Box(
                     contentAlignment = if (isTextAlignStart) Alignment.CenterStart else Alignment.Center
                 ) {
-                    TText(
-                        text = text,
-                        style = TTextStyle.LITTLE,
-                        color = color,
-                        textDecoration = if (isUnderlined) TextDecoration.Underline else null
-                    )
+                    if (isLoading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(Dimens.progressIndicatorSize),
+                            strokeWidth = Dimens.progressStrokeSize,
+                            color = color
+                        )
+                    } else {
+                        TText(
+                            text = text,
+                            style = TTextStyle.LITTLE,
+                            color = color,
+                            textDecoration = if (isUnderlined) TextDecoration.Underline else null
+                        )
+                    }
                 }
             }
         }
-
     }
 }

@@ -69,7 +69,7 @@ fun SignInScreen(
         TButton(
             text = stringResource(Res.string.signIn),
             onClick = { viewModel.signIn() },
-            enabled = !viewModel.isLoading
+            isLoading = viewModel.isLoading
         )
 
         TButton(

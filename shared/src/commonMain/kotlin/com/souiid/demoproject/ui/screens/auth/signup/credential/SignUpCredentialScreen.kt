@@ -76,7 +76,7 @@ fun SignUpCredentialScreen() {
         TButton(
             text = stringResource(Res.string.signUp),
             onClick = { viewModel.signUp() },
-            enabled = !viewModel.isLoading
+            isLoading = viewModel.isLoading
         )
     }
 }
