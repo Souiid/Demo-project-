@@ -21,4 +21,7 @@ sealed interface Route {
 
     @Serializable
     data object SignUpDescription : Route
+
+    @Serializable
+    data object SignUpCredential : Route
 }

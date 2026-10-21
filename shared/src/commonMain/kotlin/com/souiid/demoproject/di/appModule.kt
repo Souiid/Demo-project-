@@ -9,6 +9,7 @@ import com.souiid.demoproject.domain.usecase.UpdateUserNameUseCase
 import com.souiid.demoproject.domain.usecase.signup.UpdateSignUpDescriptionUseCase
 import com.souiid.demoproject.ui.navigation.authgate.AuthGateViewModel
 import com.souiid.demoproject.ui.screens.HomeViewModel
+import com.souiid.demoproject.ui.screens.auth.signup.credential.SignUpCredentialViewModel
 import com.souiid.demoproject.ui.screens.auth.signup.description.SignUpDescriptionViewModel
 import com.souiid.demoproject.ui.screens.auth.signup.name.SignUpNameViewModel
 import org.koin.dsl.module
@@ -36,4 +37,6 @@ val appModule = module {
     factory { AuthGateViewModel(get()) }
     factory { SignUpNameViewModel(get(), get()) }
     factory { SignUpDescriptionViewModel(get(), get()) }
+    factory { SignUpCredentialViewModel() }
+
 }
