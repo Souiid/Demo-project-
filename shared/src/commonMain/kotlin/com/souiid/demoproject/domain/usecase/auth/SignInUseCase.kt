@@ -1,6 +1,5 @@
-package com.souiid.demoproject.domain.usecase
+package com.souiid.demoproject.domain.usecase.auth
 
-import com.souiid.demoproject.data.AuthRepository
 import com.souiid.demoproject.domain.model.AppError
 import com.souiid.demoproject.domain.model.AppResult
 import com.souiid.demoproject.domain.repository.IAuthRepository

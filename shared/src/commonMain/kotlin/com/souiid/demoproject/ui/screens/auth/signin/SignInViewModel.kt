@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.souiid.demoproject.domain.model.AppError
 import com.souiid.demoproject.domain.model.AppResult
-import com.souiid.demoproject.domain.usecase.SignInUseCase
+import com.souiid.demoproject.domain.usecase.auth.SignInUseCase
 import kotlinx.coroutines.launch
 
 class SignInViewModel(

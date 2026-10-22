@@ -3,7 +3,7 @@ package com.souiid.demoproject.domain
 import com.souiid.demoproject.domain.model.AppError
 import com.souiid.demoproject.domain.model.AppResult
 import com.souiid.demoproject.domain.repository.IAuthRepository
-import com.souiid.demoproject.domain.usecase.SignInUseCase
+import com.souiid.demoproject.domain.usecase.auth.SignInUseCase
 import dev.mokkery.answering.returns
 import dev.mokkery.answering.throws
 import dev.mokkery.everySuspend

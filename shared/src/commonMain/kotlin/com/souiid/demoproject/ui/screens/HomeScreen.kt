@@ -28,25 +28,11 @@ import demoproject.shared.generated.resources.signOut
 @Composable
 fun HomeScreen() {
     val viewModel: HomeViewModel = koinInject()
-    var nameInput by remember { mutableStateOf("") }
 
     TScreen(verticalArrangement = Arrangement.Center) {
         TText(
             text = stringResource(Res.string.home),
             style = TTextStyle.TITLE
-        )
-
-        TTextField(
-            value = nameInput,
-            onValueChange = { nameInput = it },
-            labelTitle = stringResource(Res.string.name)
-        )
-
-        TButton(
-            text = stringResource(Res.string.save),
-            onClick = {
-                viewModel.updateUserName(nameInput)
-            }
         )
 
         TButton(
