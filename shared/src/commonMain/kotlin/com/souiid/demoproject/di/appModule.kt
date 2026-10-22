@@ -2,6 +2,7 @@ package com.souiid.demoproject.di
 
 import com.souiid.demoproject.data.AuthRepository
 import com.souiid.demoproject.data.SignUpRepository
+import com.souiid.demoproject.domain.repository.IAuthRepository
 import com.souiid.demoproject.domain.usecase.ObserveAuthStateUseCase
 import com.souiid.demoproject.domain.usecase.SignInUseCase
 import com.souiid.demoproject.domain.usecase.SignOutUseCase
@@ -24,6 +25,11 @@ val appModule = module {
 
     single { AuthRepository() }
     single { SignUpRepository() }
+
+    //IREPOSITORY
+
+    single<IAuthRepository> { AuthRepository() }
+
 //_________________________________________________________
 
     //USECASE

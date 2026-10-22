@@ -1,5 +1,6 @@
 package com.souiid.demoproject.data
 
+import com.souiid.demoproject.domain.repository.IAuthRepository
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.FirebaseAuth
 import dev.gitlive.firebase.auth.FirebaseUser
@@ -11,7 +12,7 @@ import dev.gitlive.firebase.firestore.firestore
 import dev.gitlive.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.map
 
-class AuthRepository {
+class AuthRepository: IAuthRepository {
 
     private val auth: FirebaseAuth = Firebase.auth
     private val firestore: FirebaseFirestore = Firebase.firestore
@@ -29,7 +30,7 @@ class AuthRepository {
         auth.signOut()
     }
 
-    suspend fun signIn(email: String, password: String) {
+    override suspend fun signIn(email: String, password: String) {
         auth.signInWithEmailAndPassword(email, password)
     }
 

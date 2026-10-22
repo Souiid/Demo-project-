@@ -21,6 +21,8 @@ kotlinxSerialization = "1.11.0"
 koin = "4.2.2"
 googleServices = "4.5.0"
 gitliveFirebase = "2.7.0"
+kotlinx-coroutines = "1.11.0"
+mokkery = "3.5.0"
 
 [libraries]
 kamel-image = { module = "media.kamel:kamel-image", version.ref = "kamelImage" }
@@ -50,6 +52,7 @@ koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
 koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koin" }
 gitlive-firebase-auth = { module = "dev.gitlive:firebase-auth", version.ref = "gitliveFirebase" }
 gitlive-firebase-firestore = { module = "dev.gitlive:firebase-firestore", version.ref = "gitliveFirebase" }
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
@@ -59,3 +62,4 @@ composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "k
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 googleServices = { id = "com.google.gms.google-services", version.ref = "googleServices" }
+mokkery = { id = "dev.mokkery", version.ref = "mokkery" }
