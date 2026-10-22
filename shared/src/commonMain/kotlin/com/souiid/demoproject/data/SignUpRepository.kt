@@ -16,17 +16,17 @@ class SignUpRepository: ISignUpRepository {
     val firestore = Firebase.firestore
 
     private val _signUpInfo = MutableStateFlow(SignUpInfo())
-    val signUpInfo = _signUpInfo.asStateFlow()
+    override val signUpInfo = _signUpInfo.asStateFlow()
 
-    fun updateFirstName(value: String) {
+    override fun updateFirstName(value: String) {
         _signUpInfo.update { it.copy(firstName = value) }
     }
 
-    fun updateLastName(value: String) {
+    override fun updateLastName(value: String) {
         _signUpInfo.update { it.copy(lastName = value) }
     }
 
-    fun updateDescription(value: String) {
+    override fun updateDescription(value: String) {
         _signUpInfo.update { it.copy(description = value) }
     }
 
@@ -46,7 +46,7 @@ class SignUpRepository: ISignUpRepository {
         clear()
     }
 
-    fun clear() {
+    override fun clear() {
         _signUpInfo.value = SignUpInfo()
     }
 }

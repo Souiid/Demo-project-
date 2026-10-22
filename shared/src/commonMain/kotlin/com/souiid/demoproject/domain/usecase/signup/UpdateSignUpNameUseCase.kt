@@ -1,12 +1,11 @@
 package com.souiid.demoproject.domain.usecase.signup
 
-
-import com.souiid.demoproject.data.SignUpRepository
 import com.souiid.demoproject.domain.model.AppError
 import com.souiid.demoproject.domain.model.AppResult
+import com.souiid.demoproject.domain.repository.ISignUpRepository
 
 class UpdateSignUpNameUseCase(
-    private val repository: SignUpRepository
+    private val repository: ISignUpRepository
 ) {
     operator fun invoke(firstName: String, lastName: String): AppResult<Unit> {
         if (firstName.isBlank()) {
