@@ -1,4 +1,4 @@
-package com.souiid.demoproject.domain
+package com.souiid.demoproject.domain.signup
 
 import com.souiid.demoproject.domain.model.SignUpInfo
 import com.souiid.demoproject.domain.repository.ISignUpRepository

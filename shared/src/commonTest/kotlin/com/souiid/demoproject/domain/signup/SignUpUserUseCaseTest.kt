@@ -1,4 +1,4 @@
-package com.souiid.demoproject.domain
+package com.souiid.demoproject.domain.signup
 
 import com.souiid.demoproject.domain.model.AppError
 import com.souiid.demoproject.domain.model.AppResult
