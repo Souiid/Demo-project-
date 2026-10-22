@@ -2,6 +2,7 @@ package com.souiid.demoproject.data
 
 import com.souiid.demoproject.domain.model.SignUpInfo
 import com.souiid.demoproject.domain.model.User
+import com.souiid.demoproject.domain.repository.ISignUpRepository
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.auth
 import dev.gitlive.firebase.firestore.firestore
@@ -9,7 +10,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-class SignUpRepository {
+class SignUpRepository: ISignUpRepository {
 
     val auth = Firebase.auth
     val firestore = Firebase.firestore
@@ -29,7 +30,7 @@ class SignUpRepository {
         _signUpInfo.update { it.copy(description = value) }
     }
 
-    suspend fun signUp(email: String, password: String) {
+    override suspend fun signUp(email: String, password: String) {
         val uid = requireNotNull(auth.createUserWithEmailAndPassword(email, password).user).uid
 
         val info = signUpInfo.value

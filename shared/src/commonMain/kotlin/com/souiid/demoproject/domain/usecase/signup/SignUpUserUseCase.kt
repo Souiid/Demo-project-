@@ -1,12 +1,12 @@
 package com.souiid.demoproject.domain.usecase.signup
 
-import com.souiid.demoproject.data.SignUpRepository
 import com.souiid.demoproject.domain.model.AppError
 import com.souiid.demoproject.domain.model.AppResult
+import com.souiid.demoproject.domain.repository.ISignUpRepository
 import kotlinx.coroutines.CancellationException
 
 class SignUpUserUseCase(
-    private val repository: SignUpRepository
+    private val repository: ISignUpRepository
 ) {
     suspend operator fun invoke(
         email: String,
