@@ -1,6 +1,7 @@
 package com.souiid.demoproject.di
 
 import com.souiid.demoproject.data.AuthRepository
+import com.souiid.demoproject.data.SignUpInfoStore
 import com.souiid.demoproject.data.SignUpRepository
 import com.souiid.demoproject.domain.repository.IAuthRepository
 import com.souiid.demoproject.domain.repository.ISignUpRepository
@@ -25,7 +26,8 @@ val appModule = module {
     //REPOSITORY
 
     single { AuthRepository() }
-    single { SignUpRepository() }
+    single { SignUpRepository(get()) }
+    single { SignUpInfoStore() }
 
     //IREPOSITORY
 

@@ -1,38 +1,27 @@
 package com.souiid.demoproject.data
 
-import com.souiid.demoproject.domain.model.SignUpInfo
 import com.souiid.demoproject.domain.model.User
 import com.souiid.demoproject.domain.repository.ISignUpRepository
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.auth
 import dev.gitlive.firebase.firestore.firestore
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 
-class SignUpRepository: ISignUpRepository {
+class SignUpRepository(
+    private val store: SignUpInfoStore
+) : ISignUpRepository {
 
-    val auth = Firebase.auth
-    val firestore = Firebase.firestore
+    private val auth = Firebase.auth
+    private val firestore = Firebase.firestore
 
-    private val _signUpInfo = MutableStateFlow(SignUpInfo())
-    override val signUpInfo = _signUpInfo.asStateFlow()
+    override val signUpInfo = store.signUpInfo
 
-    override fun updateFirstName(value: String) {
-        _signUpInfo.update { it.copy(firstName = value) }
-    }
-
-    override fun updateLastName(value: String) {
-        _signUpInfo.update { it.copy(lastName = value) }
-    }
-
-    override fun updateDescription(value: String) {
-        _signUpInfo.update { it.copy(description = value) }
-    }
+    override fun updateFirstName(value: String) = store.updateFirstName(value)
+    override fun updateLastName(value: String) = store.updateLastName(value)
+    override fun updateDescription(value: String) = store.updateDescription(value)
+    override fun clear() = store.clear()
 
     override suspend fun signUp(email: String, password: String) {
         val uid = requireNotNull(auth.createUserWithEmailAndPassword(email, password).user).uid
-
         val info = signUpInfo.value
 
         val user = User(
@@ -44,9 +33,5 @@ class SignUpRepository: ISignUpRepository {
 
         firestore.collection("users").document(uid).set(user)
         clear()
-    }
-
-    override fun clear() {
-        _signUpInfo.value = SignUpInfo()
     }
 }
