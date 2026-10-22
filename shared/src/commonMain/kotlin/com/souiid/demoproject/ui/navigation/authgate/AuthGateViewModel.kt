@@ -4,22 +4,17 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.souiid.demoproject.domain.model.AuthState
 import com.souiid.demoproject.domain.usecase.ObserveAuthStateUseCase
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.stateIn
 
 class AuthGateViewModel(
-    private val observeAuthStateUseCase: ObserveAuthStateUseCase
+    observeAuthStateUseCase: ObserveAuthStateUseCase
 ) : ViewModel() {
 
-    private val _authState = MutableStateFlow(AuthState.LOADING)
-    val authState = _authState.asStateFlow()
-
-    init {
-        viewModelScope.launch {
-            observeAuthStateUseCase().collect { user ->
-                _authState.value = if (user != null) AuthState.AUTHENTICATED else AuthState.UNAUTHENTICATED
-            }
-        }
-    }
+    val authState = observeAuthStateUseCase()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = AuthState.LOADING
+        )
 }
