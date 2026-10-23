@@ -1,4 +1,4 @@
-package com.souiid.demoproject.ui.screens
+package com.souiid.demoproject.ui.screens.app.datastore
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -8,17 +8,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import demoproject.shared.generated.resources.Res
-import demoproject.shared.generated.resources.search
+import demoproject.shared.generated.resources.ktor
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
-fun SearchScreen() {
+fun DataStoreScreen() {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = stringResource(Res.string.search),
+            text = stringResource(Res.string.ktor),
             style = MaterialTheme.typography.headlineLarge
         )
     }

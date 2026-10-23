@@ -7,9 +7,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.souiid.demoproject.ui.navigation.Route
 import demoproject.shared.generated.resources.Res
-import demoproject.shared.generated.resources.home
-import demoproject.shared.generated.resources.profile
-import demoproject.shared.generated.resources.search
+import demoproject.shared.generated.resources.firebase
+import demoproject.shared.generated.resources.datastore
+import demoproject.shared.generated.resources.ktor
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 
@@ -19,9 +19,9 @@ enum class BottomBarItem(
     val selectedIcon: ImageVector,
     val unselectedIcon: ImageVector
 ) {
-    HOME(Res.string.home, Route.Home, AppIcon.Home, AppIcon.UnselectedHome),
-    SEARCH(Res.string.search, Route.Search, AppIcon.Search, AppIcon.UnselectedSearch),
-    PROFILE(Res.string.profile, Route.Profile, AppIcon.Profile, AppIcon.UnselectedProfile)
+    FIREBASE(Res.string.firebase, Route.FirebaseFeed, AppIcon.Firebase, AppIcon.UnselectedFirebase),
+    KTOR(Res.string.ktor, Route.Ktor, AppIcon.Ktor, AppIcon.UnselectedKtor),
+    DATASTORE(Res.string.datastore, Route.DataStore, AppIcon.DataStore, AppIcon.UnselectedDataStore)
 }
 
 @Composable

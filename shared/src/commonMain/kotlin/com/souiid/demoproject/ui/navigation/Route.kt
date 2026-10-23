@@ -5,13 +5,13 @@ import kotlinx.serialization.Serializable
 sealed interface Route {
 
     @Serializable
-    data object Home : Route
+    data object FirebaseFeed : Route
 
     @Serializable
-    data object Search : Route
+    data object Ktor : Route
 
     @Serializable
-    data object Profile : Route
+    data object DataStore : Route
 
     @Serializable
     data object SignIn : Route

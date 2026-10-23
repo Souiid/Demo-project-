@@ -1,9 +1,9 @@
 <resources>
     <string name="app_name">Multiplatform Template</string>
 
-    <string name="home">Home</string>
-    <string name="search">Search</string>
-    <string name="profile">Profile</string>
+    <string name="firebase">Firebase</string>
+    <string name="ktor">Ktor</string>
+    <string name="datastore">DataStore</string>
 
     <string name="save">Save</string>
     <string name="name">Name</string>

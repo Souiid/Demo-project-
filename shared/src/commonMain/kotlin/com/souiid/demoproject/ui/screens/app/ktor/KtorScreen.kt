@@ -1,4 +1,4 @@
-package com.souiid.demoproject.ui.screens
+package com.souiid.demoproject.ui.screens.app.ktor
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -8,17 +8,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import demoproject.shared.generated.resources.Res
-import demoproject.shared.generated.resources.profile
+import demoproject.shared.generated.resources.datastore
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
-fun ProfileScreen() {
+fun KtorScreen() {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = stringResource(Res.string.profile),
+            text = stringResource(Res.string.datastore),
             style = MaterialTheme.typography.headlineLarge
         )
     }

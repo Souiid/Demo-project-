@@ -2,25 +2,25 @@ package com.souiid.demoproject.ui.components.others
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Language
+import androidx.compose.material.icons.filled.LocalFireDepartment
+import androidx.compose.material.icons.filled.Storage
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.Person
-import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material.icons.outlined.Language
+import androidx.compose.material.icons.outlined.LocalFireDepartment
+import androidx.compose.material.icons.outlined.Storage
 
 
 object AppIcon {
 
-    val Home = Icons.Default.Home
-    val Search = Icons.Default.Search
-    val Profile = Icons.Default.Person
+    val Firebase = Icons.Default.LocalFireDepartment
+    val Ktor = Icons.Default.Language
+    val DataStore = Icons.Default.Storage
 
-    val UnselectedHome = Icons.Outlined.Home
-    val UnselectedSearch = Icons.Outlined.Search
-    val UnselectedProfile = Icons.Outlined.Person
+    val UnselectedFirebase = Icons.Outlined.LocalFireDepartment
+    val UnselectedKtor = Icons.Outlined.Language
+    val UnselectedDataStore = Icons.Outlined.Storage
 
     val EyeOpen = Icons.Default.Visibility
     val EyeClose = Icons.Default.VisibilityOff

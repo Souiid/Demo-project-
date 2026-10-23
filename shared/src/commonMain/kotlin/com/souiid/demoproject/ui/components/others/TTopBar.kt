@@ -18,7 +18,7 @@ fun TTopBar(
         title = {
             TText(
                 text = title,
-                style = TTextStyle.TITLE
+                style = TTextStyle.SUBTITLE
             )
         },
         navigationIcon = {

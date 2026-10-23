@@ -5,15 +5,15 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavDestination.Companion.hasRoute
-import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.souiid.demoproject.ui.components.others.AppBottomBar
 import com.souiid.demoproject.ui.components.others.BottomBarItem
-import com.souiid.demoproject.ui.screens.HomeScreen
-import com.souiid.demoproject.ui.screens.ProfileScreen
-import com.souiid.demoproject.ui.screens.SearchScreen
+import com.souiid.demoproject.ui.components.others.TTopBar
+import com.souiid.demoproject.ui.screens.app.firebase.FirebaseFeedScreen
+import com.souiid.demoproject.ui.screens.app.ktor.KtorScreen
+import com.souiid.demoproject.ui.screens.app.datastore.DataStoreScreen
 
 @Composable
 fun AppNavigation() {
@@ -21,13 +21,22 @@ fun AppNavigation() {
     val backStackEntry = navController.currentBackStackEntryAsState().value
 
     val selectedItem = when {
-        backStackEntry?.destination?.hasRoute<Route.Home>() == true -> BottomBarItem.HOME
-        backStackEntry?.destination?.hasRoute<Route.Search>() == true -> BottomBarItem.SEARCH
-        backStackEntry?.destination?.hasRoute<Route.Profile>() == true -> BottomBarItem.PROFILE
-        else -> BottomBarItem.HOME
+        backStackEntry?.destination?.hasRoute<Route.FirebaseFeed>() == true -> BottomBarItem.FIREBASE
+        backStackEntry?.destination?.hasRoute<Route.Ktor>() == true -> BottomBarItem.KTOR
+        backStackEntry?.destination?.hasRoute<Route.DataStore>() == true -> BottomBarItem.DATASTORE
+        else -> BottomBarItem.FIREBASE
     }
 
     Scaffold(
+        topBar = {
+            TTopBar(
+                title = when (selectedItem) {
+                    BottomBarItem.FIREBASE -> "Firebase"
+                    BottomBarItem.KTOR -> "Ktor"
+                    BottomBarItem.DATASTORE -> "DataStore"
+                }
+            )
+        },
         bottomBar = {
             AppBottomBar(
                 selectedItem = selectedItem,
@@ -41,19 +50,19 @@ fun AppNavigation() {
     ) { paddingValues ->
         TNavHost(
             navController = navController,
-            startDestination = Route.Home::class,
+            startDestination = Route.FirebaseFeed::class,
             modifier = Modifier.padding(paddingValues)
-        ){
-            composable<Route.Home> {
-                HomeScreen()
+        ) {
+            composable<Route.FirebaseFeed> {
+                FirebaseFeedScreen()
             }
 
-            composable<Route.Search> {
-                SearchScreen()
+            composable<Route.Ktor> {
+                DataStoreScreen()
             }
 
-            composable<Route.Profile> {
-                ProfileScreen()
+            composable<Route.DataStore> {
+                KtorScreen()
             }
         }
     }
