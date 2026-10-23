@@ -13,13 +13,22 @@ import org.koin.compose.koinInject
 import demoproject.shared.generated.resources.signOut
 
 @Composable
-fun FirebaseFeedScreen() {
+fun FirebaseFeedScreen(
+    goToProfile: () -> Unit
+) {
     val viewModel: FirebaseFeedViewModel = koinInject()
 
     TScreen(verticalArrangement = Arrangement.Center) {
         TText(
             text = stringResource(Res.string.firebase),
             style = TTextStyle.TITLE
+        )
+
+        TButton(
+            text = "Go to profile",
+            onClick = {
+                goToProfile()
+            }
         )
 
         TButton(

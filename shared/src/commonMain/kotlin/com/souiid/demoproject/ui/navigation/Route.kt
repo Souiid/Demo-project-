@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 sealed interface Route {
 
     @Serializable
-    data object FirebaseFeed : Route
+    data object Firebase : Route
 
     @Serializable
     data object Ktor : Route
@@ -24,4 +24,10 @@ sealed interface Route {
 
     @Serializable
     data object SignUpCredential : Route
+
+    @Serializable
+    data object FirebaseFeed : Route
+
+    @Serializable
+    data object FirebaseProfile : Route
 }
