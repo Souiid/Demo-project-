@@ -9,4 +9,5 @@ interface IAuthRepository {
     suspend fun signIn(email: String, password: String)
     suspend fun signOut()
     fun observeUserProfile(userId: String): Flow<Boolean>
+    val currentAuthUser: FirebaseUser?
 }

@@ -14,6 +14,7 @@ class AuthRepository : IAuthRepository {
     private val auth: FirebaseAuth = Firebase.auth
 
     override val authState: Flow<FirebaseUser?> = auth.authStateChanged
+    override val currentAuthUser: FirebaseUser? = auth.currentUser
 
     override suspend fun signOut() {
         auth.signOut()

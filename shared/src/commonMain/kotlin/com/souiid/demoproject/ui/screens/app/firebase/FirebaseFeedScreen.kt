@@ -2,6 +2,7 @@ package com.souiid.demoproject.ui.screens.app.firebase
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import com.souiid.demoproject.ui.components.others.TScreen
 import com.souiid.demoproject.ui.components.button.TButton
 import com.souiid.demoproject.ui.components.text.TText
@@ -17,6 +18,10 @@ fun FirebaseFeedScreen(
     goToProfile: () -> Unit
 ) {
     val viewModel: FirebaseFeedViewModel = koinInject()
+
+    LaunchedEffect(Unit) {
+        viewModel.loadCurrentUser()
+    }
 
     TScreen(verticalArrangement = Arrangement.Center) {
         TText(
