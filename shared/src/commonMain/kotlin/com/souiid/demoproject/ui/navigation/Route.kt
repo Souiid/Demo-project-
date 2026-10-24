@@ -30,4 +30,7 @@ sealed interface Route {
 
     @Serializable
     data object FirebaseProfile : Route
+
+    @Serializable
+    data object EditProfile: Route
 }

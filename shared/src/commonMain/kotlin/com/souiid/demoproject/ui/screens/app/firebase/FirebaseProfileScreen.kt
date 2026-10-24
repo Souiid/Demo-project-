@@ -28,7 +28,8 @@ import org.koin.compose.koinInject
 
 @Composable
 fun FirebaseProfileScreen(
-    userId: String? = null
+    userId: String? = null,
+    goToEditProfile: () -> Unit
 ) {
     val viewModel: FirebaseProfileViewModel = koinInject()
     val displayedUser by viewModel.displayedUser.collectAsStateWithLifecycle()
@@ -59,7 +60,8 @@ fun FirebaseProfileScreen(
             displayedUser != null -> {
                 ProfileContent(
                     user = displayedUser!!,
-                    isCurrentUser = displayedUser?.id == currentUser?.id
+                    isCurrentUser = displayedUser?.id == currentUser?.id,
+                    goToEditProfile = goToEditProfile
                 )
             }
         }
@@ -69,7 +71,8 @@ fun FirebaseProfileScreen(
 @Composable
 private fun ProfileContent(
     user: User,
-    isCurrentUser: Boolean
+    isCurrentUser: Boolean,
+    goToEditProfile: () -> Unit
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -115,7 +118,9 @@ private fun ProfileContent(
         Spacer(modifier = Modifier.height(24.dp))
 
         if (isCurrentUser) {
-            TButton(text = "Edit profile", onClick = {})
+            TButton(text = "Edit profile", onClick = {
+                goToEditProfile()
+            })
         } else {
             TButton(text = "Follow", onClick = {})
         }

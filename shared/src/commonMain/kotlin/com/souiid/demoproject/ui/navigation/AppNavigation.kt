@@ -28,7 +28,7 @@ fun AppNavigation() {
         else -> BottomBarItem.FIREBASE
     }
 
-    val isNotPrimaryScreen = destination?.hasRoute<Route.FirebaseProfile>() == true
+    val isNotPrimaryScreen = destination?.hasRoute<Route.FirebaseFeed>() == false
 
     Scaffold(
         topBar = {
