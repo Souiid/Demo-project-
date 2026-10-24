@@ -39,4 +39,34 @@ class UserRepository: IUserRepository {
             AppResult.Failure(AppError.Unknown())
         }
     }
+
+    override suspend fun updateUser(
+        firstName: String,
+        lastName: String,
+        description: String
+    ): AppResult<Unit> {
+        return try {
+            val user = _currentUser.value ?: return AppResult.Failure(AppError.Unknown())
+
+            firestore.collection("users").document(user.id).update(
+                mapOf(
+                    "firstName" to firstName,
+                    "lastName" to lastName,
+                    "description" to description
+                )
+            )
+
+            _currentUser.value = user.copy(
+                firstName = firstName,
+                lastName = lastName,
+                description = description
+            )
+
+            AppResult.Success(Unit)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            AppResult.Failure(AppError.Unknown())
+        }
+    }
 }
