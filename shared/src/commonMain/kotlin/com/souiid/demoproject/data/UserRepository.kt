@@ -89,4 +89,28 @@ class UserRepository: IUserRepository {
             AppResult.Failure(AppError.Unknown())
         }
     }
+
+    override suspend fun searchUsers(query: String): AppResult<List<User>> {
+        return try {
+            if (query.isBlank()) return AppResult.Success(emptyList())
+
+            val search = query.trim().lowercase()
+            val snapshot = firestore.collection("users").get()
+
+            val users = snapshot.documents
+                .map { it.data<User>() }
+                .filter { it.id != auth.currentUser?.uid }
+                .filter {
+                    it.firstName.contains(search, ignoreCase = true) ||
+                            it.lastName.contains(search, ignoreCase = true) ||
+                            "${it.firstName} ${it.lastName}".contains(search, ignoreCase = true)
+                }
+
+            AppResult.Success(users)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            AppResult.Failure(AppError.Unknown())
+        }
+    }
 }

@@ -10,5 +10,6 @@ interface IUserRepository {
     suspend fun fetchUser(userId: String): AppResult<User>
     suspend fun updateUser(firstName: String, lastName: String, description: String, photoUrl: String? = null): AppResult<Unit>
     suspend fun uploadPhoto(uri: String): AppResult<String>
+    suspend fun searchUsers(query: String): AppResult<List<User>>
 
 }
