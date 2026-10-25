@@ -149,4 +149,21 @@ class UserRepository: IUserRepository {
             AppResult.Failure(AppError.Unknown())
         }
     }
+
+    override suspend fun getFollowingUsers(): AppResult<List<User>> {
+        return try {
+            val userId = Firebase.auth.currentUser?.uid ?: return AppResult.Failure(AppError.Unknown())
+            val following = firestore.collection("users").document(userId).collection("following").get()
+
+            val users = following.documents.mapNotNull { document ->
+                firestore.collection("users").document(document.id).get().data<User?>()
+            }
+
+            AppResult.Success(users)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            AppResult.Failure(AppError.Unknown())
+        }
+    }
 }

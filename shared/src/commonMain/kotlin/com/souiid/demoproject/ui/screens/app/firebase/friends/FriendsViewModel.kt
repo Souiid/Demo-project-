@@ -7,6 +7,7 @@ import com.souiid.demoproject.domain.model.AppResult
 import com.souiid.demoproject.domain.model.User
 import com.souiid.demoproject.domain.usecase.user.FollowUserUseCase
 import com.souiid.demoproject.domain.usecase.user.GetFollowingUserIdsUseCase
+import com.souiid.demoproject.domain.usecase.user.GetFollowingUsersUseCase
 import com.souiid.demoproject.domain.usecase.user.SearchUsersUseCase
 import com.souiid.demoproject.domain.usecase.user.UnfollowUserUseCase
 import kotlinx.coroutines.FlowPreview
@@ -23,7 +24,8 @@ class FriendsViewModel(
     private val searchUsersUseCase: SearchUsersUseCase,
     private val followUserUseCase: FollowUserUseCase,
     private val unfollowUserUseCase: UnfollowUserUseCase,
-    private val getFollowingUserIdsUseCase: GetFollowingUserIdsUseCase
+    private val getFollowingUserIdsUseCase: GetFollowingUserIdsUseCase,
+    private val getFollowingUsersUseCase: GetFollowingUsersUseCase
 ) : ViewModel() {
 
     private val _searchQuery = MutableStateFlow("")
@@ -46,6 +48,12 @@ class FriendsViewModel(
 
     private val _isFollowingLoading = MutableStateFlow(true)
     val isFollowingLoading = _isFollowingLoading.asStateFlow()
+
+    private val _followingUsers = MutableStateFlow<List<User>>(emptyList())
+    val followingUsers = _followingUsers.asStateFlow()
+
+    private val _isFollowingUsersLoading = MutableStateFlow(false)
+    val isFollowingUsersLoading = _isFollowingUsersLoading.asStateFlow()
 
     init {
         viewModelScope.launch {
@@ -74,6 +82,7 @@ class FriendsViewModel(
         }
 
         loadFollowing()
+        loadFollowingUsers()
     }
 
     fun onSearchQueryChange(query: String) {
@@ -104,6 +113,7 @@ class FriendsViewModel(
                     } else {
                         _followingUserIds.value - userId
                     }
+                    loadFollowingUsers()
                 }
                 is AppResult.Failure -> _error.value = result.error
             }
@@ -122,6 +132,20 @@ class FriendsViewModel(
                 }
             } finally {
                 _isFollowingLoading.value = false
+            }
+        }
+    }
+
+    private fun loadFollowingUsers() {
+        viewModelScope.launch {
+            _isFollowingUsersLoading.value = true
+            try {
+                when (val result = getFollowingUsersUseCase()) {
+                    is AppResult.Success -> _followingUsers.value = result.data
+                    is AppResult.Failure -> _error.value = result.error
+                }
+            } finally {
+                _isFollowingUsersLoading.value = false
             }
         }
     }

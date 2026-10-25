@@ -14,5 +14,6 @@ interface IUserRepository {
     suspend fun followUser(targetUserId: String): AppResult<Unit>
     suspend fun unfollowUser(targetUserId: String): AppResult<Unit>
     suspend fun getFollowingUserIds(): AppResult<Set<String>>
+    suspend fun getFollowingUsers(): AppResult<List<User>>
 
 }

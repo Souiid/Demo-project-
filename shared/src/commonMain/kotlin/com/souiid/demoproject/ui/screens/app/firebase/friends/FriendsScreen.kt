@@ -26,10 +26,14 @@ import com.souiid.demoproject.ui.components.textfield.TTextField
 import com.souiid.demoproject.ui.components.textfield.TTextFieldType
 import demoproject.shared.generated.resources.Res
 import demoproject.shared.generated.resources.follow
+import demoproject.shared.generated.resources.followers
 import demoproject.shared.generated.resources.searchUsers
 import demoproject.shared.generated.resources.unfollow
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
+import demoproject.shared.generated.resources.followings
+import demoproject.shared.generated.resources.results
+import demoproject.shared.generated.resources.noResults
 
 @Composable
 fun FriendsScreen(
@@ -38,10 +42,12 @@ fun FriendsScreen(
     val viewModel: FriendsViewModel = koinInject()
     val search by viewModel.searchQuery.collectAsStateWithLifecycle()
     val users by viewModel.users.collectAsStateWithLifecycle()
+    val followingUsers by viewModel.followingUsers.collectAsStateWithLifecycle()
     val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
+    val isFollowingUsersLoading by viewModel.isFollowingUsersLoading.collectAsStateWithLifecycle()
+    val isFollowingLoading by viewModel.isFollowingLoading.collectAsStateWithLifecycle()
     val followingUserIds by viewModel.followingUserIds.collectAsStateWithLifecycle()
     val updatingUserIds by viewModel.updatingUserIds.collectAsStateWithLifecycle()
-    val isFollowingLoading by viewModel.isFollowingLoading.collectAsStateWithLifecycle()
 
     TScreen {
         TTextField(
@@ -51,19 +57,53 @@ fun FriendsScreen(
             placeholder = stringResource(Res.string.searchUsers)
         )
 
-        if (isLoading) {
-            CircularProgressIndicator()
+        if (search.isNotBlank()) {
+            TText(
+                text = stringResource(Res.string.results),
+                style = TTextStyle.SUBTITLE
+            )
+
+            if (isLoading) {
+                CircularProgressIndicator()
+            } else if (users.isEmpty()) {
+                TText(
+                    text = stringResource(Res.string.noResults),
+                    style = TTextStyle.BODY
+                )
+            } else {
+                LazyColumn {
+                    items(users, key = { it.id }) { user ->
+                        FriendItem(
+                            user = user,
+                            isFollowing = user.id in followingUserIds,
+                            isUpdating = isFollowingLoading || user.id in updatingUserIds,
+                            onUserClick = { onUserClick(user.id) },
+                            onFollowClick = { viewModel.followUser(user.id) },
+                            onUnfollowClick = { viewModel.unfollowUser(user.id) }
+                        )
+                    }
+                }
+            }
         } else {
-            LazyColumn {
-                items(users, key = { it.id }) { user ->
-                    FriendItem(
-                        user = user,
-                        isFollowing = user.id in followingUserIds,
-                        isUpdating = isFollowingLoading || user.id in updatingUserIds,
-                        onUserClick = { onUserClick(user.id) },
-                        onFollowClick = { viewModel.followUser(user.id) },
-                        onUnfollowClick = { viewModel.unfollowUser(user.id) }
-                    )
+            TText(
+                text = stringResource(Res.string.followings),
+                style = TTextStyle.SUBTITLE
+            )
+
+            if (isFollowingUsersLoading) {
+                CircularProgressIndicator()
+            } else {
+                LazyColumn {
+                    items(followingUsers, key = { it.id }) { user ->
+                        FriendItem(
+                            user = user,
+                            isFollowing = user.id in followingUserIds,
+                            isUpdating = isFollowingLoading || user.id in updatingUserIds,
+                            onUserClick = { onUserClick(user.id) },
+                            onFollowClick = { viewModel.followUser(user.id) },
+                            onUnfollowClick = { viewModel.unfollowUser(user.id) }
+                        )
+                    }
                 }
             }
         }

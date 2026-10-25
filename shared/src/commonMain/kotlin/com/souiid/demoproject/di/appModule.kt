@@ -17,6 +17,7 @@ import com.souiid.demoproject.domain.usecase.signup.UpdateSignUpDescriptionUseCa
 import com.souiid.demoproject.domain.usecase.user.FetchUserUseCase
 import com.souiid.demoproject.domain.usecase.user.FollowUserUseCase
 import com.souiid.demoproject.domain.usecase.user.GetFollowingUserIdsUseCase
+import com.souiid.demoproject.domain.usecase.user.GetFollowingUsersUseCase
 import com.souiid.demoproject.domain.usecase.user.ObserveCurrentUserUseCase
 import com.souiid.demoproject.domain.usecase.user.SearchUsersUseCase
 import com.souiid.demoproject.domain.usecase.user.UnfollowUserUseCase
@@ -67,6 +68,7 @@ val appModule = module {
     factory { FollowUserUseCase(get()) }
     factory { UnfollowUserUseCase(get()) }
     factory { GetFollowingUserIdsUseCase(get()) }
+    factory { GetFollowingUsersUseCase(get()) }
 
 
 
@@ -82,6 +84,6 @@ val appModule = module {
     factory { SignInViewModel(get()) }
     factory { FirebaseProfileViewModel(get(), get()) }
     factory { EditProfileViewModel(get(), get(), get()) }
-    factory { FriendsViewModel(get(), get(), get(), get()) }
+    factory { FriendsViewModel(get(), get(), get(), get(), get()) }
 
 }

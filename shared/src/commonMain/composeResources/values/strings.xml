@@ -70,5 +70,9 @@
     <string name="following">Following</string>
     <string name="follow">Follow</string>
     <string name="unfollow">Unfollow</string>
+    <string name="followers">Followers</string>
+    <string name="followings">Followings</string>
+    <string name="results">Results</string>
+    <string name="noResults">No results</string>
 
 </resources>
