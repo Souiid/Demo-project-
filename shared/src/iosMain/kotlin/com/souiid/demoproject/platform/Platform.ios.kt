@@ -1,4 +1,4 @@
-package com.souiid.demoproject
+package com.souiid.demoproject.platform
 
 import platform.UIKit.UIDevice
 

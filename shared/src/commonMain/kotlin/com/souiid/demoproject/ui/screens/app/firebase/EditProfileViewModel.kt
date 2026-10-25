@@ -9,11 +9,13 @@ import com.souiid.demoproject.domain.model.AppError
 import com.souiid.demoproject.domain.model.AppResult
 import com.souiid.demoproject.domain.usecase.user.ObserveCurrentUserUseCase
 import com.souiid.demoproject.domain.usecase.user.UpdateUserUseCase
+import com.souiid.demoproject.domain.usecase.user.UploadPhotoUseCase
 import kotlinx.coroutines.launch
 
 class EditProfileViewModel(
     observeCurrentUserUseCase: ObserveCurrentUserUseCase,
-    private val updateUserUseCase: UpdateUserUseCase
+    private val updateUserUseCase: UpdateUserUseCase,
+    private val uploadPhotoUseCase: UploadPhotoUseCase
 ) : ViewModel() {
 
     val currentUser = observeCurrentUserUseCase()
@@ -43,13 +45,29 @@ class EditProfileViewModel(
             error = null
 
             try {
-                when (val result = updateUserUseCase(firstName, lastName, description)) {
-                    is AppResult.Success -> {
-                        isSuccess = true
+                if (firstName.isBlank() || lastName.isBlank()) {
+                    when (val result = updateUserUseCase(firstName, lastName, description)) {
+                        is AppResult.Failure -> error = result.error
+                        is AppResult.Success -> Unit
                     }
-                    is AppResult.Failure -> {
-                        error = result.error
+                    return@launch
+                }
+
+                var photoUrl: String? = null
+
+                if (photoUri != null) {
+                    when (val result = uploadPhotoUseCase(photoUri!!)) {
+                        is AppResult.Success -> photoUrl = result.data
+                        is AppResult.Failure -> {
+                            error = result.error
+                            return@launch
+                        }
                     }
+                }
+
+                when (val result = updateUserUseCase(firstName, lastName, description, photoUrl)) {
+                    is AppResult.Success -> isSuccess = true
+                    is AppResult.Failure -> error = result.error
                 }
             } finally {
                 isLoading = false

@@ -12,21 +12,16 @@ class UpdateUserUseCase(
     suspend operator fun invoke(
         firstName: String,
         lastName: String,
-        description: String
+        description: String,
+        photoUrl: String? = null
     ): AppResult<Unit> {
         if (firstName.isBlank()) return AppResult.Failure(
-            AppError.Validation(
-                Field.FIRST_NAME,
-                ValidationReason.REQUIRED
-            )
+            AppError.Validation(Field.FIRST_NAME, ValidationReason.REQUIRED)
         )
         if (lastName.isBlank()) return AppResult.Failure(
-            AppError.Validation(
-                Field.LAST_NAME,
-                ValidationReason.REQUIRED
-            )
+            AppError.Validation(Field.LAST_NAME, ValidationReason.REQUIRED)
         )
 
-        return userRepository.updateUser(firstName.trim(), lastName.trim(), description.trim())
+        return userRepository.updateUser(firstName.trim(), lastName.trim(), description.trim(), photoUrl)
     }
 }

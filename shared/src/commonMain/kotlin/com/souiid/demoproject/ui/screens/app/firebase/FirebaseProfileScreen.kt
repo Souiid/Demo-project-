@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.souiid.demoproject.domain.model.User
 import com.souiid.demoproject.ui.components.button.TButton
+import com.souiid.demoproject.ui.components.others.TKamelImage
 import com.souiid.demoproject.ui.components.others.TScreen
 import com.souiid.demoproject.ui.components.text.TText
 import com.souiid.demoproject.ui.components.text.TTextStyle
@@ -78,13 +79,9 @@ private fun ProfileContent(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Column(
-            modifier = Modifier
-                .size(96.dp)
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.primaryContainer),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
+        TKamelImage(
+            imageUrl = user.photoUrl,
+            modifier = Modifier.size(96.dp)
         ) {
             TText(
                 text = "${user.firstName.firstOrNull() ?: ""}${user.lastName.firstOrNull() ?: ""}",

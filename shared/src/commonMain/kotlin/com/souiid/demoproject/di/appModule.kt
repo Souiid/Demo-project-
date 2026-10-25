@@ -17,6 +17,7 @@ import com.souiid.demoproject.domain.usecase.signup.UpdateSignUpDescriptionUseCa
 import com.souiid.demoproject.domain.usecase.user.FetchUserUseCase
 import com.souiid.demoproject.domain.usecase.user.ObserveCurrentUserUseCase
 import com.souiid.demoproject.domain.usecase.user.UpdateUserUseCase
+import com.souiid.demoproject.domain.usecase.user.UploadPhotoUseCase
 import com.souiid.demoproject.ui.navigation.authgate.AuthGateViewModel
 import com.souiid.demoproject.ui.screens.app.firebase.EditProfileViewModel
 import com.souiid.demoproject.ui.screens.app.firebase.FirebaseFeedViewModel
@@ -56,6 +57,8 @@ val appModule = module {
     factory { ObserveCurrentUserUseCase(get()) }
     factory { FetchUserUseCase(get()) }
     factory { UpdateUserUseCase(get()) }
+    factory { UploadPhotoUseCase(get()) }
+
 
 //________________________________________________________
 
@@ -68,6 +71,6 @@ val appModule = module {
     factory { SignUpCredentialViewModel(get()) }
     factory { SignInViewModel(get()) }
     factory { FirebaseProfileViewModel(get(), get()) }
-    factory { EditProfileViewModel(get(), get()) }
+    factory { EditProfileViewModel(get(), get(), get()) }
 
 }

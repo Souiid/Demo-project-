@@ -4,10 +4,12 @@ import com.souiid.demoproject.domain.model.AppError
 import com.souiid.demoproject.domain.model.AppResult
 import com.souiid.demoproject.domain.model.User
 import com.souiid.demoproject.domain.repository.IUserRepository
+import com.souiid.demoproject.platform.createFileFromUri
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.FirebaseAuth
 import dev.gitlive.firebase.auth.auth
 import dev.gitlive.firebase.firestore.firestore
+import dev.gitlive.firebase.storage.storage
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlin.coroutines.cancellation.CancellationException
@@ -43,23 +45,26 @@ class UserRepository: IUserRepository {
     override suspend fun updateUser(
         firstName: String,
         lastName: String,
-        description: String
+        description: String,
+        photoUrl: String?
     ): AppResult<Unit> {
         return try {
             val user = _currentUser.value ?: return AppResult.Failure(AppError.Unknown())
 
-            firestore.collection("users").document(user.id).update(
-                mapOf(
-                    "firstName" to firstName,
-                    "lastName" to lastName,
-                    "description" to description
-                )
+            val updates = mutableMapOf<String, Any>(
+                "firstName" to firstName,
+                "lastName" to lastName,
+                "description" to description
             )
+            if (photoUrl != null) updates["photoUrl"] = photoUrl
+
+            firestore.collection("users").document(user.id).update(updates)
 
             _currentUser.value = user.copy(
                 firstName = firstName,
                 lastName = lastName,
-                description = description
+                description = description,
+                photoUrl = photoUrl ?: user.photoUrl
             )
 
             AppResult.Success(Unit)
@@ -70,5 +75,18 @@ class UserRepository: IUserRepository {
         }
     }
 
+    override suspend fun uploadPhoto(uri: String): AppResult<String> {
+        val userId = Firebase.auth.currentUser?.uid
+            ?: return AppResult.Failure(AppError.Unknown())
 
+        return try {
+            val reference = Firebase.storage.reference.child("users/$userId/profile.jpg")
+            reference.putFile(createFileFromUri(uri))
+            AppResult.Success(reference.getDownloadUrl())
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            AppResult.Failure(AppError.Unknown())
+        }
+    }
 }
