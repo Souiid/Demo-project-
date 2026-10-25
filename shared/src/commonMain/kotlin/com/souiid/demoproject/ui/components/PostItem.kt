@@ -17,6 +17,7 @@ import com.souiid.demoproject.ui.components.others.AppIcon
 import com.souiid.demoproject.ui.components.others.TKamelImage
 import com.souiid.demoproject.ui.components.text.TText
 import com.souiid.demoproject.ui.components.text.TTextStyle
+import com.souiid.demoproject.ui.utils.PostDateFormatter
 
 @Composable
 fun PostItem(
@@ -46,6 +47,11 @@ fun PostItem(
                 TText(
                     text = author?.let { "${it.firstName} ${it.lastName}" } ?: "Unknown user",
                     style = TTextStyle.SUBTITLE
+                )
+
+                TText(
+                    text = PostDateFormatter.format(post.createdAt),
+                    style = TTextStyle.DESCRIPTION
                 )
             }
         }

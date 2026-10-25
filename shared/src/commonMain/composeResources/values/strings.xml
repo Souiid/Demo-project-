@@ -78,4 +78,10 @@
     <string name="writePost">Write post</string>
     <string name="publish">Publish</string>
 
+    <string name="postJustNow">Just now</string>
+    <string name="postMinutesAgo">%1$d min ago</string>
+    <string name="postHoursAgo">%1$d h ago</string>
+    <string name="postYesterday">Yesterday</string>
+    <string name="postDaysAgo">%1$d days ago</string>
+
 </resources>
