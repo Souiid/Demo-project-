@@ -20,10 +20,10 @@ import com.souiid.demoproject.domain.usecase.user.SearchUsersUseCase
 import com.souiid.demoproject.domain.usecase.user.UpdateUserUseCase
 import com.souiid.demoproject.domain.usecase.user.UploadPhotoUseCase
 import com.souiid.demoproject.ui.navigation.authgate.AuthGateViewModel
-import com.souiid.demoproject.ui.screens.app.firebase.EditProfileViewModel
-import com.souiid.demoproject.ui.screens.app.firebase.FirebaseFeedViewModel
-import com.souiid.demoproject.ui.screens.app.firebase.FirebaseProfileViewModel
-import com.souiid.demoproject.ui.screens.app.firebase.FriendsViewModel
+import com.souiid.demoproject.ui.screens.app.firebase.editprofile.EditProfileViewModel
+import com.souiid.demoproject.ui.screens.app.firebase.feed.FirebaseFeedViewModel
+import com.souiid.demoproject.ui.screens.app.firebase.profile.FirebaseProfileViewModel
+import com.souiid.demoproject.ui.screens.app.firebase.friends.FriendsViewModel
 import com.souiid.demoproject.ui.screens.auth.signin.SignInViewModel
 import com.souiid.demoproject.ui.screens.auth.signup.credential.SignUpCredentialViewModel
 import com.souiid.demoproject.ui.screens.auth.signup.description.SignUpDescriptionViewModel

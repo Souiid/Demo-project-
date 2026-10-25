@@ -1,4 +1,4 @@
-package com.souiid.demoproject.ui.screens.app.firebase
+package com.souiid.demoproject.ui.screens.app.firebase.editprofile
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box

@@ -1,4 +1,4 @@
-package com.souiid.demoproject.ui.screens.app.firebase
+package com.souiid.demoproject.ui.screens.app.firebase.editprofile
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf

@@ -1,4 +1,4 @@
-package com.souiid.demoproject.ui.screens.app.firebase
+package com.souiid.demoproject.ui.screens.app.firebase.feed
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.runtime.Composable

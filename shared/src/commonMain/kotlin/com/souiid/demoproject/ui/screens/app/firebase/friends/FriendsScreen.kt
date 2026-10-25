@@ -1,4 +1,4 @@
-package com.souiid.demoproject.ui.screens.app.firebase
+package com.souiid.demoproject.ui.screens.app.firebase.friends
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement

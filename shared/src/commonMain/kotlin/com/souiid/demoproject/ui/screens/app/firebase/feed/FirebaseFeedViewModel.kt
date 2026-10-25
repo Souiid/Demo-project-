@@ -1,4 +1,4 @@
-package com.souiid.demoproject.ui.screens.app.firebase
+package com.souiid.demoproject.ui.screens.app.firebase.feed
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
