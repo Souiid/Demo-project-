@@ -33,4 +33,7 @@ sealed interface Route {
 
     @Serializable
     data object EditProfile: Route
+
+    @Serializable
+    data object Friends: Route
 }

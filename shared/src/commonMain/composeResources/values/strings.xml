@@ -66,5 +66,8 @@
     <string name="takePhoto">Take photo</string>
     <string name="chooseFromGallery">Choose from gallery</string>
     <string name="deletePhoto">Delete photo</string>
+    <string name="searchUsers">Search user</string>
+    <string name="following">Following</string>
+    <string name="follow">Follow</string>
 
 </resources>

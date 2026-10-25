@@ -49,9 +49,14 @@ fun TTextField(
         TTextFieldType.EMAIL -> KeyboardType.Email
         TTextFieldType.PASSWORD -> KeyboardType.Password
         TTextFieldType.DESCRIPTION -> KeyboardType.Text
+        TTextFieldType.SEARCH -> KeyboardType.Text
     }
 
-    val finalImeAction = if (type == TTextFieldType.DESCRIPTION) ImeAction.Default else imeAction
+    val finalImeAction = when (type) {
+        TTextFieldType.DESCRIPTION -> ImeAction.Default
+        TTextFieldType.SEARCH -> ImeAction.Search
+        else -> imeAction
+    }
 
     val visualTransformation = if (type == TTextFieldType.PASSWORD && !passwordVisible) {
         PasswordVisualTransformation()
@@ -81,18 +86,26 @@ fun TTextField(
             shape = shape,
             isError = isError,
 
-            leadingIcon = leadingIcon,
+            leadingIcon = if (type == TTextFieldType.SEARCH) {
+                { Icon(imageVector = AppIcon.Search, contentDescription = null) }
+            } else leadingIcon,
 
             trailingIcon = {
-                if (type == TTextFieldType.PASSWORD) {
-                    IconButton(onClick = { passwordVisible = !passwordVisible }) {
-                        Icon(
-                            imageVector = if (passwordVisible) AppIcon.EyeOpen else AppIcon.EyeClose,
-                            contentDescription = "Password visibility"
-                        )
+                when (type) {
+                    TTextFieldType.PASSWORD -> {
+                        IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                            Icon(
+                                imageVector = if (passwordVisible) AppIcon.EyeOpen else AppIcon.EyeClose,
+                                contentDescription = "Password visibility"
+                            )
+                        }
                     }
-                } else {
-                    trailingContent?.invoke()
+                    TTextFieldType.SEARCH if value.isNotEmpty() -> {
+                        IconButton(onClick = { onValueChange("") }) {
+                            Icon(imageVector = AppIcon.Close, contentDescription = null)
+                        }
+                    }
+                    else -> trailingContent?.invoke()
                 }
             }
         )

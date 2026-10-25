@@ -2,14 +2,17 @@ package com.souiid.demoproject.ui.components.others
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.LocalFireDepartment
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Storage
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material.icons.outlined.Language
 import androidx.compose.material.icons.outlined.LocalFireDepartment
 import androidx.compose.material.icons.outlined.Storage
+import androidx.compose.ui.graphics.vector.ImageVector
 
 
 object AppIcon {
@@ -26,5 +29,9 @@ object AppIcon {
     val EyeClose = Icons.Default.VisibilityOff
 
     val ArrowBack = Icons.AutoMirrored.Filled.ArrowBack
+
+    val Search = Icons.Default.Search
+
+    val Close = Icons.Default.Close
 
 }

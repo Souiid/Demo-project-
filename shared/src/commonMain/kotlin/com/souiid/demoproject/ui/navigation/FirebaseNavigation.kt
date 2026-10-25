@@ -7,6 +7,7 @@ import androidx.navigation.navigation
 import com.souiid.demoproject.ui.screens.app.firebase.EditProfileScreen
 import com.souiid.demoproject.ui.screens.app.firebase.FirebaseFeedScreen
 import com.souiid.demoproject.ui.screens.app.firebase.FirebaseProfileScreen
+import com.souiid.demoproject.ui.screens.app.firebase.FriendsScreen
 
 fun NavGraphBuilder.firebaseNavigation(navController: NavController) {
     navigation<Route.Firebase>(startDestination = Route.FirebaseFeed) {
@@ -14,6 +15,9 @@ fun NavGraphBuilder.firebaseNavigation(navController: NavController) {
             FirebaseFeedScreen(
                 goToProfile = {
                     navController.navigate(Route.FirebaseProfile)
+                },
+                goToFriends = {
+                    navController.navigate(Route.Friends)
                 }
             )
         }
@@ -28,6 +32,14 @@ fun NavGraphBuilder.firebaseNavigation(navController: NavController) {
 
         composable<Route.EditProfile> {
             EditProfileScreen()
+        }
+
+        composable<Route.Friends> {
+            FriendsScreen(
+                onUserClick = {
+
+                }
+            )
         }
     }
 }

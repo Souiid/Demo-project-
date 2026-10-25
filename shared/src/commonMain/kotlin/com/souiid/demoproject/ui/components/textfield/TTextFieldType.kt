@@ -4,5 +4,6 @@ enum class TTextFieldType {
     TEXT,
     EMAIL,
     PASSWORD,
-    DESCRIPTION
+    DESCRIPTION,
+    SEARCH
 }

@@ -15,7 +15,8 @@ import demoproject.shared.generated.resources.signOut
 
 @Composable
 fun FirebaseFeedScreen(
-    goToProfile: () -> Unit
+    goToProfile: () -> Unit,
+    goToFriends: () -> Unit
 ) {
     val viewModel: FirebaseFeedViewModel = koinInject()
 
@@ -33,6 +34,13 @@ fun FirebaseFeedScreen(
             text = "Go to profile",
             onClick = {
                 goToProfile()
+            }
+        )
+
+        TButton(
+            text = "Go to friends",
+            onClick = {
+                goToFriends()
             }
         )
 
