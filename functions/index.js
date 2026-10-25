@@ -82,3 +82,34 @@ exports.unfollowUser = onCall(async (request) => {
 
   return {isFollowing: false};
 });
+
+/*
+ * Create post
+ */
+exports.createPost = onCall(async (request) => {
+  const userId = request.auth?.uid;
+  const content = request.data?.content;
+
+  if (!userId) {
+    throw new HttpsError("unauthenticated", "User must be authenticated.");
+  }
+
+  if (typeof content !== "string" || !content.trim()) {
+    throw new HttpsError("invalid-argument", "Post content cannot be empty.");
+  }
+
+  if (content.trim().length > 1000) {
+    throw new HttpsError("invalid-argument", "Post content is too long.");
+  }
+
+  const postRef = db.collection("posts").doc();
+
+  await postRef.set({
+    authorId: userId,
+    content: content.trim(),
+    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    likesCount: 0,
+  });
+
+  return {postId: postRef.id};
+});

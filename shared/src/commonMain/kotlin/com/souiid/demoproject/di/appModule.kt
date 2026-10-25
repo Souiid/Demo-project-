@@ -1,15 +1,18 @@
 package com.souiid.demoproject.di
 
 import com.souiid.demoproject.data.AuthRepository
+import com.souiid.demoproject.data.PostRepository
 import com.souiid.demoproject.data.SignUpInfoStore
 import com.souiid.demoproject.data.SignUpRepository
 import com.souiid.demoproject.data.UserRepository
 import com.souiid.demoproject.domain.repository.IAuthRepository
+import com.souiid.demoproject.domain.repository.IPostRepository
 import com.souiid.demoproject.domain.repository.ISignUpRepository
 import com.souiid.demoproject.domain.repository.IUserRepository
 import com.souiid.demoproject.domain.usecase.auth.ObserveAuthStateUseCase
 import com.souiid.demoproject.domain.usecase.auth.SignInUseCase
 import com.souiid.demoproject.domain.usecase.auth.SignOutUseCase
+import com.souiid.demoproject.domain.usecase.post.CreatePostUseCase
 import com.souiid.demoproject.domain.usecase.signup.ObserveSignUpInfoUseCase
 import com.souiid.demoproject.domain.usecase.signup.UpdateSignUpNameUseCase
 import com.souiid.demoproject.domain.usecase.signup.SignUpUserUseCase
@@ -42,12 +45,14 @@ val appModule = module {
     single { SignUpRepository(get()) }
     single { SignUpInfoStore() }
     single { UserRepository() }
+    single { PostRepository() }
 
     //IREPOSITORY
 
     single<IAuthRepository> { get<AuthRepository>() }
     single<ISignUpRepository> { get<SignUpRepository>() }
     single<IUserRepository> { get<UserRepository>() }
+    single<IPostRepository> { get<PostRepository>() }
 
 //_________________________________________________________
 
@@ -69,14 +74,13 @@ val appModule = module {
     factory { UnfollowUserUseCase(get()) }
     factory { GetFollowingUserIdsUseCase(get()) }
     factory { GetFollowingUsersUseCase(get()) }
-
-
+    factory { CreatePostUseCase(get()) }
 
 //________________________________________________________
 
     //VIEWMODEL
 
-    factory { FirebaseFeedViewModel(get(), get()) }
+    factory { FirebaseFeedViewModel(get(), get(), get()) }
     factory { AuthGateViewModel(get()) }
     factory { SignUpNameViewModel(get(), get()) }
     factory { SignUpDescriptionViewModel(get(), get()) }

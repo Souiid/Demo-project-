@@ -74,5 +74,8 @@
     <string name="followings">Followings</string>
     <string name="results">Results</string>
     <string name="noResults">No results</string>
+    <string name="createPost">Create post</string>
+    <string name="writePost">Write post</string>
+    <string name="publish">Publish</string>
 
 </resources>
