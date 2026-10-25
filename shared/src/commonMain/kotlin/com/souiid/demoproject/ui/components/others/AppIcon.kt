@@ -2,7 +2,9 @@ package com.souiid.demoproject.ui.components.others
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.LocalFireDepartment
 import androidx.compose.material.icons.filled.Person
@@ -36,5 +38,9 @@ object AppIcon {
     val Close = Icons.Default.Close
 
     val Person = Icons.Default.Person
+
+    val Add = Icons.Default.Add
+
+    val FavoriteBorder = Icons.Default.FavoriteBorder
 
 }

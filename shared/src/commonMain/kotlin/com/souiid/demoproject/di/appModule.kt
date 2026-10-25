@@ -13,6 +13,7 @@ import com.souiid.demoproject.domain.usecase.auth.ObserveAuthStateUseCase
 import com.souiid.demoproject.domain.usecase.auth.SignInUseCase
 import com.souiid.demoproject.domain.usecase.auth.SignOutUseCase
 import com.souiid.demoproject.domain.usecase.post.CreatePostUseCase
+import com.souiid.demoproject.domain.usecase.post.GetFeedPostsUseCase
 import com.souiid.demoproject.domain.usecase.signup.ObserveSignUpInfoUseCase
 import com.souiid.demoproject.domain.usecase.signup.UpdateSignUpNameUseCase
 import com.souiid.demoproject.domain.usecase.signup.SignUpUserUseCase
@@ -75,12 +76,13 @@ val appModule = module {
     factory { GetFollowingUserIdsUseCase(get()) }
     factory { GetFollowingUsersUseCase(get()) }
     factory { CreatePostUseCase(get()) }
+    factory { GetFeedPostsUseCase(get(), get()) }
 
 //________________________________________________________
 
     //VIEWMODEL
 
-    factory { FirebaseFeedViewModel(get(), get()) }
+    factory { FirebaseFeedViewModel(get(), get(), get()) }
     factory { AuthGateViewModel(get()) }
     factory { SignUpNameViewModel(get(), get()) }
     factory { SignUpDescriptionViewModel(get(), get()) }
