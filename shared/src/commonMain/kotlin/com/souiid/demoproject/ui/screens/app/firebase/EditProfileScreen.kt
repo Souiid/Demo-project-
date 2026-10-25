@@ -22,6 +22,7 @@ import com.souiid.demoproject.domain.model.AppError
 import com.souiid.demoproject.domain.model.User
 import com.souiid.demoproject.ui.components.button.TButton
 import com.souiid.demoproject.ui.components.button.TButtonType
+import com.souiid.demoproject.ui.components.others.PhotoPicker
 import com.souiid.demoproject.ui.components.others.TKamelImage
 import com.souiid.demoproject.ui.components.others.TScreen
 import com.souiid.demoproject.ui.components.text.TText
@@ -29,6 +30,13 @@ import com.souiid.demoproject.ui.components.text.TTextStyle
 import com.souiid.demoproject.ui.components.textfield.TTextField
 import com.souiid.demoproject.ui.components.textfield.TTextFieldType
 import com.souiid.demoproject.ui.utils.appErrorMessage
+import demoproject.shared.generated.resources.Res
+import demoproject.shared.generated.resources.description
+import demoproject.shared.generated.resources.firstName
+import demoproject.shared.generated.resources.lastName
+import demoproject.shared.generated.resources.modifyPhoto
+import demoproject.shared.generated.resources.save
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 
 @Composable
@@ -38,7 +46,11 @@ fun EditProfileScreen() {
 
     TScreen(horizontalAlignment = Alignment.CenterHorizontally) {
         currentUser?.let { user ->
-            EditProfilePhoto(user = user)
+            EditProfilePhoto(
+                user = user,
+                photoUri = viewModel.photoUri,
+                onPhotoSelected = { viewModel.photoUri = it }
+            )
             EditProfileFields(viewModel)
             EditProfileSaveButton(viewModel)
         }
@@ -46,47 +58,9 @@ fun EditProfileScreen() {
 }
 
 @Composable
-private fun EditProfilePhoto(user: User) {
-    Box(
-        modifier = Modifier.size(104.dp),
-        contentAlignment = Alignment.BottomEnd
-    ) {
-        TKamelImage(
-            imageUrl = user.photoUrl,
-            modifier = Modifier.fillMaxSize()
-        ) {
-            TText(
-                text = "${user.firstName.firstOrNull() ?: ""}${user.lastName.firstOrNull() ?: ""}",
-                style = TTextStyle.SUBTITLE
-            )
-        }
-
-        IconButton(
-            onClick = {},
-            modifier = Modifier
-                .size(36.dp)
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.primary)
-        ) {
-            Icon(
-                imageVector = Icons.Default.Edit,
-                contentDescription = "Modifier la photo",
-                tint = MaterialTheme.colorScheme.onPrimary
-            )
-        }
-    }
-
-    TButton(
-        text = "Modifier la photo de profil",
-        type = TButtonType.TEXT,
-        onClick = {}
-    )
-}
-
-@Composable
 private fun EditProfileFields(viewModel: EditProfileViewModel) {
     TTextField(
-        labelTitle = "Prénom",
+        labelTitle = stringResource(Res.string.firstName),
         value = viewModel.firstName,
         onValueChange = {
             viewModel.clearError()
@@ -100,7 +74,7 @@ private fun EditProfileFields(viewModel: EditProfileViewModel) {
     )
 
     TTextField(
-        labelTitle = "Nom",
+        labelTitle = stringResource(Res.string.lastName),
         value = viewModel.lastName,
         onValueChange = {
             viewModel.clearError()
@@ -114,7 +88,7 @@ private fun EditProfileFields(viewModel: EditProfileViewModel) {
     )
 
     TTextField(
-        labelTitle = "Description",
+        labelTitle = stringResource(Res.string.description),
         value = viewModel.description,
         onValueChange = {
             viewModel.clearError()
@@ -128,10 +102,55 @@ private fun EditProfileFields(viewModel: EditProfileViewModel) {
 @Composable
 private fun EditProfileSaveButton(viewModel: EditProfileViewModel) {
     TButton(
-        text = "Enregistrer",
+        text = stringResource(Res.string.save),
         onClick = {
             viewModel.updateUser()
         },
         isLoading = viewModel.isLoading
     )
+}
+
+@Composable
+private fun EditProfilePhoto(
+    user: User,
+    photoUri: String?,
+    onPhotoSelected: (String?) -> Unit
+) {
+    PhotoPicker(
+        photoUri = photoUri,
+        onPhotoSelected = onPhotoSelected
+    ) { _, openPicker ->
+        Box(
+            modifier = Modifier.size(104.dp),
+            contentAlignment = Alignment.BottomEnd
+        ) {
+            TKamelImage(
+                imageUrl = user.photoUrl,
+                photoUri = photoUri,
+                modifier = Modifier.fillMaxSize()
+            ) {
+                TText(
+                    text = "${user.firstName.firstOrNull() ?: ""}${user.lastName.firstOrNull() ?: ""}",
+                    style = TTextStyle.SUBTITLE
+                )
+            }
+
+            IconButton(
+                onClick = openPicker,
+                modifier = Modifier.size(36.dp).clip(CircleShape).background(MaterialTheme.colorScheme.primary)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Edit,
+                    contentDescription = stringResource(Res.string.modifyPhoto),
+                    tint = MaterialTheme.colorScheme.onPrimary
+                )
+            }
+        }
+
+        TButton(
+            text = stringResource(Res.string.modifyPhoto),
+            type = TButtonType.TEXT,
+            onClick = openPicker
+        )
+    }
 }

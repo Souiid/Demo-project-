@@ -21,6 +21,7 @@ class EditProfileViewModel(
     var firstName by mutableStateOf(currentUser.value?.firstName.orEmpty())
     var lastName by mutableStateOf(currentUser.value?.lastName.orEmpty())
     var description by mutableStateOf(currentUser.value?.description.orEmpty())
+    var photoUri by mutableStateOf<String?>(null)
 
     var isLoading by mutableStateOf(false)
         private set

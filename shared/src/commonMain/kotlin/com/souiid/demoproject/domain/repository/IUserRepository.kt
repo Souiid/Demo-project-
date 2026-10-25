@@ -9,4 +9,5 @@ interface IUserRepository {
     val currentUser: StateFlow<User?>
     suspend fun fetchUser(userId: String): AppResult<User>
     suspend fun updateUser(firstName: String, lastName: String, description: String): AppResult<Unit>
+
 }
