@@ -21,6 +21,9 @@ import com.souiid.demoproject.ui.components.others.TKamelImage
 import com.souiid.demoproject.ui.components.others.TScreen
 import com.souiid.demoproject.ui.components.text.TText
 import com.souiid.demoproject.ui.components.text.TTextStyle
+import demoproject.shared.generated.resources.Res
+import demoproject.shared.generated.resources.signOut
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 
 @Composable
@@ -57,8 +60,9 @@ fun FirebaseProfileScreen(
             displayedUser != null -> {
                 ProfileContent(
                     user = displayedUser!!,
-                    isCurrentUser = displayedUser?.id == currentUser?.id,
-                    goToEditProfile = goToEditProfile
+                    isCurrentUser = currentUser?.id != null && displayedUser?.id == currentUser?.id,
+                    goToEditProfile = goToEditProfile,
+                    onSignOut = viewModel::signOut
                 )
             }
         }
@@ -69,7 +73,8 @@ fun FirebaseProfileScreen(
 private fun ProfileContent(
     user: User,
     isCurrentUser: Boolean,
-    goToEditProfile: () -> Unit
+    goToEditProfile: () -> Unit,
+    onSignOut: () -> Unit
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -94,7 +99,10 @@ private fun ProfileContent(
 
         if (user.description.isNotBlank()) {
             Spacer(modifier = Modifier.height(12.dp))
-            TText(text = user.description, style = TTextStyle.BODY)
+            TText(
+                text = user.description,
+                style = TTextStyle.BODY
+            )
         }
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -111,17 +119,31 @@ private fun ProfileContent(
         Spacer(modifier = Modifier.height(24.dp))
 
         if (isCurrentUser) {
-            TButton(text = "Edit profile", onClick = {
-                goToEditProfile()
-            })
+            TButton(
+                text = "Edit profile",
+                onClick = goToEditProfile
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            TButton(
+                text = stringResource(Res.string.signOut),
+                onClick = onSignOut
+            )
         } else {
-            TButton(text = "Follow", onClick = {})
+            TButton(
+                text = "Follow",
+                onClick = {}
+            )
         }
     }
 }
 
 @Composable
-private fun ProfileStat(value: String, label: String) {
+private fun ProfileStat(
+    value: String,
+    label: String
+) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         TText(text = value, style = TTextStyle.TITLE)
         TText(text = label, style = TTextStyle.BODY)

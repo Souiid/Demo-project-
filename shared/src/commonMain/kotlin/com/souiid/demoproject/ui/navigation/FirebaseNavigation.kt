@@ -12,14 +12,7 @@ import com.souiid.demoproject.ui.screens.app.firebase.friends.FriendsScreen
 fun NavGraphBuilder.firebaseNavigation(navController: NavController) {
     navigation<Route.Firebase>(startDestination = Route.FirebaseFeed) {
         composable<Route.FirebaseFeed> {
-            FirebaseFeedScreen(
-                goToProfile = {
-                    navController.navigate(Route.FirebaseProfile)
-                },
-                goToFriends = {
-                    navController.navigate(Route.Friends)
-                }
-            )
+            FirebaseFeedScreen()
         }
 
         composable<Route.FirebaseProfile> {

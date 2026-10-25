@@ -80,13 +80,13 @@ val appModule = module {
 
     //VIEWMODEL
 
-    factory { FirebaseFeedViewModel(get(), get(), get()) }
+    factory { FirebaseFeedViewModel(get(), get()) }
     factory { AuthGateViewModel(get()) }
     factory { SignUpNameViewModel(get(), get()) }
     factory { SignUpDescriptionViewModel(get(), get()) }
     factory { SignUpCredentialViewModel(get()) }
     factory { SignInViewModel(get()) }
-    factory { FirebaseProfileViewModel(get(), get()) }
+    factory { FirebaseProfileViewModel(get(), get(), get()) }
     factory { EditProfileViewModel(get(), get(), get()) }
     factory { FriendsViewModel(get(), get(), get(), get(), get()) }
 

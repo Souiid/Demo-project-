@@ -20,10 +20,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 
 @Composable
-fun FirebaseFeedScreen(
-    goToProfile: () -> Unit,
-    goToFriends: () -> Unit
-) {
+fun FirebaseFeedScreen() {
     val viewModel: FirebaseFeedViewModel = koinInject()
     var showCreatePostSheet by remember { mutableStateOf(false) }
 
@@ -45,23 +42,8 @@ fun FirebaseFeedScreen(
         )
 
         TButton(
-            text = "Go to profile",
-            onClick = goToProfile
-        )
-
-        TButton(
-            text = "Go to friends",
-            onClick = goToFriends
-        )
-
-        TButton(
             text = stringResource(Res.string.createPost),
             onClick = { showCreatePostSheet = true }
-        )
-
-        TButton(
-            text = stringResource(Res.string.signOut),
-            onClick = viewModel::signOut
         )
     }
 

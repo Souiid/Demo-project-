@@ -15,7 +15,6 @@ import dev.gitlive.firebase.auth.auth
 import kotlinx.coroutines.launch
 
 class FirebaseFeedViewModel(
-    private val signOutUseCase: SignOutUseCase,
     private val fetchUserUseCase: FetchUserUseCase,
     private val createPostUseCase: CreatePostUseCase
 ) : ViewModel() {
@@ -88,9 +87,4 @@ class FirebaseFeedViewModel(
         isPostCreated = false
     }
 
-    fun signOut() {
-        viewModelScope.launch {
-            signOutUseCase()
-        }
-    }
 }

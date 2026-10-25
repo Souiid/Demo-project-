@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.souiid.demoproject.domain.model.AppError
 import com.souiid.demoproject.domain.model.AppResult
 import com.souiid.demoproject.domain.model.User
+import com.souiid.demoproject.domain.usecase.auth.SignOutUseCase
 import com.souiid.demoproject.domain.usecase.user.FetchUserUseCase
 import com.souiid.demoproject.domain.usecase.user.ObserveCurrentUserUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,7 +17,8 @@ import kotlinx.coroutines.launch
 
 class FirebaseProfileViewModel(
     private val fetchUserUseCase: FetchUserUseCase,
-    private val observeCurrentUserUseCase: ObserveCurrentUserUseCase
+    private val observeCurrentUserUseCase: ObserveCurrentUserUseCase,
+    private val signOutUseCase: SignOutUseCase
 ) : ViewModel() {
 
     val currentUser = observeCurrentUserUseCase()
@@ -53,6 +55,12 @@ class FirebaseProfileViewModel(
             } finally {
                 isLoading = false
             }
+        }
+    }
+
+    fun signOut() {
+        viewModelScope.launch {
+            signOutUseCase()
         }
     }
 }

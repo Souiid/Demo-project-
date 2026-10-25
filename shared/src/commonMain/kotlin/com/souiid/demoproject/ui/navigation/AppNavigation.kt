@@ -1,6 +1,8 @@
 package com.souiid.demoproject.ui.navigation
 
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -10,6 +12,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.souiid.demoproject.ui.components.others.AppBottomBar
+import com.souiid.demoproject.ui.components.others.AppIcon
 import com.souiid.demoproject.ui.components.others.BottomBarItem
 import com.souiid.demoproject.ui.components.others.TTopBar
 import com.souiid.demoproject.ui.screens.app.datastore.DataStoreScreen
@@ -40,7 +43,28 @@ fun AppNavigation() {
                 },
                 onBack = if (isNotPrimaryScreen) {
                     { navController.popBackStack() }
-                } else null
+                } else null,
+                actions = {
+                    if (destination?.hasRoute<Route.FirebaseFeed>() == true) {
+                        IconButton(
+                            onClick = { navController.navigate(Route.Friends) }
+                        ) {
+                            Icon(
+                                imageVector = AppIcon.Search,
+                                contentDescription = "Search"
+                            )
+                        }
+
+                        IconButton(
+                            onClick = { navController.navigate(Route.FirebaseProfile) }
+                        ) {
+                            Icon(
+                                imageVector = AppIcon.Person,
+                                contentDescription = "Profile"
+                            )
+                        }
+                    }
+                }
             )
         },
         bottomBar = {
