@@ -11,5 +11,8 @@ interface IUserRepository {
     suspend fun updateUser(firstName: String, lastName: String, description: String, photoUrl: String? = null): AppResult<Unit>
     suspend fun uploadPhoto(uri: String): AppResult<String>
     suspend fun searchUsers(query: String): AppResult<List<User>>
+    suspend fun followUser(targetUserId: String): AppResult<Unit>
+    suspend fun unfollowUser(targetUserId: String): AppResult<Unit>
+    suspend fun getFollowingUserIds(): AppResult<Set<String>>
 
 }

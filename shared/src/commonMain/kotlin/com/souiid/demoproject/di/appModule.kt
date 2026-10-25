@@ -15,8 +15,11 @@ import com.souiid.demoproject.domain.usecase.signup.UpdateSignUpNameUseCase
 import com.souiid.demoproject.domain.usecase.signup.SignUpUserUseCase
 import com.souiid.demoproject.domain.usecase.signup.UpdateSignUpDescriptionUseCase
 import com.souiid.demoproject.domain.usecase.user.FetchUserUseCase
+import com.souiid.demoproject.domain.usecase.user.FollowUserUseCase
+import com.souiid.demoproject.domain.usecase.user.GetFollowingUserIdsUseCase
 import com.souiid.demoproject.domain.usecase.user.ObserveCurrentUserUseCase
 import com.souiid.demoproject.domain.usecase.user.SearchUsersUseCase
+import com.souiid.demoproject.domain.usecase.user.UnfollowUserUseCase
 import com.souiid.demoproject.domain.usecase.user.UpdateUserUseCase
 import com.souiid.demoproject.domain.usecase.user.UploadPhotoUseCase
 import com.souiid.demoproject.ui.navigation.authgate.AuthGateViewModel
@@ -61,6 +64,11 @@ val appModule = module {
     factory { UpdateUserUseCase(get()) }
     factory { UploadPhotoUseCase(get()) }
     factory { SearchUsersUseCase(get()) }
+    factory { FollowUserUseCase(get()) }
+    factory { UnfollowUserUseCase(get()) }
+    factory { GetFollowingUserIdsUseCase(get()) }
+
+
 
 //________________________________________________________
 
@@ -74,6 +82,6 @@ val appModule = module {
     factory { SignInViewModel(get()) }
     factory { FirebaseProfileViewModel(get(), get()) }
     factory { EditProfileViewModel(get(), get(), get()) }
-    factory { FriendsViewModel(get()) }
+    factory { FriendsViewModel(get(), get(), get(), get()) }
 
 }

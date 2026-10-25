@@ -9,6 +9,7 @@ import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.FirebaseAuth
 import dev.gitlive.firebase.auth.auth
 import dev.gitlive.firebase.firestore.firestore
+import dev.gitlive.firebase.functions.functions
 import dev.gitlive.firebase.storage.storage
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,6 +19,7 @@ class UserRepository: IUserRepository {
 
     private val firestore = Firebase.firestore
     private val auth: FirebaseAuth = Firebase.auth
+    private val functions = Firebase.functions
 
     private val _currentUser = MutableStateFlow<User?>(null)
     override val currentUser = _currentUser.asStateFlow()
@@ -107,6 +109,40 @@ class UserRepository: IUserRepository {
                 }
 
             AppResult.Success(users)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            AppResult.Failure(AppError.Unknown())
+        }
+    }
+
+    override suspend fun followUser(targetUserId: String): AppResult<Unit> {
+        return try {
+            functions.httpsCallable("followUser").invoke(mapOf("targetUserId" to targetUserId))
+            AppResult.Success(Unit)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            AppResult.Failure(AppError.Unknown())
+        }
+    }
+
+    override suspend fun unfollowUser(targetUserId: String): AppResult<Unit> {
+        return try {
+            functions.httpsCallable("unfollowUser").invoke(mapOf("targetUserId" to targetUserId))
+            AppResult.Success(Unit)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            AppResult.Failure(AppError.Unknown())
+        }
+    }
+
+    override suspend fun getFollowingUserIds(): AppResult<Set<String>> {
+        return try {
+            val userId = Firebase.auth.currentUser?.uid ?: return AppResult.Failure(AppError.Unknown())
+            val snapshot = firestore.collection("users").document(userId).collection("following").get()
+            AppResult.Success(snapshot.documents.map { it.id }.toSet())
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {

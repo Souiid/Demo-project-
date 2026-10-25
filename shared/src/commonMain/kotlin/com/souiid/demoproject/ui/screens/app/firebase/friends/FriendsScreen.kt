@@ -27,6 +27,7 @@ import com.souiid.demoproject.ui.components.textfield.TTextFieldType
 import demoproject.shared.generated.resources.Res
 import demoproject.shared.generated.resources.follow
 import demoproject.shared.generated.resources.searchUsers
+import demoproject.shared.generated.resources.unfollow
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 
@@ -38,6 +39,9 @@ fun FriendsScreen(
     val search by viewModel.searchQuery.collectAsStateWithLifecycle()
     val users by viewModel.users.collectAsStateWithLifecycle()
     val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
+    val followingUserIds by viewModel.followingUserIds.collectAsStateWithLifecycle()
+    val updatingUserIds by viewModel.updatingUserIds.collectAsStateWithLifecycle()
+    val isFollowingLoading by viewModel.isFollowingLoading.collectAsStateWithLifecycle()
 
     TScreen {
         TTextField(
@@ -54,7 +58,11 @@ fun FriendsScreen(
                 items(users, key = { it.id }) { user ->
                     FriendItem(
                         user = user,
-                        onUserClick = { onUserClick(user.id) }
+                        isFollowing = user.id in followingUserIds,
+                        isUpdating = isFollowingLoading || user.id in updatingUserIds,
+                        onUserClick = { onUserClick(user.id) },
+                        onFollowClick = { viewModel.followUser(user.id) },
+                        onUnfollowClick = { viewModel.unfollowUser(user.id) }
                     )
                 }
             }
@@ -65,7 +73,11 @@ fun FriendsScreen(
 @Composable
 private fun FriendItem(
     user: User,
-    onUserClick: () -> Unit
+    isFollowing: Boolean,
+    isUpdating: Boolean,
+    onUserClick: () -> Unit,
+    onFollowClick: () -> Unit,
+    onUnfollowClick: () -> Unit
 ) {
     Row(
         modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
@@ -92,8 +104,12 @@ private fun FriendItem(
         }
 
         TButton(
-            text = stringResource(Res.string.follow),
-            onClick = {}
+            text = stringResource(if (isFollowing) Res.string.unfollow else Res.string.follow),
+            enabled = !isUpdating,
+            onClick = {
+                if (isFollowing) onUnfollowClick()
+                else onFollowClick()
+            }
         )
     }
 }

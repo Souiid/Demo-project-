@@ -1,32 +1,84 @@
-/**
- * Import function triggers from their respective submodules:
- *
- * const {onCall} = require("firebase-functions/v2/https");
- * const {onDocumentWritten} = require("firebase-functions/v2/firestore");
- *
- * See a full list of supported triggers at https://firebase.google.com/docs/functions
- */
-
 const {setGlobalOptions} = require("firebase-functions");
-const {onRequest} = require("firebase-functions/https");
-const logger = require("firebase-functions/logger");
+const {onCall, HttpsError} = require("firebase-functions/v2/https");
+const admin = require("firebase-admin");
 
-// For cost control, you can set the maximum number of containers that can be
-// running at the same time. This helps mitigate the impact of unexpected
-// traffic spikes by instead downgrading performance. This limit is a
-// per-function limit. You can override the limit for each function using the
-// `maxInstances` option in the function's options, e.g.
-// `onRequest({ maxInstances: 5 }, (req, res) => { ... })`.
-// NOTE: setGlobalOptions does not apply to functions using the v1 API. V1
-// functions should each use functions.runWith({ maxInstances: 10 }) instead.
-// In the v1 API, each function can only serve one request per container, so
-// this will be the maximum concurrent request count.
-setGlobalOptions({ maxInstances: 10 });
+setGlobalOptions({maxInstances: 10});
 
-// Create and deploy your first functions
-// https://firebase.google.com/docs/functions/get-started
+admin.initializeApp();
 
-// exports.helloWorld = onRequest((request, response) => {
-//   logger.info("Hello logs!", {structuredData: true});
-//   response.send("Hello from Firebase!");
-// });
+const db = admin.firestore();
+
+/*
+ * Follow user
+ */
+exports.followUser = onCall(async (request) => {
+  const userId = request.auth?.uid;
+  const targetUserId = request.data?.targetUserId;
+
+  if (!userId) {
+    throw new HttpsError("unauthenticated", "User must be authenticated.");
+  }
+
+  if (typeof targetUserId !== "string" || !targetUserId.trim()) {
+    throw new HttpsError("invalid-argument", "Invalid target user ID.");
+  }
+
+  if (userId === targetUserId) {
+    throw new HttpsError("invalid-argument", "You cannot follow yourself.");
+  }
+
+  const userRef = db.collection("users").doc(userId);
+  const targetRef = db.collection("users").doc(targetUserId);
+  const followingRef = userRef.collection("following").doc(targetUserId);
+  const followerRef = targetRef.collection("followers").doc(userId);
+
+  await db.runTransaction(async (transaction) => {
+    const target = await transaction.get(targetRef);
+
+    if (!target.exists) {
+      throw new HttpsError("not-found", "User not found.");
+    }
+
+    transaction.set(followingRef, {
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    });
+
+    transaction.set(followerRef, {
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    });
+  });
+
+  return {isFollowing: true};
+});
+
+/*
+ * Unfollow user
+ */
+exports.unfollowUser = onCall(async (request) => {
+  const userId = request.auth?.uid;
+  const targetUserId = request.data?.targetUserId;
+
+  if (!userId) {
+    throw new HttpsError("unauthenticated", "User must be authenticated.");
+  }
+
+  if (
+    typeof targetUserId !== "string" ||
+    !targetUserId.trim() ||
+    userId === targetUserId
+  ) {
+    throw new HttpsError("invalid-argument", "Invalid target user ID.");
+  }
+
+  const userRef = db.collection("users").doc(userId);
+  const targetRef = db.collection("users").doc(targetUserId);
+  const followingRef = userRef.collection("following").doc(targetUserId);
+  const followerRef = targetRef.collection("followers").doc(userId);
+
+  const batch = db.batch();
+  batch.delete(followingRef);
+  batch.delete(followerRef);
+  await batch.commit();
+
+  return {isFollowing: false};
+});

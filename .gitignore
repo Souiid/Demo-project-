@@ -34,6 +34,8 @@ xcuserdata/
 
 # Node
 node_modules/
+firebase-debug.log
+firebase-debug.*.log
 
 # Environment / secrets
 .env
