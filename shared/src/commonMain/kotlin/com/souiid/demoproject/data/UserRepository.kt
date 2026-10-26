@@ -138,9 +138,8 @@ class UserRepository: IUserRepository {
         }
     }
 
-    override suspend fun getFollowingUserIds(): AppResult<Set<String>> {
+    override suspend fun getFollowingUserIds(userId: String): AppResult<Set<String>> {
         return try {
-            val userId = Firebase.auth.currentUser?.uid ?: return AppResult.Failure(AppError.Unknown())
             val snapshot = firestore.collection("users").document(userId).collection("following").get()
             AppResult.Success(snapshot.documents.map { it.id }.toSet())
         } catch (e: CancellationException) {
@@ -150,16 +149,27 @@ class UserRepository: IUserRepository {
         }
     }
 
-    override suspend fun getFollowingUsers(): AppResult<List<User>> {
+    override suspend fun getFollowingUsers(userId: String): AppResult<List<User>> {
         return try {
-            val userId = Firebase.auth.currentUser?.uid ?: return AppResult.Failure(AppError.Unknown())
             val following = firestore.collection("users").document(userId).collection("following").get()
 
             val users = following.documents.mapNotNull { document ->
-                firestore.collection("users").document(document.id).get().data<User?>()
+                val snapshot = firestore.collection("users").document(document.id).get()
+                if (snapshot.exists) snapshot.data<User>() else null
             }
 
             AppResult.Success(users)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            AppResult.Failure(AppError.Unknown())
+        }
+    }
+
+    override suspend fun getFollowerUserIds(userId: String): AppResult<Set<String>> {
+        return try {
+            val snapshot = firestore.collection("users").document(userId).collection("followers").get()
+            AppResult.Success(snapshot.documents.map { it.id }.toSet())
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {

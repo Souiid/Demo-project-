@@ -8,6 +8,7 @@ import com.souiid.demoproject.domain.model.User
 import com.souiid.demoproject.domain.usecase.user.FollowUserUseCase
 import com.souiid.demoproject.domain.usecase.user.GetFollowingUserIdsUseCase
 import com.souiid.demoproject.domain.usecase.user.GetFollowingUsersUseCase
+import com.souiid.demoproject.domain.usecase.user.ObserveCurrentUserUseCase
 import com.souiid.demoproject.domain.usecase.user.SearchUsersUseCase
 import com.souiid.demoproject.domain.usecase.user.UnfollowUserUseCase
 import kotlinx.coroutines.FlowPreview
@@ -25,7 +26,8 @@ class FriendsViewModel(
     private val followUserUseCase: FollowUserUseCase,
     private val unfollowUserUseCase: UnfollowUserUseCase,
     private val getFollowingUserIdsUseCase: GetFollowingUserIdsUseCase,
-    private val getFollowingUsersUseCase: GetFollowingUsersUseCase
+    private val getFollowingUsersUseCase: GetFollowingUsersUseCase,
+    private val observeCurrentUserUseCase: ObserveCurrentUserUseCase
 ) : ViewModel() {
 
     private val _searchQuery = MutableStateFlow("")
@@ -54,6 +56,8 @@ class FriendsViewModel(
 
     private val _isFollowingUsersLoading = MutableStateFlow(false)
     val isFollowingUsersLoading = _isFollowingUsersLoading.asStateFlow()
+
+    val userId = observeCurrentUserUseCase().value?.id
 
     init {
         viewModelScope.launch {
@@ -123,10 +127,12 @@ class FriendsViewModel(
     }
 
     private fun loadFollowing() {
+
+        val userId = userId ?: return
         viewModelScope.launch {
             _isFollowingLoading.value = true
             try {
-                when (val result = getFollowingUserIdsUseCase()) {
+                when (val result = getFollowingUserIdsUseCase(userId)) {
                     is AppResult.Success -> _followingUserIds.value = result.data
                     is AppResult.Failure -> _error.value = result.error
                 }
@@ -137,10 +143,11 @@ class FriendsViewModel(
     }
 
     private fun loadFollowingUsers() {
+        val userId = userId ?: return
         viewModelScope.launch {
             _isFollowingUsersLoading.value = true
             try {
-                when (val result = getFollowingUsersUseCase()) {
+                when (val result = getFollowingUsersUseCase(userId)) {
                     is AppResult.Success -> _followingUsers.value = result.data
                     is AppResult.Failure -> _error.value = result.error
                 }

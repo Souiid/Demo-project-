@@ -14,14 +14,17 @@ import com.souiid.demoproject.domain.usecase.auth.SignInUseCase
 import com.souiid.demoproject.domain.usecase.auth.SignOutUseCase
 import com.souiid.demoproject.domain.usecase.post.CreatePostUseCase
 import com.souiid.demoproject.domain.usecase.post.GetFeedPostsUseCase
+import com.souiid.demoproject.domain.usecase.post.GetUserPostsUseCase
 import com.souiid.demoproject.domain.usecase.signup.ObserveSignUpInfoUseCase
 import com.souiid.demoproject.domain.usecase.signup.UpdateSignUpNameUseCase
 import com.souiid.demoproject.domain.usecase.signup.SignUpUserUseCase
 import com.souiid.demoproject.domain.usecase.signup.UpdateSignUpDescriptionUseCase
 import com.souiid.demoproject.domain.usecase.user.FetchUserUseCase
 import com.souiid.demoproject.domain.usecase.user.FollowUserUseCase
+import com.souiid.demoproject.domain.usecase.user.GetFollowerUserIdsUseCase
 import com.souiid.demoproject.domain.usecase.user.GetFollowingUserIdsUseCase
 import com.souiid.demoproject.domain.usecase.user.GetFollowingUsersUseCase
+import com.souiid.demoproject.domain.usecase.user.GetProfileStatsUseCase
 import com.souiid.demoproject.domain.usecase.user.ObserveCurrentUserUseCase
 import com.souiid.demoproject.domain.usecase.user.SearchUsersUseCase
 import com.souiid.demoproject.domain.usecase.user.UnfollowUserUseCase
@@ -76,20 +79,24 @@ val appModule = module {
     factory { GetFollowingUserIdsUseCase(get()) }
     factory { GetFollowingUsersUseCase(get()) }
     factory { CreatePostUseCase(get()) }
-    factory { GetFeedPostsUseCase(get(), get()) }
+    factory { GetFeedPostsUseCase(get(), get(), get()) }
+    factory { GetFollowerUserIdsUseCase(get()) }
+    factory { GetProfileStatsUseCase(get(), get(), get()) }
+    factory { GetUserPostsUseCase(get()) }
+
 
 //________________________________________________________
 
     //VIEWMODEL
 
-    factory { FirebaseFeedViewModel(get(), get(), get()) }
+    factory { FirebaseFeedViewModel(get(), get(), get(), get()) }
     factory { AuthGateViewModel(get()) }
     factory { SignUpNameViewModel(get(), get()) }
     factory { SignUpDescriptionViewModel(get(), get()) }
     factory { SignUpCredentialViewModel(get()) }
     factory { SignInViewModel(get()) }
-    factory { FirebaseProfileViewModel(get(), get(), get()) }
+    factory { FirebaseProfileViewModel(get(), get(), get(), get()) }
     factory { EditProfileViewModel(get(), get(), get()) }
-    factory { FriendsViewModel(get(), get(), get(), get(), get()) }
+    factory { FriendsViewModel(get(), get(), get(), get(), get(), get()) }
 
 }

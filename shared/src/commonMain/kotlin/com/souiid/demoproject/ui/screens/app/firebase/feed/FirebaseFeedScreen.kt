@@ -20,6 +20,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.souiid.demoproject.ui.components.CreatePostSheet
 import com.souiid.demoproject.ui.components.PostItem
 import com.souiid.demoproject.ui.components.others.AppIcon
@@ -34,11 +35,18 @@ import org.koin.compose.koinInject
 @Composable
 fun FirebaseFeedScreen() {
     val viewModel: FirebaseFeedViewModel = koinInject()
+
+    val currentUser by viewModel.currentUser.collectAsStateWithLifecycle()
     var showCreatePostSheet by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         viewModel.loadCurrentUser()
-        viewModel.loadPosts()
+    }
+
+    LaunchedEffect(currentUser?.id) {
+        if (currentUser != null) {
+            viewModel.loadPosts()
+        }
     }
 
     LaunchedEffect(viewModel.isPostCreated) {

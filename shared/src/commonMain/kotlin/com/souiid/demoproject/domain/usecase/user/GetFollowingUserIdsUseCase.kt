@@ -6,7 +6,7 @@ import com.souiid.demoproject.domain.repository.IUserRepository
 class GetFollowingUserIdsUseCase(
     private val userRepository: IUserRepository
 ) {
-    suspend operator fun invoke(): AppResult<Set<String>> {
-        return userRepository.getFollowingUserIds()
+    suspend operator fun invoke(userId: String): AppResult<Set<String>> {
+        return userRepository.getFollowingUserIds(userId)
     }
 }

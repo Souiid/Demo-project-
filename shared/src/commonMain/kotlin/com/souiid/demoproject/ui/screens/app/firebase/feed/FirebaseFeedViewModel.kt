@@ -12,6 +12,7 @@ import com.souiid.demoproject.domain.model.User
 import com.souiid.demoproject.domain.usecase.post.CreatePostUseCase
 import com.souiid.demoproject.domain.usecase.post.GetFeedPostsUseCase
 import com.souiid.demoproject.domain.usecase.user.FetchUserUseCase
+import com.souiid.demoproject.domain.usecase.user.ObserveCurrentUserUseCase
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.auth
 import kotlinx.coroutines.launch
@@ -19,8 +20,12 @@ import kotlinx.coroutines.launch
 class FirebaseFeedViewModel(
     private val fetchUserUseCase: FetchUserUseCase,
     private val createPostUseCase: CreatePostUseCase,
-    private val getFeedPostsUseCase: GetFeedPostsUseCase
+    private val getFeedPostsUseCase: GetFeedPostsUseCase,
+    private val observeCurrentUserUseCase: ObserveCurrentUserUseCase
+
 ) : ViewModel() {
+
+    val currentUser = observeCurrentUserUseCase()
 
     var error by mutableStateOf<AppError?>(null)
         private set

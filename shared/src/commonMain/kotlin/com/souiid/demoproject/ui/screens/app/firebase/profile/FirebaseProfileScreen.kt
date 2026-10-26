@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.souiid.demoproject.domain.model.ProfileStats
 import com.souiid.demoproject.domain.model.User
 import com.souiid.demoproject.ui.components.button.TButton
 import com.souiid.demoproject.ui.components.others.TKamelImage
@@ -34,6 +35,7 @@ fun FirebaseProfileScreen(
     val viewModel: FirebaseProfileViewModel = koinInject()
     val displayedUser by viewModel.displayedUser.collectAsStateWithLifecycle()
     val currentUser by viewModel.currentUser.collectAsStateWithLifecycle()
+    val profileStats by viewModel.profileStats.collectAsStateWithLifecycle()
 
     LaunchedEffect(userId) {
         viewModel.loadUser(userId)
@@ -43,6 +45,17 @@ fun FirebaseProfileScreen(
         when {
             viewModel.isLoading -> {
                 CircularProgressIndicator()
+            }
+
+            displayedUser != null -> {
+                ProfileContent(
+                    user = displayedUser!!,
+                    stats = profileStats,
+                    isLoadingStats = viewModel.isLoadingStats,
+                    isCurrentUser = currentUser?.id != null && displayedUser?.id == currentUser?.id,
+                    goToEditProfile = goToEditProfile,
+                    onSignOut = viewModel::signOut
+                )
             }
 
             viewModel.error != null -> {
@@ -56,15 +69,6 @@ fun FirebaseProfileScreen(
                     onClick = { viewModel.loadUser(userId) }
                 )
             }
-
-            displayedUser != null -> {
-                ProfileContent(
-                    user = displayedUser!!,
-                    isCurrentUser = currentUser?.id != null && displayedUser?.id == currentUser?.id,
-                    goToEditProfile = goToEditProfile,
-                    onSignOut = viewModel::signOut
-                )
-            }
         }
     }
 }
@@ -72,6 +76,8 @@ fun FirebaseProfileScreen(
 @Composable
 private fun ProfileContent(
     user: User,
+    stats: ProfileStats,
+    isLoadingStats: Boolean,
     isCurrentUser: Boolean,
     goToEditProfile: () -> Unit,
     onSignOut: () -> Unit
@@ -99,6 +105,7 @@ private fun ProfileContent(
 
         if (user.description.isNotBlank()) {
             Spacer(modifier = Modifier.height(12.dp))
+
             TText(
                 text = user.description,
                 style = TTextStyle.BODY
@@ -107,13 +114,17 @@ private fun ProfileContent(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ) {
-            ProfileStat("0", "Posts")
-            ProfileStat("0", "Followers")
-            ProfileStat("0", "Following")
+        if (isLoadingStats) {
+            CircularProgressIndicator()
+        } else {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                ProfileStat(stats.posts.toString(), "Posts")
+                ProfileStat(stats.followers.toString(), "Followers")
+                ProfileStat(stats.following.toString(), "Following")
+            }
         }
 
         Spacer(modifier = Modifier.height(24.dp))

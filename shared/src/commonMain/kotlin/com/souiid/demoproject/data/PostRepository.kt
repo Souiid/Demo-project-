@@ -55,4 +55,8 @@ class PostRepository : IPostRepository {
             AppResult.Failure(AppError.Unknown())
         }
     }
+
+    override suspend fun getUserPosts(userId: String): AppResult<List<Post>> {
+        return getFeedPosts(listOf(userId))
+    }
 }

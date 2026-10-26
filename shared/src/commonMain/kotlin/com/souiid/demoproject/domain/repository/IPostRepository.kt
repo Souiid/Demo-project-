@@ -6,4 +6,5 @@ import com.souiid.demoproject.domain.model.Post
 interface IPostRepository {
     suspend fun createPost(content: String): AppResult<Unit>
     suspend fun getFeedPosts(authorIds: List<String>): AppResult<List<Post>>
+    suspend fun getUserPosts(userId: String): AppResult<List<Post>>
 }
