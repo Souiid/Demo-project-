@@ -84,5 +84,6 @@
     <string name="postYesterday">Yesterday</string>
     <string name="postDaysAgo">%1$d days ago</string>
     <string name="posts">Posts</string>
+    <string name="feed">Feed</string>
 
 </resources>

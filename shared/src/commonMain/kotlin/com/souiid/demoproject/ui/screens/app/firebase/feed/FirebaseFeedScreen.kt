@@ -3,6 +3,7 @@ package com.souiid.demoproject.ui.screens.app.firebase.feed
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -20,6 +21,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.souiid.demoproject.ui.components.CreatePostSheet
 import com.souiid.demoproject.ui.components.PostItem
@@ -27,10 +29,12 @@ import com.souiid.demoproject.ui.components.others.AppIcon
 import com.souiid.demoproject.ui.components.others.TScreen
 import com.souiid.demoproject.ui.components.text.TText
 import com.souiid.demoproject.ui.components.text.TTextStyle
+import com.souiid.demoproject.ui.theme.Dimens
 import demoproject.shared.generated.resources.Res
 import demoproject.shared.generated.resources.createPost
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
+import demoproject.shared.generated.resources.feed
 
 @Composable
 fun FirebaseFeedScreen(
@@ -46,9 +50,7 @@ fun FirebaseFeedScreen(
     }
 
     LaunchedEffect(currentUser?.id) {
-        if (currentUser != null) {
-            viewModel.loadPosts()
-        }
+        if (currentUser != null) viewModel.observePosts()
     }
 
     LaunchedEffect(viewModel.isPostCreated) {
@@ -58,7 +60,12 @@ fun FirebaseFeedScreen(
         }
     }
 
-    TScreen {
+    TScreen(horizontalAlignment = Alignment.Start) {
+        TText(
+            modifier = Modifier.padding(vertical = Dimens.standardPadding),
+            text = stringResource(Res.string.feed),
+            style = TTextStyle.TITLE
+        )
         Box(modifier = Modifier.fillMaxSize()) {
             when {
                 viewModel.isLoadingPosts -> {

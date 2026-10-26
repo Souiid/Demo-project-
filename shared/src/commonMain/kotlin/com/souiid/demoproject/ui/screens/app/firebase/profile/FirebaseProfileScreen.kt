@@ -24,6 +24,7 @@ import com.souiid.demoproject.ui.components.others.TKamelImage
 import com.souiid.demoproject.ui.components.others.TScreen
 import com.souiid.demoproject.ui.components.text.TText
 import com.souiid.demoproject.ui.components.text.TTextStyle
+import com.souiid.demoproject.ui.screens.app.firebase.feed.FirebaseFeedViewModel
 import demoproject.shared.generated.resources.Res
 import demoproject.shared.generated.resources.follow
 import demoproject.shared.generated.resources.signOut

@@ -2,6 +2,7 @@ package com.souiid.demoproject.domain.repository
 
 import com.souiid.demoproject.domain.model.AppResult
 import com.souiid.demoproject.domain.model.Post
+import kotlinx.coroutines.flow.Flow
 
 interface IPostRepository {
     suspend fun createPost(content: String): AppResult<Unit>
@@ -10,4 +11,5 @@ interface IPostRepository {
     suspend fun likePost(postId: String): AppResult<Unit>
     suspend fun unlikePost(postId: String): AppResult<Unit>
     suspend fun getLikedPostIds(postIds: List<String>): AppResult<Set<String>>
+    fun observeFeedPosts(authorIds: List<String>): Flow<List<Post>>
 }

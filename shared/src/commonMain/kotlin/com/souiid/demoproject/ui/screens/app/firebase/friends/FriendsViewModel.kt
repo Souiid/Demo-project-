@@ -11,6 +11,7 @@ import com.souiid.demoproject.domain.usecase.user.GetFollowingUsersUseCase
 import com.souiid.demoproject.domain.usecase.user.ObserveCurrentUserUseCase
 import com.souiid.demoproject.domain.usecase.user.SearchUsersUseCase
 import com.souiid.demoproject.domain.usecase.user.UnfollowUserUseCase
+import com.souiid.demoproject.ui.screens.app.firebase.feed.FirebaseFeedViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -27,7 +28,8 @@ class FriendsViewModel(
     private val unfollowUserUseCase: UnfollowUserUseCase,
     private val getFollowingUserIdsUseCase: GetFollowingUserIdsUseCase,
     private val getFollowingUsersUseCase: GetFollowingUsersUseCase,
-    private val observeCurrentUserUseCase: ObserveCurrentUserUseCase
+    private val observeCurrentUserUseCase: ObserveCurrentUserUseCase,
+    private val feedViewModel: FirebaseFeedViewModel
 ) : ViewModel() {
 
     private val _searchQuery = MutableStateFlow("")
@@ -117,6 +119,7 @@ class FriendsViewModel(
                     } else {
                         _followingUserIds.value - userId
                     }
+                    feedViewModel.refreshPosts()
                     loadFollowingUsers()
                 }
                 is AppResult.Failure -> _error.value = result.error

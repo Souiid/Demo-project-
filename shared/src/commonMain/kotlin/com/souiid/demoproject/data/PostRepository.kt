@@ -10,6 +10,10 @@ import dev.gitlive.firebase.firestore.Timestamp
 import dev.gitlive.firebase.firestore.firestore
 import dev.gitlive.firebase.functions.functions
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 
 class PostRepository : IPostRepository {
 
@@ -100,6 +104,31 @@ class PostRepository : IPostRepository {
             AppResult.Success(likedPostIds)
         } catch (e: Exception) {
             AppResult.Failure(AppError.Unknown())
+        }
+    }
+
+    override fun observeFeedPosts(authorIds: List<String>): Flow<List<Post>> {
+        if (authorIds.isEmpty()) return flowOf(emptyList())
+
+        val flows = authorIds.distinct().chunked(30).map { ids ->
+            firestore.collection("posts")
+                .where { "authorId" inArray ids }
+                .snapshots
+                .map { snapshot ->
+                    snapshot.documents.map { document ->
+                        Post(
+                            id = document.id,
+                            authorId = document.get("authorId"),
+                            content = document.get("content"),
+                            createdAt = document.get<Timestamp>("createdAt").seconds * 1000,
+                            likesCount = document.get("likesCount")
+                        )
+                    }
+                }
+        }
+
+        return combine(flows) { results ->
+            results.flatMap { it }.sortedByDescending { it.createdAt }
         }
     }
 }

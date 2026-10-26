@@ -16,9 +16,11 @@ import com.souiid.demoproject.domain.usecase.user.GetFollowingUserIdsUseCase
 import com.souiid.demoproject.domain.usecase.user.GetProfileStatsUseCase
 import com.souiid.demoproject.domain.usecase.user.ObserveCurrentUserUseCase
 import com.souiid.demoproject.domain.usecase.user.UnfollowUserUseCase
+import com.souiid.demoproject.ui.screens.app.firebase.feed.FirebaseFeedViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlin.coroutines.cancellation.CancellationException
 
 class FirebaseProfileViewModel(
     private val fetchUserUseCase: FetchUserUseCase,
@@ -27,7 +29,8 @@ class FirebaseProfileViewModel(
     private val getProfileStatsUseCase: GetProfileStatsUseCase,
     private val getFollowingUserIdsUseCase: GetFollowingUserIdsUseCase,
     private val followUserUseCase: FollowUserUseCase,
-    private val unfollowUserUseCase: UnfollowUserUseCase
+    private val unfollowUserUseCase: UnfollowUserUseCase,
+    private val feedViewModel: FirebaseFeedViewModel
 ) : ViewModel() {
 
     val currentUser = observeCurrentUserUseCase()
@@ -133,7 +136,6 @@ class FirebaseProfileViewModel(
 
             try {
                 val wasFollowing = _isFollowing.value
-
                 val result = if (wasFollowing) {
                     unfollowUserUseCase(userId)
                 } else {
@@ -146,6 +148,8 @@ class FirebaseProfileViewModel(
                             _isFollowing.value = !wasFollowing
                             loadProfileStats(userId)
                         }
+
+                        feedViewModel.refreshPosts()
                     }
                     is AppResult.Failure -> error = result.error
                 }
@@ -157,7 +161,14 @@ class FirebaseProfileViewModel(
 
     fun signOut() {
         viewModelScope.launch {
-            signOutUseCase()
+            try {
+                signOutUseCase()
+                feedViewModel.clear()
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                error = AppError.Unknown()
+            }
         }
     }
 }
