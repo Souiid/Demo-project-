@@ -11,8 +11,11 @@ import com.souiid.demoproject.domain.model.ProfileStats
 import com.souiid.demoproject.domain.model.User
 import com.souiid.demoproject.domain.usecase.auth.SignOutUseCase
 import com.souiid.demoproject.domain.usecase.user.FetchUserUseCase
+import com.souiid.demoproject.domain.usecase.user.FollowUserUseCase
+import com.souiid.demoproject.domain.usecase.user.GetFollowingUserIdsUseCase
 import com.souiid.demoproject.domain.usecase.user.GetProfileStatsUseCase
 import com.souiid.demoproject.domain.usecase.user.ObserveCurrentUserUseCase
+import com.souiid.demoproject.domain.usecase.user.UnfollowUserUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -21,7 +24,10 @@ class FirebaseProfileViewModel(
     private val fetchUserUseCase: FetchUserUseCase,
     private val observeCurrentUserUseCase: ObserveCurrentUserUseCase,
     private val signOutUseCase: SignOutUseCase,
-    private val getProfileStatsUseCase: GetProfileStatsUseCase
+    private val getProfileStatsUseCase: GetProfileStatsUseCase,
+    private val getFollowingUserIdsUseCase: GetFollowingUserIdsUseCase,
+    private val followUserUseCase: FollowUserUseCase,
+    private val unfollowUserUseCase: UnfollowUserUseCase
 ) : ViewModel() {
 
     val currentUser = observeCurrentUserUseCase()
@@ -31,6 +37,12 @@ class FirebaseProfileViewModel(
 
     private val _profileStats = MutableStateFlow(ProfileStats())
     val profileStats = _profileStats.asStateFlow()
+
+    private val _isFollowing = MutableStateFlow(false)
+    val isFollowing = _isFollowing.asStateFlow()
+
+    private val _isUpdatingFollow = MutableStateFlow(false)
+    val isUpdatingFollow = _isUpdatingFollow.asStateFlow()
 
     var isLoadingStats by mutableStateOf(false)
         private set
@@ -49,6 +61,7 @@ class FirebaseProfileViewModel(
             error = null
             _displayedUser.value = null
             _profileStats.value = ProfileStats()
+            _isFollowing.value = false
 
             try {
                 val user = currentUser.value
@@ -61,6 +74,10 @@ class FirebaseProfileViewModel(
                         is AppResult.Success -> {
                             _displayedUser.value = result.data
                             loadProfileStats(result.data.id)
+
+                            if (result.data.id != currentUser.value?.id) {
+                                loadFollowStatus(result.data.id)
+                            }
                         }
                         is AppResult.Failure -> error = result.error
                     }
@@ -88,6 +105,52 @@ class FirebaseProfileViewModel(
                 }
             } finally {
                 isLoadingStats = false
+            }
+        }
+    }
+
+    private suspend fun loadFollowStatus(userId: String) {
+        val currentUserId = currentUser.value?.id ?: return
+
+        when (val result = getFollowingUserIdsUseCase(currentUserId)) {
+            is AppResult.Success -> {
+                if (_displayedUser.value?.id == userId) {
+                    _isFollowing.value = userId in result.data
+                }
+            }
+            is AppResult.Failure -> error = result.error
+        }
+    }
+
+    fun toggleFollow() {
+        val userId = _displayedUser.value?.id ?: return
+        val currentUserId = currentUser.value?.id ?: return
+        if (userId == currentUserId || _isUpdatingFollow.value || isLoading) return
+
+        viewModelScope.launch {
+            _isUpdatingFollow.value = true
+            error = null
+
+            try {
+                val wasFollowing = _isFollowing.value
+
+                val result = if (wasFollowing) {
+                    unfollowUserUseCase(userId)
+                } else {
+                    followUserUseCase(userId)
+                }
+
+                when (result) {
+                    is AppResult.Success -> {
+                        if (_displayedUser.value?.id == userId) {
+                            _isFollowing.value = !wasFollowing
+                            loadProfileStats(userId)
+                        }
+                    }
+                    is AppResult.Failure -> error = result.error
+                }
+            } finally {
+                _isUpdatingFollow.value = false
             }
         }
     }

@@ -19,17 +19,20 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.souiid.demoproject.domain.model.ProfileStats
 import com.souiid.demoproject.domain.model.User
 import com.souiid.demoproject.ui.components.button.TButton
+import com.souiid.demoproject.ui.components.button.TButtonType
 import com.souiid.demoproject.ui.components.others.TKamelImage
 import com.souiid.demoproject.ui.components.others.TScreen
 import com.souiid.demoproject.ui.components.text.TText
 import com.souiid.demoproject.ui.components.text.TTextStyle
 import demoproject.shared.generated.resources.Res
+import demoproject.shared.generated.resources.follow
 import demoproject.shared.generated.resources.signOut
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import demoproject.shared.generated.resources.posts
 import demoproject.shared.generated.resources.followers
 import demoproject.shared.generated.resources.followings
+import demoproject.shared.generated.resources.unfollow
 
 @Composable
 fun FirebaseProfileScreen(
@@ -42,6 +45,8 @@ fun FirebaseProfileScreen(
     val displayedUser by viewModel.displayedUser.collectAsStateWithLifecycle()
     val currentUser by viewModel.currentUser.collectAsStateWithLifecycle()
     val profileStats by viewModel.profileStats.collectAsStateWithLifecycle()
+    val isFollowing by viewModel.isFollowing.collectAsStateWithLifecycle()
+    val isUpdatingFollow by viewModel.isUpdatingFollow.collectAsStateWithLifecycle()
 
     LaunchedEffect(userId) {
         viewModel.loadUser(userId)
@@ -59,6 +64,9 @@ fun FirebaseProfileScreen(
                     stats = profileStats,
                     isLoadingStats = viewModel.isLoadingStats,
                     isCurrentUser = currentUser?.id != null && displayedUser?.id == currentUser?.id,
+                    isFollowing = isFollowing,
+                    isUpdatingFollow = isUpdatingFollow,
+                    onFollowClick = viewModel::toggleFollow,
                     goToEditProfile = goToEditProfile,
                     onSignOut = viewModel::signOut,
                     onStatClick = onStatClick
@@ -86,6 +94,9 @@ private fun ProfileContent(
     stats: ProfileStats,
     isLoadingStats: Boolean,
     isCurrentUser: Boolean,
+    isFollowing: Boolean,
+    isUpdatingFollow: Boolean,
+    onFollowClick: () -> Unit,
     goToEditProfile: () -> Unit,
     onSignOut: () -> Unit,
     onStatClick: (String, ProfileListType) -> Unit
@@ -165,8 +176,11 @@ private fun ProfileContent(
             )
         } else {
             TButton(
-                text = "Follow",
-                onClick = {}
+                text = stringResource(if (isFollowing) Res.string.unfollow else Res.string.follow),
+                type = if (isFollowing) TButtonType.REFUSE else TButtonType.PRIMARY,
+                isLoading = isUpdatingFollow,
+                enabled = !isUpdatingFollow,
+                onClick = onFollowClick
             )
         }
     }

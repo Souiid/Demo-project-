@@ -96,7 +96,7 @@ val appModule = module {
     factory { SignUpDescriptionViewModel(get(), get()) }
     factory { SignUpCredentialViewModel(get()) }
     factory { SignInViewModel(get()) }
-    factory { FirebaseProfileViewModel(get(), get(), get(), get()) }
+    factory { FirebaseProfileViewModel(get(), get(), get(), get(), get(), get(), get()) }
     factory { EditProfileViewModel(get(), get(), get()) }
     factory { FriendsViewModel(get(), get(), get(), get(), get(), get()) }
     factory { FirebaseProfileListViewModel(get(), get(), get(), get()) }
