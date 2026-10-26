@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.souiid.demoproject.domain.model.User
+import com.souiid.demoproject.ui.components.UserItem
 import com.souiid.demoproject.ui.components.button.TButton
 import com.souiid.demoproject.ui.components.others.TKamelImage
 import com.souiid.demoproject.ui.components.others.TScreen
@@ -73,7 +74,7 @@ fun FriendsScreen(
             } else {
                 LazyColumn {
                     items(users, key = { it.id }) { user ->
-                        FriendItem(
+                        UserItem(
                             user = user,
                             isFollowing = user.id in followingUserIds,
                             isUpdating = isFollowingLoading || user.id in updatingUserIds,
@@ -95,10 +96,10 @@ fun FriendsScreen(
             } else {
                 LazyColumn {
                     items(followingUsers, key = { it.id }) { user ->
-                        FriendItem(
+                        UserItem(
                             user = user,
                             isFollowing = user.id in followingUserIds,
-                            isUpdating = isFollowingLoading || user.id in updatingUserIds,
+                            isUpdating = user.id in updatingUserIds,
                             onUserClick = { onUserClick(user.id) },
                             onFollowClick = { viewModel.followUser(user.id) },
                             onUnfollowClick = { viewModel.unfollowUser(user.id) }
@@ -107,49 +108,5 @@ fun FriendsScreen(
                 }
             }
         }
-    }
-}
-
-@Composable
-private fun FriendItem(
-    user: User,
-    isFollowing: Boolean,
-    isUpdating: Boolean,
-    onUserClick: () -> Unit,
-    onFollowClick: () -> Unit,
-    onUnfollowClick: () -> Unit
-) {
-    Row(
-        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-        TKamelImage(
-            imageUrl = user.photoUrl,
-            modifier = Modifier.size(48.dp).clickable(onClick = onUserClick)
-        ) {
-            TText(
-                text = "${user.firstName.firstOrNull() ?: ""}${user.lastName.firstOrNull() ?: ""}",
-                style = TTextStyle.BODY
-            )
-        }
-
-        Column(
-            modifier = Modifier.weight(1f).clickable(onClick = onUserClick)
-        ) {
-            TText(
-                text = "${user.firstName} ${user.lastName}",
-                style = TTextStyle.SUBTITLE
-            )
-        }
-
-        TButton(
-            text = stringResource(if (isFollowing) Res.string.unfollow else Res.string.follow),
-            enabled = !isUpdating,
-            onClick = {
-                if (isFollowing) onUnfollowClick()
-                else onFollowClick()
-            }
-        )
     }
 }

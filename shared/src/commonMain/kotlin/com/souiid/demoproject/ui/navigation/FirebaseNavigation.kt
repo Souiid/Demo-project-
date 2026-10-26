@@ -10,6 +10,7 @@ import com.souiid.demoproject.ui.screens.app.firebase.feed.FirebaseFeedScreen
 import com.souiid.demoproject.ui.screens.app.firebase.profile.FirebaseProfileScreen
 import com.souiid.demoproject.ui.screens.app.firebase.friends.FriendsScreen
 import com.souiid.demoproject.ui.screens.app.firebase.profile.FirebaseProfileListScreen
+import com.souiid.demoproject.ui.screens.app.firebase.profile.ProfileListType
 
 fun NavGraphBuilder.firebaseNavigation(navController: NavController) {
     navigation<Route.Firebase>(startDestination = Route.FirebaseFeed) {
@@ -28,7 +29,7 @@ fun NavGraphBuilder.firebaseNavigation(navController: NavController) {
                 userId = route.userId,
                 goToEditProfile = { navController.navigate(Route.EditProfile) },
                 onStatClick = { userId, type ->
-                    navController.navigate(Route.FirebaseProfileList(userId, type))
+                    navController.navigate(Route.FirebaseProfileList(userId, type.name))
                 }
             )
         }
@@ -50,11 +51,12 @@ fun NavGraphBuilder.firebaseNavigation(navController: NavController) {
 
             FirebaseProfileListScreen(
                 userId = route.userId,
-                type = route.type,
+                type = ProfileListType.valueOf(route.type),
                 onUserClick = { userId ->
                     navController.navigate(Route.FirebaseProfile(userId))
                 }
             )
         }
     }
+
 }

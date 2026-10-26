@@ -41,6 +41,6 @@ sealed interface Route {
     @Serializable
     data class FirebaseProfileList(
         val userId: String,
-        val type: ProfileListType
+        val type: String,
     ) : Route
 }

@@ -35,6 +35,7 @@ import com.souiid.demoproject.ui.screens.app.firebase.editprofile.EditProfileVie
 import com.souiid.demoproject.ui.screens.app.firebase.feed.FirebaseFeedViewModel
 import com.souiid.demoproject.ui.screens.app.firebase.profile.FirebaseProfileViewModel
 import com.souiid.demoproject.ui.screens.app.firebase.friends.FriendsViewModel
+import com.souiid.demoproject.ui.screens.app.firebase.profile.FirebaseProfileListViewModel
 import com.souiid.demoproject.ui.screens.auth.signin.SignInViewModel
 import com.souiid.demoproject.ui.screens.auth.signup.credential.SignUpCredentialViewModel
 import com.souiid.demoproject.ui.screens.auth.signup.description.SignUpDescriptionViewModel
@@ -98,5 +99,5 @@ val appModule = module {
     factory { FirebaseProfileViewModel(get(), get(), get(), get()) }
     factory { EditProfileViewModel(get(), get(), get()) }
     factory { FriendsViewModel(get(), get(), get(), get(), get(), get()) }
-
+    factory { FirebaseProfileListViewModel(get(), get(), get(), get()) }
 }
