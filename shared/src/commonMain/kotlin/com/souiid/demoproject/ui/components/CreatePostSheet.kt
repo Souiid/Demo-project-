@@ -11,6 +11,7 @@ import com.souiid.demoproject.ui.components.others.TBottomSheet
 import com.souiid.demoproject.ui.components.text.TText
 import com.souiid.demoproject.ui.components.text.TTextStyle
 import com.souiid.demoproject.ui.components.textfield.TTextField
+import com.souiid.demoproject.ui.components.textfield.TTextFieldType
 import demoproject.shared.generated.resources.Res
 import demoproject.shared.generated.resources.createPost
 import demoproject.shared.generated.resources.publish
@@ -36,6 +37,7 @@ fun CreatePostSheet(
         TTextField(
             value = content,
             onValueChange = onContentChange,
+            type = TTextFieldType.DESCRIPTION,
             placeholder = stringResource(Res.string.writePost)
         )
 
