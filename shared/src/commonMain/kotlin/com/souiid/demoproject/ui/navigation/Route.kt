@@ -1,5 +1,6 @@
 package com.souiid.demoproject.ui.navigation
 
+import com.souiid.demoproject.ui.screens.app.firebase.profile.ProfileListType
 import kotlinx.serialization.Serializable
 
 sealed interface Route {
@@ -36,4 +37,10 @@ sealed interface Route {
 
     @Serializable
     data object Friends: Route
+
+    @Serializable
+    data class FirebaseProfileList(
+        val userId: String,
+        val type: ProfileListType
+    ) : Route
 }

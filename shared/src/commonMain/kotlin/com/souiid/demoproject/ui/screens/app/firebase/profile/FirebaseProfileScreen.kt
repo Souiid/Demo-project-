@@ -1,5 +1,6 @@
 package com.souiid.demoproject.ui.screens.app.firebase.profile
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -26,11 +27,16 @@ import demoproject.shared.generated.resources.Res
 import demoproject.shared.generated.resources.signOut
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
+import demoproject.shared.generated.resources.posts
+import demoproject.shared.generated.resources.followers
+import demoproject.shared.generated.resources.followings
 
 @Composable
 fun FirebaseProfileScreen(
     userId: String? = null,
     goToEditProfile: () -> Unit,
+    onStatClick: (String, ProfileListType) -> Unit
+
 ) {
     val viewModel: FirebaseProfileViewModel = koinInject()
     val displayedUser by viewModel.displayedUser.collectAsStateWithLifecycle()
@@ -54,7 +60,8 @@ fun FirebaseProfileScreen(
                     isLoadingStats = viewModel.isLoadingStats,
                     isCurrentUser = currentUser?.id != null && displayedUser?.id == currentUser?.id,
                     goToEditProfile = goToEditProfile,
-                    onSignOut = viewModel::signOut
+                    onSignOut = viewModel::signOut,
+                    onStatClick = onStatClick
                 )
             }
 
@@ -80,7 +87,8 @@ private fun ProfileContent(
     isLoadingStats: Boolean,
     isCurrentUser: Boolean,
     goToEditProfile: () -> Unit,
-    onSignOut: () -> Unit
+    onSignOut: () -> Unit,
+    onStatClick: (String, ProfileListType) -> Unit
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -121,9 +129,23 @@ private fun ProfileContent(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                ProfileStat(stats.posts.toString(), "Posts")
-                ProfileStat(stats.followers.toString(), "Followers")
-                ProfileStat(stats.following.toString(), "Following")
+                ProfileStat(
+                    value = stats.posts.toString(),
+                    label = stringResource(Res.string.posts),
+                    onClick = { onStatClick(user.id, ProfileListType.POSTS) }
+                )
+
+                ProfileStat(
+                    value = stats.followers.toString(),
+                    label = stringResource(Res.string.followers),
+                    onClick = { onStatClick(user.id, ProfileListType.FOLLOWERS) }
+                )
+
+                ProfileStat(
+                    value = stats.following.toString(),
+                    label = stringResource(Res.string.followings),
+                    onClick = { onStatClick(user.id, ProfileListType.FOLLOWING) }
+                )
             }
         }
 
@@ -153,9 +175,13 @@ private fun ProfileContent(
 @Composable
 private fun ProfileStat(
     value: String,
-    label: String
+    label: String,
+    onClick: () -> Unit
 ) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(
+        modifier = Modifier.clickable(onClick = onClick),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         TText(text = value, style = TTextStyle.TITLE)
         TText(text = label, style = TTextStyle.BODY)
     }

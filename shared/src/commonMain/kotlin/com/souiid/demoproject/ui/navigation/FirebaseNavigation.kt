@@ -9,6 +9,7 @@ import com.souiid.demoproject.ui.screens.app.firebase.editprofile.EditProfileScr
 import com.souiid.demoproject.ui.screens.app.firebase.feed.FirebaseFeedScreen
 import com.souiid.demoproject.ui.screens.app.firebase.profile.FirebaseProfileScreen
 import com.souiid.demoproject.ui.screens.app.firebase.friends.FriendsScreen
+import com.souiid.demoproject.ui.screens.app.firebase.profile.FirebaseProfileListScreen
 
 fun NavGraphBuilder.firebaseNavigation(navController: NavController) {
     navigation<Route.Firebase>(startDestination = Route.FirebaseFeed) {
@@ -25,8 +26,9 @@ fun NavGraphBuilder.firebaseNavigation(navController: NavController) {
 
             FirebaseProfileScreen(
                 userId = route.userId,
-                goToEditProfile = {
-                    navController.navigate(Route.EditProfile)
+                goToEditProfile = { navController.navigate(Route.EditProfile) },
+                onStatClick = { userId, type ->
+                    navController.navigate(Route.FirebaseProfileList(userId, type))
                 }
             )
         }
@@ -37,6 +39,18 @@ fun NavGraphBuilder.firebaseNavigation(navController: NavController) {
 
         composable<Route.Friends> {
             FriendsScreen(
+                onUserClick = { userId ->
+                    navController.navigate(Route.FirebaseProfile(userId))
+                }
+            )
+        }
+
+        composable<Route.FirebaseProfileList> { backStackEntry ->
+            val route = backStackEntry.toRoute<Route.FirebaseProfileList>()
+
+            FirebaseProfileListScreen(
+                userId = route.userId,
+                type = route.type,
                 onUserClick = { userId ->
                     navController.navigate(Route.FirebaseProfile(userId))
                 }
