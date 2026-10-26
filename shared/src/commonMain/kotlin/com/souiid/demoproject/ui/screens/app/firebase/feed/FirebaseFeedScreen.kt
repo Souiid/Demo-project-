@@ -1,6 +1,5 @@
 package com.souiid.demoproject.ui.screens.app.firebase.feed
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -86,7 +85,9 @@ fun FirebaseFeedScreen(
                             PostItem(
                                 post = post,
                                 author = viewModel.authors[post.authorId],
-                                onLike = {},
+                                isLiked = post.id in viewModel.likedPostIds,
+                                isUpdatingLike = post.id in viewModel.updatingLikePostIds,
+                                onLike = { viewModel.toggleLike(post.id) },
                                 onAuthorClick = { onUserClick(post.authorId) }
                             )
 

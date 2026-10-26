@@ -14,7 +14,10 @@ import com.souiid.demoproject.domain.usecase.auth.SignInUseCase
 import com.souiid.demoproject.domain.usecase.auth.SignOutUseCase
 import com.souiid.demoproject.domain.usecase.post.CreatePostUseCase
 import com.souiid.demoproject.domain.usecase.post.GetFeedPostsUseCase
+import com.souiid.demoproject.domain.usecase.post.GetLikedPostIdsUseCase
 import com.souiid.demoproject.domain.usecase.post.GetUserPostsUseCase
+import com.souiid.demoproject.domain.usecase.post.LikePostUseCase
+import com.souiid.demoproject.domain.usecase.post.UnlikePostUseCase
 import com.souiid.demoproject.domain.usecase.signup.ObserveSignUpInfoUseCase
 import com.souiid.demoproject.domain.usecase.signup.UpdateSignUpNameUseCase
 import com.souiid.demoproject.domain.usecase.signup.SignUpUserUseCase
@@ -84,13 +87,16 @@ val appModule = module {
     factory { GetFollowerUserIdsUseCase(get()) }
     factory { GetProfileStatsUseCase(get(), get(), get()) }
     factory { GetUserPostsUseCase(get()) }
+    factory { LikePostUseCase(get()) }
+    factory { UnlikePostUseCase(get()) }
+    factory { GetLikedPostIdsUseCase(get()) }
 
 
 //________________________________________________________
 
     //VIEWMODEL
 
-    factory { FirebaseFeedViewModel(get(), get(), get(), get()) }
+    factory { FirebaseFeedViewModel(get(), get(), get(), get(), get(), get(), get()) }
     factory { AuthGateViewModel(get()) }
     factory { SignUpNameViewModel(get(), get()) }
     factory { SignUpDescriptionViewModel(get(), get()) }
@@ -99,5 +105,5 @@ val appModule = module {
     factory { FirebaseProfileViewModel(get(), get(), get(), get(), get(), get(), get()) }
     factory { EditProfileViewModel(get(), get(), get()) }
     factory { FriendsViewModel(get(), get(), get(), get(), get(), get()) }
-    factory { FirebaseProfileListViewModel(get(), get(), get(), get()) }
+    factory { FirebaseProfileListViewModel(get(), get(), get(), get(), get(), get(), get()) }
 }

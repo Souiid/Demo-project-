@@ -113,3 +113,89 @@ exports.createPost = onCall(async (request) => {
 
   return {postId: postRef.id};
 });
+
+/*
+ * Like post
+ */
+exports.likePost = onCall(async (request) => {
+  const userId = request.auth?.uid;
+  const postId = request.data?.postId;
+
+  if (!userId) {
+    throw new HttpsError("unauthenticated", "User must be authenticated.");
+  }
+
+  if (typeof postId !== "string" || !postId.trim()) {
+    throw new HttpsError("invalid-argument", "Invalid post ID.");
+  }
+
+  const postRef = db.collection("posts").doc(postId);
+  const likeRef = postRef.collection("likes").doc(userId);
+
+  const isLiked = await db.runTransaction(async (transaction) => {
+    const post = await transaction.get(postRef);
+    const like = await transaction.get(likeRef);
+
+    if (!post.exists) {
+      throw new HttpsError("not-found", "Post not found.");
+    }
+
+    if (like.exists) {
+      return true;
+    }
+
+    transaction.set(likeRef, {
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    });
+
+    transaction.update(postRef, {
+      likesCount: admin.firestore.FieldValue.increment(1),
+    });
+
+    return true;
+  });
+
+  return {isLiked};
+});
+
+/*
+ * Unlike post
+ */
+exports.unlikePost = onCall(async (request) => {
+  const userId = request.auth?.uid;
+  const postId = request.data?.postId;
+
+  if (!userId) {
+    throw new HttpsError("unauthenticated", "User must be authenticated.");
+  }
+
+  if (typeof postId !== "string" || !postId.trim()) {
+    throw new HttpsError("invalid-argument", "Invalid post ID.");
+  }
+
+  const postRef = db.collection("posts").doc(postId);
+  const likeRef = postRef.collection("likes").doc(userId);
+
+  const isLiked = await db.runTransaction(async (transaction) => {
+    const post = await transaction.get(postRef);
+    const like = await transaction.get(likeRef);
+
+    if (!post.exists) {
+      throw new HttpsError("not-found", "Post not found.");
+    }
+
+    if (!like.exists) {
+      return false;
+    }
+
+    transaction.delete(likeRef);
+
+    transaction.update(postRef, {
+      likesCount: admin.firestore.FieldValue.increment(-1),
+    });
+
+    return false;
+  });
+
+  return {isLiked};
+});

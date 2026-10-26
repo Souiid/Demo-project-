@@ -6,8 +6,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,6 +27,8 @@ import com.souiid.demoproject.ui.utils.PostDateFormatter
 fun PostItem(
     post: Post,
     author: User?,
+    isLiked: Boolean = false,
+    isUpdatingLike: Boolean = false,
     onLike: () -> Unit = {},
     onAuthorClick: (String) -> Unit
 ) {
@@ -64,12 +69,26 @@ fun PostItem(
             style = TTextStyle.BODY
         )
 
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            IconButton(onClick = onLike, enabled = false) {
-                Icon(
-                    imageVector = AppIcon.FavoriteBorder,
-                    contentDescription = "Like"
-                )
+        Row(
+            horizontalArrangement = Arrangement.Start,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(
+                onClick = onLike,
+                enabled = !isUpdatingLike
+            ) {
+                if (isUpdatingLike) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(20.dp),
+                        strokeWidth = 2.dp
+                    )
+                } else {
+                    Icon(
+                        imageVector = if (isLiked) AppIcon.Favorite else AppIcon.FavoriteBorder,
+                        contentDescription = if (isLiked) "Unlike" else "Like",
+                        tint = if (isLiked) MaterialTheme.colorScheme.error else LocalContentColor.current
+                    )
+                }
             }
 
             TText(

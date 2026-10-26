@@ -11,6 +11,9 @@ import com.souiid.demoproject.domain.model.Post
 import com.souiid.demoproject.domain.model.User
 import com.souiid.demoproject.domain.usecase.post.CreatePostUseCase
 import com.souiid.demoproject.domain.usecase.post.GetFeedPostsUseCase
+import com.souiid.demoproject.domain.usecase.post.GetLikedPostIdsUseCase
+import com.souiid.demoproject.domain.usecase.post.LikePostUseCase
+import com.souiid.demoproject.domain.usecase.post.UnlikePostUseCase
 import com.souiid.demoproject.domain.usecase.user.FetchUserUseCase
 import com.souiid.demoproject.domain.usecase.user.ObserveCurrentUserUseCase
 import dev.gitlive.firebase.Firebase
@@ -21,7 +24,10 @@ class FirebaseFeedViewModel(
     private val fetchUserUseCase: FetchUserUseCase,
     private val createPostUseCase: CreatePostUseCase,
     private val getFeedPostsUseCase: GetFeedPostsUseCase,
-    private val observeCurrentUserUseCase: ObserveCurrentUserUseCase
+    private val observeCurrentUserUseCase: ObserveCurrentUserUseCase,
+    private val likePostUseCase: LikePostUseCase,
+    private val unlikePostUseCase: UnlikePostUseCase,
+    private val getLikedPostIdsUseCase: GetLikedPostIdsUseCase
 
 ) : ViewModel() {
 
@@ -49,6 +55,12 @@ class FirebaseFeedViewModel(
         private set
 
     var authors by mutableStateOf<Map<String, User>>(emptyMap())
+        private set
+
+    var likedPostIds by mutableStateOf<Set<String>>(emptySet())
+        private set
+
+    var updatingLikePostIds by mutableStateOf<Set<String>>(emptySet())
         private set
 
     fun loadCurrentUser() {
@@ -80,6 +92,7 @@ class FirebaseFeedViewModel(
                 when (val result = getFeedPostsUseCase()) {
                     is AppResult.Success -> {
                         posts = result.data
+                        loadLikedPosts(result.data)
                         loadAuthors(result.data)
                     }
                     is AppResult.Failure -> error = result.error
@@ -130,5 +143,43 @@ class FirebaseFeedViewModel(
         }
 
         authors = users
+    }
+
+    private suspend fun loadLikedPosts(posts: List<Post>) {
+        when (val result = getLikedPostIdsUseCase(posts.map { it.id })) {
+            is AppResult.Success -> likedPostIds = result.data
+            is AppResult.Failure -> error = result.error
+        }
+    }
+
+    fun toggleLike(postId: String) {
+        if (postId in updatingLikePostIds || posts.none { it.id == postId }) return
+
+        updatingLikePostIds = updatingLikePostIds + postId
+
+        viewModelScope.launch {
+            error = null
+            try {
+                val wasLiked = postId in likedPostIds
+                val result = if (wasLiked) unlikePostUseCase(postId) else likePostUseCase(postId)
+
+                when (result) {
+                    is AppResult.Success -> {
+                        likedPostIds = if (wasLiked) likedPostIds - postId else likedPostIds + postId
+
+                        posts = posts.map { post ->
+                            if (post.id == postId) {
+                                post.copy(likesCount = (post.likesCount + if (wasLiked) -1 else 1).coerceAtLeast(0))
+                            } else {
+                                post
+                            }
+                        }
+                    }
+                    is AppResult.Failure -> error = result.error
+                }
+            } finally {
+                updatingLikePostIds = updatingLikePostIds - postId
+            }
+        }
     }
 }

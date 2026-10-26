@@ -5,6 +5,7 @@ import com.souiid.demoproject.domain.model.AppResult
 import com.souiid.demoproject.domain.model.Post
 import com.souiid.demoproject.domain.repository.IPostRepository
 import dev.gitlive.firebase.Firebase
+import dev.gitlive.firebase.auth.auth
 import dev.gitlive.firebase.firestore.Timestamp
 import dev.gitlive.firebase.firestore.firestore
 import dev.gitlive.firebase.functions.functions
@@ -58,5 +59,47 @@ class PostRepository : IPostRepository {
 
     override suspend fun getUserPosts(userId: String): AppResult<List<Post>> {
         return getFeedPosts(listOf(userId))
+    }
+
+    override suspend fun likePost(postId: String): AppResult<Unit> {
+        return try {
+            Firebase.functions.httpsCallable("likePost").invoke(mapOf("postId" to postId))
+            AppResult.Success(Unit)
+        } catch (e: Exception) {
+            AppResult.Failure(AppError.Unknown())
+        }
+    }
+
+    override suspend fun unlikePost(postId: String): AppResult<Unit> {
+        return try {
+            Firebase.functions.httpsCallable("unlikePost").invoke(mapOf("postId" to postId))
+            AppResult.Success(Unit)
+        } catch (e: Exception) {
+            AppResult.Failure(AppError.Unknown())
+        }
+    }
+
+    override suspend fun getLikedPostIds(postIds: List<String>): AppResult<Set<String>> {
+        return try {
+            val userId = Firebase.auth.currentUser?.uid
+                ?: return AppResult.Failure(AppError.Unknown())
+
+            val likedPostIds = mutableSetOf<String>()
+
+            for (postId in postIds.distinct()) {
+                val like = Firebase.firestore
+                    .collection("posts")
+                    .document(postId)
+                    .collection("likes")
+                    .document(userId)
+                    .get()
+
+                if (like.exists) likedPostIds.add(postId)
+            }
+
+            AppResult.Success(likedPostIds)
+        } catch (e: Exception) {
+            AppResult.Failure(AppError.Unknown())
+        }
     }
 }
