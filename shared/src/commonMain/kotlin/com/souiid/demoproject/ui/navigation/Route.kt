@@ -29,7 +29,7 @@ sealed interface Route {
     data object FirebaseFeed : Route
 
     @Serializable
-    data object FirebaseProfile : Route
+    data class FirebaseProfile(val userId: String? = null) : Route
 
     @Serializable
     data object EditProfile: Route

@@ -1,5 +1,6 @@
 package com.souiid.demoproject.ui.screens.app.firebase.feed
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -33,7 +34,9 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 
 @Composable
-fun FirebaseFeedScreen() {
+fun FirebaseFeedScreen(
+    onUserClick: (String) -> Unit
+) {
     val viewModel: FirebaseFeedViewModel = koinInject()
 
     val currentUser by viewModel.currentUser.collectAsStateWithLifecycle()
@@ -82,8 +85,11 @@ fun FirebaseFeedScreen() {
                         items(viewModel.posts, key = { it.id }) { post ->
                             PostItem(
                                 post = post,
-                                author = viewModel.authors[post.authorId]
+                                author = viewModel.authors[post.authorId],
+                                onLike = {},
+                                onAuthorClick = { onUserClick(post.authorId) }
                             )
+
                         }
                     }
                 }

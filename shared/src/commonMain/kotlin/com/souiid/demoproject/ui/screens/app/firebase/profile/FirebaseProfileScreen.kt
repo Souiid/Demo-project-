@@ -30,7 +30,7 @@ import org.koin.compose.koinInject
 @Composable
 fun FirebaseProfileScreen(
     userId: String? = null,
-    goToEditProfile: () -> Unit
+    goToEditProfile: () -> Unit,
 ) {
     val viewModel: FirebaseProfileViewModel = koinInject()
     val displayedUser by viewModel.displayedUser.collectAsStateWithLifecycle()

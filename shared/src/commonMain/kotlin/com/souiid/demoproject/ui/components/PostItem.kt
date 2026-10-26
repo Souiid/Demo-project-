@@ -1,5 +1,6 @@
 package com.souiid.demoproject.ui.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -23,15 +24,17 @@ import com.souiid.demoproject.ui.utils.PostDateFormatter
 fun PostItem(
     post: Post,
     author: User?,
-    onLike: () -> Unit = {}
+    onLike: () -> Unit = {},
+    onAuthorClick: (String) -> Unit
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         Row(
+            modifier = Modifier.clickable(onClick = { onAuthorClick(post.authorId) }),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             TKamelImage(
                 imageUrl = author?.photoUrl.orEmpty(),

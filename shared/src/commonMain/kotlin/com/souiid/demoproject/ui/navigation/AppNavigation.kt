@@ -56,7 +56,7 @@ fun AppNavigation() {
                         }
 
                         IconButton(
-                            onClick = { navController.navigate(Route.FirebaseProfile) }
+                            onClick = { navController.navigate(Route.FirebaseProfile(null)) }
                         ) {
                             Icon(
                                 imageVector = AppIcon.Person,
