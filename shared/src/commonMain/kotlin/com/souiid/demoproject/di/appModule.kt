@@ -14,6 +14,7 @@ import com.souiid.demoproject.domain.repository.IUserRepository
 import com.souiid.demoproject.domain.usecase.auth.ObserveAuthStateUseCase
 import com.souiid.demoproject.domain.usecase.auth.SignInUseCase
 import com.souiid.demoproject.domain.usecase.auth.SignOutUseCase
+import com.souiid.demoproject.domain.usecase.notification.ObserveNotificationsUseCase
 import com.souiid.demoproject.domain.usecase.notification.SaveNotificationTokenUseCase
 import com.souiid.demoproject.domain.usecase.post.CreatePostUseCase
 import com.souiid.demoproject.domain.usecase.post.GetFeedPostsUseCase
@@ -42,6 +43,7 @@ import com.souiid.demoproject.ui.screens.app.firebase.editprofile.EditProfileVie
 import com.souiid.demoproject.ui.screens.app.firebase.feed.FirebaseFeedViewModel
 import com.souiid.demoproject.ui.screens.app.firebase.profile.FirebaseProfileViewModel
 import com.souiid.demoproject.ui.screens.app.firebase.friends.FriendsViewModel
+import com.souiid.demoproject.ui.screens.app.firebase.notification.NotificationCenterViewModel
 import com.souiid.demoproject.ui.screens.app.firebase.profile.FirebaseProfileListViewModel
 import com.souiid.demoproject.ui.screens.auth.signin.SignInViewModel
 import com.souiid.demoproject.ui.screens.auth.signup.credential.SignUpCredentialViewModel
@@ -98,6 +100,7 @@ val appModule = module {
     factory { GetLikedPostIdsUseCase(get()) }
     factory { ObserveFeedPostsUseCase(get(), get(), get()) }
     factory { SaveNotificationTokenUseCase(get()) }
+    factory { ObserveNotificationsUseCase(get()) }
 
 //________________________________________________________
 
@@ -113,4 +116,5 @@ val appModule = module {
     factory { EditProfileViewModel(get(), get(), get()) }
     factory { FriendsViewModel(get(), get(), get(), get(), get(), get(), get()) }
     factory { FirebaseProfileListViewModel(get(), get(), get(), get(), get(), get(), get()) }
+    factory { NotificationCenterViewModel(get(), get()) }
 }

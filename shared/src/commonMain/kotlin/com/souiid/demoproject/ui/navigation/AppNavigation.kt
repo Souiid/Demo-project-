@@ -24,7 +24,6 @@ import com.souiid.demoproject.ui.screens.app.ktor.KtorScreen
 @Composable
 fun AppNavigation() {
     val navController = rememberNavController()
-
     val notificationNavigationData by NotificationNavigation.data.collectAsState()
 
     LaunchedEffect(notificationNavigationData) {
@@ -39,7 +38,7 @@ fun AppNavigation() {
 
             "NEW_LIKE", "NEW_POST" -> {
                 data.postId?.let {
-                    navController.navigate(Route.FirebasePost(it))
+                    navController.navigate(Route.FirebaseFeed(it))
                 }
             }
         }
@@ -72,21 +71,24 @@ fun AppNavigation() {
                 } else null,
                 actions = {
                     if (destination?.hasRoute<Route.FirebaseFeed>() == true) {
-                        IconButton(
-                            onClick = { navController.navigate(Route.Friends) }
-                        ) {
+                        IconButton(onClick = { navController.navigate(Route.Friends) }) {
                             Icon(
                                 imageVector = AppIcon.Search,
                                 contentDescription = "Search"
                             )
                         }
 
-                        IconButton(
-                            onClick = { navController.navigate(Route.FirebaseProfile(null)) }
-                        ) {
+                        IconButton(onClick = { navController.navigate(Route.FirebaseProfile(null)) }) {
                             Icon(
                                 imageVector = AppIcon.Person,
                                 contentDescription = "Profile"
+                            )
+                        }
+
+                        IconButton(onClick = { navController.navigate(Route.NotificationCenter) }) {
+                            Icon(
+                                imageVector = AppIcon.Notifications,
+                                contentDescription = "Notifications"
                             )
                         }
                     }

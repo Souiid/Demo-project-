@@ -27,8 +27,8 @@ sealed interface Route {
     data object SignUpCredential : Route
 
     @Serializable
-    data object FirebaseFeed : Route
-
+    data class FirebaseFeed(val postId: String? = null) : Route
+    
     @Serializable
     data class FirebaseProfile(val userId: String? = null) : Route
 
@@ -45,5 +45,5 @@ sealed interface Route {
     ) : Route
 
     @Serializable
-    data class FirebasePost(val postId: String) : Route
+    data object NotificationCenter : Route
 }

@@ -31,6 +31,24 @@ async function sendNotification(token, title, body, data = {}) {
 }
 
 /**
+ * Saves a notification to the recipient's history.
+ * @param {string} userId - Recipient user ID.
+ * @param {string} title - Notification title.
+ * @param {string} body - Notification body.
+ * @param {Object} data - Additional notification data.
+ * @return {Promise<void>} Resolves after saving.
+ */
+async function saveNotification(userId, title, body, data = {}) {
+  await db.collection("users").doc(userId)
+      .collection("notifications").add({
+        title,
+        body,
+        ...data,
+        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      });
+}
+
+/**
  * Returns the user's full name.
  * @param {FirebaseFirestore.DocumentSnapshot} user - User document.
  * @return {string} User's full name.
@@ -96,12 +114,17 @@ exports.followUser = onCall(async (request) => {
   });
 
   if (result.isNewFollow) {
-    await sendNotification(
-        result.token,
-        "New follower",
-        `${result.name} started following you.`,
-        {type: "NEW_FOLLOWER", userId},
-    );
+    const title = "New follower";
+    const body = `${result.name} started following you.`;
+    const data = {type: "NEW_FOLLOWER", userId};
+
+    try {
+      await saveNotification(targetUserId, title, body, data);
+    } catch (error) {
+      console.error("Failed to save follower notification:", error);
+    }
+
+    await sendNotification(result.token, title, body, data);
   }
 
   return {isFollowing: true};
@@ -143,7 +166,6 @@ exports.unfollowUser = onCall(async (request) => {
 /*
  * Create post
  */
-
 exports.createPost = onCall(async (request) => {
   const userId = request.auth?.uid;
   const content = request.data?.content;
@@ -184,6 +206,32 @@ exports.createPost = onCall(async (request) => {
     const followerUsers = followerRefs.length ?
       await db.getAll(...followerRefs) : [];
 
+    const title = "New post";
+    const body = `${getUserName(user)} published a new post.`;
+    const data = {type: "NEW_POST", userId, postId: postRef.id};
+
+    try {
+      for (let i = 0; i < followerIds.length; i += 400) {
+        const batch = db.batch();
+
+        followerIds.slice(i, i + 400).forEach((followerId) => {
+          const notificationRef = db.collection("users").doc(followerId)
+              .collection("notifications").doc();
+
+          batch.set(notificationRef, {
+            title,
+            body,
+            ...data,
+            createdAt: admin.firestore.FieldValue.serverTimestamp(),
+          });
+        });
+
+        await batch.commit();
+      }
+    } catch (error) {
+      console.error("Failed to save post notifications:", error);
+    }
+
     const tokens = [...new Set(followerUsers
         .map((doc) => doc.get("fcmToken"))
         .filter((token) => typeof token === "string" && token.length > 0))];
@@ -193,15 +241,8 @@ exports.createPost = onCall(async (request) => {
 
       await admin.messaging().sendEachForMulticast({
         tokens: batch,
-        notification: {
-          title: "New post",
-          body: `${getUserName(user)} published a new post.`,
-        },
-        data: {
-          type: "NEW_POST",
-          userId,
-          postId: postRef.id,
-        },
+        notification: {title, body},
+        data,
       });
     }
   } catch (error) {
@@ -214,8 +255,7 @@ exports.createPost = onCall(async (request) => {
 
 /*
  * Like post
- */
-
+*/
 exports.likePost = onCall(async (request) => {
   const userId = request.auth?.uid;
   const postId = request.data?.postId;
@@ -253,21 +293,30 @@ exports.likePost = onCall(async (request) => {
   });
 
   if (isNewLike) {
-    const post = await postRef.get();
-    const authorId = post.get("authorId");
+    try {
+      const post = await postRef.get();
+      const authorId = post.get("authorId");
 
-    if (authorId && authorId !== userId) {
-      const [author, user] = await Promise.all([
-        db.collection("users").doc(authorId).get(),
-        db.collection("users").doc(userId).get(),
-      ]);
+      if (authorId && authorId !== userId) {
+        const [author, user] = await Promise.all([
+          db.collection("users").doc(authorId).get(),
+          db.collection("users").doc(userId).get(),
+        ]);
 
-      await sendNotification(
-          author.get("fcmToken"),
-          "New like",
-          `${getUserName(user)} liked your post.`,
-          {type: "NEW_LIKE", userId, postId},
-      );
+        const title = "New like";
+        const body = `${getUserName(user)} liked your post.`;
+        const data = {type: "NEW_LIKE", userId, postId};
+
+        try {
+          await saveNotification(authorId, title, body, data);
+        } catch (error) {
+          console.error("Failed to save like notification:", error);
+        }
+
+        await sendNotification(author.get("fcmToken"), title, body, data);
+      }
+    } catch (error) {
+      console.error("Failed to notify post author:", error);
     }
   }
 

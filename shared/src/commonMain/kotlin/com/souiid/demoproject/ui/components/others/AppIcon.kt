@@ -2,13 +2,16 @@ package com.souiid.demoproject.ui.components.others
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.Article
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.LocalFireDepartment
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Storage
 import androidx.compose.material.icons.filled.Visibility
@@ -44,5 +47,10 @@ object AppIcon {
 
     val Favorite = Icons.Default.Favorite
     val FavoriteBorder = Icons.Default.FavoriteBorder
+    val Notifications = Icons.Default.Notifications
+
+    val NotificationLike = Icons.Default.Favorite
+    val NotificationFollower = Icons.Default.PersonAdd
+    val NotificationPost = Icons.AutoMirrored.Filled.Article
 
 }

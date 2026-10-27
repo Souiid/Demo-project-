@@ -19,7 +19,7 @@ enum class BottomBarItem(
     val selectedIcon: ImageVector,
     val unselectedIcon: ImageVector
 ) {
-    FIREBASE(Res.string.firebase, Route.FirebaseFeed, AppIcon.Firebase, AppIcon.UnselectedFirebase),
+    FIREBASE(Res.string.firebase, Route.FirebaseFeed(), AppIcon.Firebase, AppIcon.UnselectedFirebase),
     KTOR(Res.string.ktor, Route.Ktor, AppIcon.Ktor, AppIcon.UnselectedKtor),
     DATASTORE(Res.string.datastore, Route.DataStore, AppIcon.DataStore, AppIcon.UnselectedDataStore)
 }

@@ -9,16 +9,18 @@ import com.souiid.demoproject.ui.screens.app.firebase.editprofile.EditProfileScr
 import com.souiid.demoproject.ui.screens.app.firebase.feed.FirebaseFeedScreen
 import com.souiid.demoproject.ui.screens.app.firebase.profile.FirebaseProfileScreen
 import com.souiid.demoproject.ui.screens.app.firebase.friends.FriendsScreen
+import com.souiid.demoproject.ui.screens.app.firebase.notification.NotificationCenterScreen
 import com.souiid.demoproject.ui.screens.app.firebase.profile.FirebaseProfileListScreen
 import com.souiid.demoproject.ui.screens.app.firebase.profile.ProfileListType
 
 fun NavGraphBuilder.firebaseNavigation(navController: NavController) {
-    navigation<Route.Firebase>(startDestination = Route.FirebaseFeed) {
-        composable<Route.FirebaseFeed> {
+    navigation<Route.Firebase>(startDestination = Route.FirebaseFeed()) {
+        composable<Route.FirebaseFeed> { backStackEntry ->
+            val route = backStackEntry.toRoute<Route.FirebaseFeed>()
+
             FirebaseFeedScreen(
-                onUserClick = { userId ->
-                    navController.navigate(Route.FirebaseProfile(userId))
-                }
+                postId = route.postId,
+                onUserClick = { navController.navigate(Route.FirebaseProfile(it)) }
             )
         }
 
@@ -58,14 +60,8 @@ fun NavGraphBuilder.firebaseNavigation(navController: NavController) {
             )
         }
 
-        composable<Route.FirebasePost> { backStackEntry ->
-            val route = backStackEntry.toRoute<Route.FirebasePost>()
-
-            FirebaseFeedScreen(
-                postId = route.postId,
-                onUserClick = { navController.navigate(Route.FirebaseProfile(it)) }
-            )
+        composable<Route.NotificationCenter> {
+            NotificationCenterScreen()
         }
     }
-
 }
