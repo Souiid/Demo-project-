@@ -10,6 +10,7 @@
 		2D018FDB3088E42600E9732B /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 2D018FDA3088E42600E9732B /* FirebaseFirestore */; };
 		2D018FDD308E319E00E9732B /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 2D018FDC308E319E00E9732B /* FirebaseStorage */; };
 		2D018FDF308E657000E9732B /* FirebaseFunctions in Frameworks */ = {isa = PBXBuildFile; productRef = 2D018FDE308E657000E9732B /* FirebaseFunctions */; };
+		2D018FE13090D38600E9732B /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 2D018FE03090D38600E9732B /* FirebaseMessaging */; };
 		2DF6FE1C30865D7B00C346B7 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 2DF6FE1B30865D7B00C346B7 /* FirebaseAuth */; };
 		2DF6FE1E30865D7B00C346B7 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 2DF6FE1D30865D7B00C346B7 /* FirebaseCore */; };
 /* End PBXBuildFile section */
@@ -49,6 +50,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2D018FE13090D38600E9732B /* FirebaseMessaging in Frameworks */,
 				2DF6FE1E30865D7B00C346B7 /* FirebaseCore in Frameworks */,
 				2D018FDD308E319E00E9732B /* FirebaseStorage in Frameworks */,
 				2D018FDF308E657000E9732B /* FirebaseFunctions in Frameworks */,
@@ -111,6 +113,7 @@
 				2D018FDA3088E42600E9732B /* FirebaseFirestore */,
 				2D018FDC308E319E00E9732B /* FirebaseStorage */,
 				2D018FDE308E657000E9732B /* FirebaseFunctions */,
+				2D018FE03090D38600E9732B /* FirebaseMessaging */,
 			);
 			productName = iosApp;
 			productReference = 926E64034770532AA5E0C380 /* ProjectDemo.app */;
@@ -202,6 +205,7 @@
 				ARCHS = arm64;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = iosApp/iosApp.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"iosApp/Preview Content\"";
@@ -210,6 +214,8 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = iosApp/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Project Demo";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Autoriser l'accès à l'appareil photo pour prendre une photo de profil.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Autoriser l'accès à la photothèque pour choisir une photo de profil.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -354,6 +360,7 @@
 				ARCHS = arm64;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = iosApp/iosApp.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"iosApp/Preview Content\"";
@@ -362,6 +369,8 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = iosApp/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Project Demo";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Autoriser l'accès à l'appareil photo pour prendre une photo de profil.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Autoriser l'accès à la photothèque pour choisir une photo de profil.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -426,6 +435,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 2DF6FE1A30865D7B00C346B7 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseFunctions;
+		};
+		2D018FE03090D38600E9732B /* FirebaseMessaging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2DF6FE1A30865D7B00C346B7 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseMessaging;
 		};
 		2DF6FE1B30865D7B00C346B7 /* FirebaseAuth */ = {
 			isa = XCSwiftPackageProductDependency;

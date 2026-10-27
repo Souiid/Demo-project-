@@ -67,6 +67,7 @@ kotlin {
             implementation(libs.gitlive.firebase.firestore)
             implementation(libs.firebase.storage)
             implementation(libs.firebase.functions)
+            implementation(libs.firebase.messaging)
             implementation(libs.imagepickerkmp)
 
         }
