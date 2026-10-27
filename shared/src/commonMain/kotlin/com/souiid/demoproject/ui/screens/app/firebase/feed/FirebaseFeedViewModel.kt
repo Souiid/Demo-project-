@@ -10,6 +10,7 @@ import com.souiid.demoproject.domain.model.AppError
 import com.souiid.demoproject.domain.model.AppResult
 import com.souiid.demoproject.domain.model.Post
 import com.souiid.demoproject.domain.model.User
+import com.souiid.demoproject.domain.usecase.notification.SaveNotificationTokenUseCase
 import com.souiid.demoproject.domain.usecase.post.CreatePostUseCase
 import com.souiid.demoproject.domain.usecase.post.GetLikedPostIdsUseCase
 import com.souiid.demoproject.domain.usecase.post.LikePostUseCase
@@ -22,6 +23,7 @@ import dev.gitlive.firebase.auth.auth
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class FirebaseFeedViewModel(
@@ -31,7 +33,8 @@ class FirebaseFeedViewModel(
     observeCurrentUserUseCase: ObserveCurrentUserUseCase,
     private val likePostUseCase: LikePostUseCase,
     private val unlikePostUseCase: UnlikePostUseCase,
-    private val getLikedPostIdsUseCase: GetLikedPostIdsUseCase
+    private val getLikedPostIdsUseCase: GetLikedPostIdsUseCase,
+    private val saveNotificationTokenUseCase: SaveNotificationTokenUseCase
 ) : ViewModel() {
 
     val currentUser = observeCurrentUserUseCase()
@@ -70,6 +73,10 @@ class FirebaseFeedViewModel(
     private var feedJob: Job? = null
     private var feedGeneration = 0
     private var checkedLikePostIds = emptySet<String>()
+
+    init{
+        observeNotificationToken()
+    }
 
     fun loadCurrentUser() {
         val userId = Firebase.auth.currentUser?.uid ?: run {
@@ -267,5 +274,21 @@ class FirebaseFeedViewModel(
 
     fun refreshPosts() {
         observePosts(forceRestart = true)
+    }
+
+    fun observeNotificationToken() {
+        viewModelScope.launch {
+            currentUser.collectLatest { user ->
+                if (user == null) return@collectLatest
+
+                try {
+                    saveNotificationTokenUseCase(user.id)
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (_: Exception) {
+                    // Token registration failure should not block the feed
+                }
+            }
+        }
     }
 }

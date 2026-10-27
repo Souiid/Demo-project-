@@ -1,17 +1,20 @@
 package com.souiid.demoproject.di
 
 import com.souiid.demoproject.data.AuthRepository
+import com.souiid.demoproject.data.NotificationRepository
 import com.souiid.demoproject.data.PostRepository
 import com.souiid.demoproject.data.SignUpInfoStore
 import com.souiid.demoproject.data.SignUpRepository
 import com.souiid.demoproject.data.UserRepository
 import com.souiid.demoproject.domain.repository.IAuthRepository
+import com.souiid.demoproject.domain.repository.INotificationRepository
 import com.souiid.demoproject.domain.repository.IPostRepository
 import com.souiid.demoproject.domain.repository.ISignUpRepository
 import com.souiid.demoproject.domain.repository.IUserRepository
 import com.souiid.demoproject.domain.usecase.auth.ObserveAuthStateUseCase
 import com.souiid.demoproject.domain.usecase.auth.SignInUseCase
 import com.souiid.demoproject.domain.usecase.auth.SignOutUseCase
+import com.souiid.demoproject.domain.usecase.notification.SaveNotificationTokenUseCase
 import com.souiid.demoproject.domain.usecase.post.CreatePostUseCase
 import com.souiid.demoproject.domain.usecase.post.GetFeedPostsUseCase
 import com.souiid.demoproject.domain.usecase.post.GetLikedPostIdsUseCase
@@ -55,6 +58,7 @@ val appModule = module {
     single { SignUpInfoStore() }
     single { UserRepository() }
     single { PostRepository() }
+    single { NotificationRepository() }
 
     //IREPOSITORY
 
@@ -62,6 +66,7 @@ val appModule = module {
     single<ISignUpRepository> { get<SignUpRepository>() }
     single<IUserRepository> { get<UserRepository>() }
     single<IPostRepository> { get<PostRepository>() }
+    single<INotificationRepository> { NotificationRepository() }
 
 //_________________________________________________________
 
@@ -92,13 +97,13 @@ val appModule = module {
     factory { UnlikePostUseCase(get()) }
     factory { GetLikedPostIdsUseCase(get()) }
     factory { ObserveFeedPostsUseCase(get(), get(), get()) }
-
+    factory { SaveNotificationTokenUseCase(get()) }
 
 //________________________________________________________
 
     //VIEWMODEL
 
-    single { FirebaseFeedViewModel(get(), get(), get(), get(), get(), get(), get()) }
+    single { FirebaseFeedViewModel(get(), get(), get(), get(), get(), get(), get(), get()) }
     factory { AuthGateViewModel(get()) }
     factory { SignUpNameViewModel(get(), get()) }
     factory { SignUpDescriptionViewModel(get(), get()) }
