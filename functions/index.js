@@ -8,6 +8,41 @@ admin.initializeApp();
 
 const db = admin.firestore();
 
+/**
+ * Sends a Firebase Cloud Messaging notification.
+ * @param {string} token - Recipient FCM token.
+ * @param {string} title - Notification title.
+ * @param {string} body - Notification body.
+ * @param {Object} data - Additional notification data.
+ * @return {Promise<void>} Resolves after the send attempt.
+*/
+async function sendNotification(token, title, body, data = {}) {
+  if (!token) return;
+
+  try {
+    await admin.messaging().send({
+      token,
+      notification: {title, body},
+      data,
+    });
+  } catch (error) {
+    console.error("Failed to send notification:", error);
+  }
+}
+
+/**
+ * Returns the user's full name.
+ * @param {FirebaseFirestore.DocumentSnapshot} user - User document.
+ * @return {string} User's full name.
+*/
+function getUserName(user) {
+  if (!user?.exists) return "Someone";
+
+  return [user.get("firstName"), user.get("lastName")]
+      .filter(Boolean).join(" ") || "Someone";
+}
+
+
 /*
  * Follow user
  */
@@ -32,11 +67,17 @@ exports.followUser = onCall(async (request) => {
   const followingRef = userRef.collection("following").doc(targetUserId);
   const followerRef = targetRef.collection("followers").doc(userId);
 
-  await db.runTransaction(async (transaction) => {
+  const result = await db.runTransaction(async (transaction) => {
+    const user = await transaction.get(userRef);
     const target = await transaction.get(targetRef);
+    const following = await transaction.get(followingRef);
 
     if (!target.exists) {
       throw new HttpsError("not-found", "User not found.");
+    }
+
+    if (following.exists) {
+      return {isNewFollow: false};
     }
 
     transaction.set(followingRef, {
@@ -46,10 +87,26 @@ exports.followUser = onCall(async (request) => {
     transaction.set(followerRef, {
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
     });
+
+    return {
+      isNewFollow: true,
+      token: target.get("fcmToken"),
+      name: getUserName(user),
+    };
   });
+
+  if (result.isNewFollow) {
+    await sendNotification(
+        result.token,
+        "New follower",
+        `${result.name} started following you.`,
+        {type: "NEW_FOLLOWER", userId},
+    );
+  }
 
   return {isFollowing: true};
 });
+
 
 /*
  * Unfollow user
@@ -86,6 +143,7 @@ exports.unfollowUser = onCall(async (request) => {
 /*
  * Create post
  */
+
 exports.createPost = onCall(async (request) => {
   const userId = request.auth?.uid;
   const content = request.data?.content;
@@ -111,12 +169,53 @@ exports.createPost = onCall(async (request) => {
     likesCount: 0,
   });
 
+  try {
+    const userRef = db.collection("users").doc(userId);
+    const [user, followers] = await Promise.all([
+      userRef.get(),
+      userRef.collection("followers").get(),
+    ]);
+
+    const followerIds = followers.docs.map((doc) => doc.id);
+    const followerRefs = followerIds.map((id) =>
+      db.collection("users").doc(id),
+    );
+
+    const followerUsers = followerRefs.length ?
+      await db.getAll(...followerRefs) : [];
+
+    const tokens = [...new Set(followerUsers
+        .map((doc) => doc.get("fcmToken"))
+        .filter((token) => typeof token === "string" && token.length > 0))];
+
+    for (let i = 0; i < tokens.length; i += 500) {
+      const batch = tokens.slice(i, i + 500);
+
+      await admin.messaging().sendEachForMulticast({
+        tokens: batch,
+        notification: {
+          title: "New post",
+          body: `${getUserName(user)} published a new post.`,
+        },
+        data: {
+          type: "NEW_POST",
+          userId,
+          postId: postRef.id,
+        },
+      });
+    }
+  } catch (error) {
+    console.error("Failed to notify followers:", error);
+  }
+
   return {postId: postRef.id};
 });
+
 
 /*
  * Like post
  */
+
 exports.likePost = onCall(async (request) => {
   const userId = request.auth?.uid;
   const postId = request.data?.postId;
@@ -132,7 +231,7 @@ exports.likePost = onCall(async (request) => {
   const postRef = db.collection("posts").doc(postId);
   const likeRef = postRef.collection("likes").doc(userId);
 
-  const isLiked = await db.runTransaction(async (transaction) => {
+  const isNewLike = await db.runTransaction(async (transaction) => {
     const post = await transaction.get(postRef);
     const like = await transaction.get(likeRef);
 
@@ -140,9 +239,7 @@ exports.likePost = onCall(async (request) => {
       throw new HttpsError("not-found", "Post not found.");
     }
 
-    if (like.exists) {
-      return true;
-    }
+    if (like.exists) return false;
 
     transaction.set(likeRef, {
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
@@ -155,8 +252,28 @@ exports.likePost = onCall(async (request) => {
     return true;
   });
 
-  return {isLiked};
+  if (isNewLike) {
+    const post = await postRef.get();
+    const authorId = post.get("authorId");
+
+    if (authorId && authorId !== userId) {
+      const [author, user] = await Promise.all([
+        db.collection("users").doc(authorId).get(),
+        db.collection("users").doc(userId).get(),
+      ]);
+
+      await sendNotification(
+          author.get("fcmToken"),
+          "New like",
+          `${getUserName(user)} liked your post.`,
+          {type: "NEW_LIKE", userId, postId},
+      );
+    }
+  }
+
+  return {isLiked: true};
 });
+
 
 /*
  * Unlike post

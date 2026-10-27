@@ -103,7 +103,6 @@ class FriendsViewModel(
         updateFollow(userId, false)
     }
 
-
     private fun updateFollow(userId: String, follow: Boolean) {
         if (userId in _updatingUserIds.value) return
 
@@ -130,7 +129,6 @@ class FriendsViewModel(
     }
 
     private fun loadFollowing() {
-
         val userId = userId ?: return
         viewModelScope.launch {
             _isFollowingLoading.value = true

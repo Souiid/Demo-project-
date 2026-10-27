@@ -77,7 +77,7 @@ val appModule = module {
     factory { UpdateSignUpNameUseCase(get()) }
     factory { UpdateSignUpDescriptionUseCase(get()) }
     factory { SignUpUserUseCase(get()) }
-    factory { SignOutUseCase(get()) }
+    factory { SignOutUseCase(get(), get(), get()) }
     factory { SignInUseCase(get()) }
     factory { ObserveCurrentUserUseCase(get()) }
     factory { FetchUserUseCase(get()) }
