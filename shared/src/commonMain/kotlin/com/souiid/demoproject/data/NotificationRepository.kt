@@ -46,9 +46,30 @@ class NotificationRepository : INotificationRepository {
                         body = document.get("body"),
                         userId = document.get("userId"),
                         postId = document.get("postId"),
-                        createdAt = document.get<Timestamp>("createdAt").seconds
+                        createdAt = document.get<Timestamp>("createdAt").seconds,
+                        isRead = document.get<Boolean?>("isRead") ?: false
                     )
                 }.sortedByDescending { it.createdAt }
+            }
+    }
+
+    override suspend fun markNotificationsAsRead(userId: String) {
+        val notifications = firestore.collection("users").document(userId)
+            .collection("notifications").get()
+
+        notifications.documents
+            .filter { it.get<Boolean?>("isRead") != true }
+            .chunked(400)
+            .forEach { documents ->
+                val batch = firestore.batch()
+
+                documents.forEach { document ->
+                    batch.updateFields(document.reference) {
+                        "isRead" to true
+                    }
+                }
+
+                batch.commit()
             }
     }
 }

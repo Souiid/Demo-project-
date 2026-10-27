@@ -7,5 +7,6 @@ data class AppNotification(
     val body: String,
     val userId: String,
     val postId: String? = null,
-    val createdAt: Long
+    val createdAt: Long,
+    val isRead: Boolean = false
 )

@@ -44,6 +44,7 @@ async function saveNotification(userId, title, body, data = {}) {
         title,
         body,
         ...data,
+        isRead: false,
         createdAt: admin.firestore.FieldValue.serverTimestamp(),
       });
 }
@@ -222,6 +223,7 @@ exports.createPost = onCall(async (request) => {
             title,
             body,
             ...data,
+            isRead: false,
             createdAt: admin.firestore.FieldValue.serverTimestamp(),
           });
         });

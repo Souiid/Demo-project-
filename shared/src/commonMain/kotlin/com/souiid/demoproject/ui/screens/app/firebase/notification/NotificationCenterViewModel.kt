@@ -32,6 +32,7 @@ class NotificationCenterViewModel(
                 }
 
                 _isLoading.value = true
+
                 observeNotificationsUseCase(user.id).collect { notifications ->
                     _notifications.value = notifications
                     _isLoading.value = false

@@ -8,5 +8,5 @@ interface INotificationRepository {
     suspend fun saveToken(userId: String)
     suspend fun deleteToken(userId: String)
     fun observeNotifications(userId: String): Flow<List<AppNotification>>
-
+    suspend fun markNotificationsAsRead(userId: String)
 }
