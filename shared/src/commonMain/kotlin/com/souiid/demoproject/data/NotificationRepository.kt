@@ -2,6 +2,7 @@ package com.souiid.demoproject.data
 
 import com.souiid.demoproject.domain.repository.INotificationRepository
 import dev.gitlive.firebase.Firebase
+import dev.gitlive.firebase.firestore.FieldValue
 import dev.gitlive.firebase.firestore.firestore
 import dev.gitlive.firebase.messaging.messaging
 
@@ -18,6 +19,12 @@ class NotificationRepository : INotificationRepository {
 
         firestore.collection("users").document(userId).updateFields {
             "fcmToken" to token
+        }
+    }
+
+    override suspend fun deleteToken(userId: String) {
+        firestore.collection("users").document(userId).updateFields {
+            "fcmToken" to FieldValue.delete
         }
     }
 }
