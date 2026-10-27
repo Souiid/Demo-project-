@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -38,12 +39,24 @@ import demoproject.shared.generated.resources.feed
 
 @Composable
 fun FirebaseFeedScreen(
+    postId: String? = null,
     onUserClick: (String) -> Unit
 ) {
     val viewModel: FirebaseFeedViewModel = koinInject()
 
     val currentUser by viewModel.currentUser.collectAsStateWithLifecycle()
     var showCreatePostSheet by remember { mutableStateOf(false) }
+
+    val listState = rememberLazyListState()
+
+    LaunchedEffect(postId, viewModel.posts) {
+        if (postId == null || viewModel.isLoadingPosts) return@LaunchedEffect
+
+        val index = viewModel.posts.indexOfFirst { it.id == postId }
+        if (index >= 0) {
+            listState.animateScrollToItem(index)
+        }
+    }
 
     LaunchedEffect(Unit) {
         viewModel.loadCurrentUser()
@@ -85,6 +98,7 @@ fun FirebaseFeedScreen(
                 else -> {
                     LazyColumn(
                         modifier = Modifier.fillMaxSize(),
+                        state = listState,
                         contentPadding = PaddingValues(bottom = 88.dp),
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {

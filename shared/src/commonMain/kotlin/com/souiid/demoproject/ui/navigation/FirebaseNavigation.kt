@@ -57,6 +57,15 @@ fun NavGraphBuilder.firebaseNavigation(navController: NavController) {
                 }
             )
         }
+
+        composable<Route.FirebasePost> { backStackEntry ->
+            val route = backStackEntry.toRoute<Route.FirebasePost>()
+
+            FirebaseFeedScreen(
+                postId = route.postId,
+                onUserClick = { navController.navigate(Route.FirebaseProfile(it)) }
+            )
+        }
     }
 
 }

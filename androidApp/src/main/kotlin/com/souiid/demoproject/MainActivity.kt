@@ -2,6 +2,7 @@
 package com.souiid.demoproject
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -12,6 +13,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.content.ContextCompat
+import com.souiid.demoproject.ui.navigation.NotificationNavigation
 
 class MainActivity : ComponentActivity() {
 
@@ -25,11 +27,29 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
 
+        handleNotificationIntent(intent)
+
         setContent {
             App()
         }
 
         requestNotificationPermission()
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        handleNotificationIntent(intent)
+    }
+
+    private fun handleNotificationIntent(intent: Intent?) {
+        val type = intent?.getStringExtra("type") ?: return
+
+        NotificationNavigation.navigate(
+            type = type,
+            userId = intent.getStringExtra("userId"),
+            postId = intent.getStringExtra("postId")
+        )
     }
 
     private fun requestNotificationPermission() {

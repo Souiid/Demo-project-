@@ -43,4 +43,7 @@ sealed interface Route {
         val userId: String,
         val type: String,
     ) : Route
+
+    @Serializable
+    data class FirebasePost(val postId: String) : Route
 }

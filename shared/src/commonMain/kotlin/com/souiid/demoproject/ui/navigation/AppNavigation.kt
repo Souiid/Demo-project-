@@ -5,6 +5,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -21,6 +24,29 @@ import com.souiid.demoproject.ui.screens.app.ktor.KtorScreen
 @Composable
 fun AppNavigation() {
     val navController = rememberNavController()
+
+    val notificationNavigationData by NotificationNavigation.data.collectAsState()
+
+    LaunchedEffect(notificationNavigationData) {
+        val data = notificationNavigationData ?: return@LaunchedEffect
+
+        when (data.type) {
+            "NEW_FOLLOWER" -> {
+                data.userId?.let {
+                    navController.navigate(Route.FirebaseProfile(it))
+                }
+            }
+
+            "NEW_LIKE", "NEW_POST" -> {
+                data.postId?.let {
+                    navController.navigate(Route.FirebasePost(it))
+                }
+            }
+        }
+
+        NotificationNavigation.clear()
+    }
+
     val backStackEntry = navController.currentBackStackEntryAsState().value
     val destination = backStackEntry?.destination
 
