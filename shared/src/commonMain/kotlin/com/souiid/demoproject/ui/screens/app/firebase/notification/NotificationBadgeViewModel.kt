@@ -9,6 +9,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import com.souiid.demoproject.platform.updateAppBadge
+
 
 class NotificationBadgeViewModel(
     private val observeCurrentUserUseCase: ObserveCurrentUserUseCase,
@@ -26,11 +28,14 @@ class NotificationBadgeViewModel(
             observeCurrentUserUseCase().collectLatest { user ->
                 currentUserId = user?.id
                 _unreadCount.value = 0
+                updateAppBadge(0)
 
                 if (user == null) return@collectLatest
 
                 observeNotificationsUseCase(user.id).collect { notifications ->
-                    _unreadCount.value = notifications.count { !it.isRead }
+                    val count = notifications.count { !it.isRead }
+                    _unreadCount.value = count
+                    updateAppBadge(count)
                 }
             }
         }

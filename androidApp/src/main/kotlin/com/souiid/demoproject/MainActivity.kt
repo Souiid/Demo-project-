@@ -1,7 +1,8 @@
-
 package com.souiid.demoproject
 
 import android.Manifest
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
@@ -13,6 +14,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.content.ContextCompat
+import com.souiid.demoproject.platform.AppContextProvider
 import com.souiid.demoproject.ui.navigation.NotificationNavigation
 
 class MainActivity : ComponentActivity() {
@@ -26,13 +28,10 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
-
+        AppContextProvider.initialize(applicationContext)
+        createNotificationChannel()
         handleNotificationIntent(intent)
-
-        setContent {
-            App()
-        }
-
+        setContent { App() }
         requestNotificationPermission()
     }
 
@@ -40,6 +39,21 @@ class MainActivity : ComponentActivity() {
         super.onNewIntent(intent)
         setIntent(intent)
         handleNotificationIntent(intent)
+    }
+
+    private fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
+
+        val channel = NotificationChannel(
+            "default",
+            "Notifications",
+            NotificationManager.IMPORTANCE_DEFAULT
+        ).apply {
+            setShowBadge(true)
+        }
+
+        val manager = getSystemService(NotificationManager::class.java)
+        manager.createNotificationChannel(channel)
     }
 
     private fun handleNotificationIntent(intent: Intent?) {

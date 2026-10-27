@@ -14,17 +14,32 @@ const db = admin.firestore();
  * @param {string} title - Notification title.
  * @param {string} body - Notification body.
  * @param {Object} data - Additional notification data.
+ * @param {number|null} badgeCount - Unread notification count.
  * @return {Promise<void>} Resolves after the send attempt.
-*/
-async function sendNotification(token, title, body, data = {}) {
+ */
+async function sendNotification(
+    token, title, body, data = {}, badgeCount = null,
+) {
   if (!token) return;
 
   try {
-    await admin.messaging().send({
+    const message = {
       token,
       notification: {title, body},
       data,
-    });
+    };
+
+    if (badgeCount !== null) {
+      message.apns = {
+        payload: {
+          aps: {
+            badge: badgeCount,
+          },
+        },
+      };
+    }
+
+    await admin.messaging().send(message);
   } catch (error) {
     console.error("Failed to send notification:", error);
   }
@@ -47,6 +62,21 @@ async function saveNotification(userId, title, body, data = {}) {
         isRead: false,
         createdAt: admin.firestore.FieldValue.serverTimestamp(),
       });
+}
+
+/**
+ * Returns the number of unread notifications for a user.
+ * @param {string} userId - Recipient user ID.
+ * @return {Promise<number>} Number of unread notifications.
+ */
+async function getUnreadNotificationCount(userId) {
+  const snapshot = await db.collection("users").doc(userId)
+      .collection("notifications")
+      .where("isRead", "==", false)
+      .count()
+      .get();
+
+  return snapshot.data().count;
 }
 
 /**
@@ -119,13 +149,16 @@ exports.followUser = onCall(async (request) => {
     const body = `${result.name} started following you.`;
     const data = {type: "NEW_FOLLOWER", userId};
 
+    let badgeCount = null;
+
     try {
       await saveNotification(targetUserId, title, body, data);
+      badgeCount = await getUnreadNotificationCount(targetUserId);
     } catch (error) {
-      console.error("Failed to save follower notification:", error);
+      console.error("Failed to save or count follower notification:", error);
     }
 
-    await sendNotification(result.token, title, body, data);
+    await sendNotification(result.token, title, body, data, badgeCount);
   }
 
   return {isFollowing: true};
@@ -234,17 +267,50 @@ exports.createPost = onCall(async (request) => {
       console.error("Failed to save post notifications:", error);
     }
 
-    const tokens = [...new Set(followerUsers
-        .map((doc) => doc.get("fcmToken"))
-        .filter((token) => typeof token === "string" && token.length > 0))];
+    const recipients = followerUsers.filter((recipient) => {
+      const token = recipient.get("fcmToken");
+      return typeof token === "string" && token.length > 0;
+    });
 
-    for (let i = 0; i < tokens.length; i += 500) {
-      const batch = tokens.slice(i, i + 500);
+    for (let i = 0; i < recipients.length; i += 100) {
+      const batch = recipients.slice(i, i + 100);
 
-      await admin.messaging().sendEachForMulticast({
-        tokens: batch,
-        notification: {title, body},
-        data,
+      const messages = await Promise.all(batch.map(async (recipient) => {
+        const message = {
+          token: recipient.get("fcmToken"),
+          notification: {title, body},
+          data,
+        };
+
+        try {
+          const badgeCount = await getUnreadNotificationCount(recipient.id);
+
+          message.apns = {
+            payload: {
+              aps: {
+                badge: badgeCount,
+              },
+            },
+          };
+        } catch (error) {
+          console.error(
+              `Failed to count unread notifications for ${recipient.id}:`,
+              error,
+          );
+        }
+
+        return message;
+      }));
+
+      const response = await admin.messaging().sendEach(messages);
+
+      response.responses.forEach((result, index) => {
+        if (!result.success) {
+          console.error(
+              `Failed to notify user ${batch[index].id}:`,
+              result.error,
+          );
+        }
       });
     }
   } catch (error) {
@@ -257,7 +323,7 @@ exports.createPost = onCall(async (request) => {
 
 /*
  * Like post
-*/
+ */
 exports.likePost = onCall(async (request) => {
   const userId = request.auth?.uid;
   const postId = request.data?.postId;
@@ -309,13 +375,18 @@ exports.likePost = onCall(async (request) => {
         const body = `${getUserName(user)} liked your post.`;
         const data = {type: "NEW_LIKE", userId, postId};
 
+        let badgeCount = null;
+
         try {
           await saveNotification(authorId, title, body, data);
+          badgeCount = await getUnreadNotificationCount(authorId);
         } catch (error) {
-          console.error("Failed to save like notification:", error);
+          console.error("Failed to save or count like notification:", error);
         }
 
-        await sendNotification(author.get("fcmToken"), title, body, data);
+        await sendNotification(
+            author.get("fcmToken"), title, body, data, badgeCount,
+        );
       }
     } catch (error) {
       console.error("Failed to notify post author:", error);
