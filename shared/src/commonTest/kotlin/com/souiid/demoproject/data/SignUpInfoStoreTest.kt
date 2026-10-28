@@ -1,6 +1,7 @@
 package com.souiid.demoproject.data
 
-import com.souiid.demoproject.domain.model.SignUpInfo
+import com.souiid.demoproject.firebase.data.SignUpInfoStore
+import com.souiid.demoproject.firebase.domain.model.SignUpInfo
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

@@ -4,10 +4,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import com.souiid.demoproject.domain.model.AppError
-import com.souiid.demoproject.domain.model.AppResult
-import com.souiid.demoproject.domain.usecase.signup.ObserveSignUpInfoUseCase
-import com.souiid.demoproject.domain.usecase.signup.UpdateSignUpNameUseCase
+import com.souiid.demoproject.firebase.domain.model.AppError
+import com.souiid.demoproject.firebase.domain.model.AppResult
+import com.souiid.demoproject.firebase.domain.usecase.signup.ObserveSignUpInfoUseCase
+import com.souiid.demoproject.firebase.domain.usecase.signup.UpdateSignUpNameUseCase
 
 class SignUpNameViewModel(
     observeSignUpInfoUseCase: ObserveSignUpInfoUseCase,

@@ -4,8 +4,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import com.souiid.demoproject.domain.usecase.signup.ObserveSignUpInfoUseCase
-import com.souiid.demoproject.domain.usecase.signup.UpdateSignUpDescriptionUseCase
+import com.souiid.demoproject.firebase.domain.usecase.signup.ObserveSignUpInfoUseCase
+import com.souiid.demoproject.firebase.domain.usecase.signup.UpdateSignUpDescriptionUseCase
 
 class SignUpDescriptionViewModel(
     observeSignUpInfoUseCase: ObserveSignUpInfoUseCase,

@@ -2,9 +2,9 @@ package com.souiid.demoproject.ui.screens.app.firebase.notification
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.souiid.demoproject.domain.usecase.notification.MarkNotificationsAsReadUseCase
-import com.souiid.demoproject.domain.usecase.notification.ObserveNotificationsUseCase
-import com.souiid.demoproject.domain.usecase.user.ObserveCurrentUserUseCase
+import com.souiid.demoproject.firebase.domain.usecase.notification.MarkNotificationsAsReadUseCase
+import com.souiid.demoproject.firebase.domain.usecase.notification.ObserveNotificationsUseCase
+import com.souiid.demoproject.firebase.domain.usecase.user.ObserveCurrentUserUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest

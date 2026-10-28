@@ -2,15 +2,15 @@ package com.souiid.demoproject.ui.screens.app.firebase.friends
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.souiid.demoproject.domain.model.AppError
-import com.souiid.demoproject.domain.model.AppResult
-import com.souiid.demoproject.domain.model.User
-import com.souiid.demoproject.domain.usecase.user.FollowUserUseCase
-import com.souiid.demoproject.domain.usecase.user.GetFollowingUserIdsUseCase
-import com.souiid.demoproject.domain.usecase.user.GetFollowingUsersUseCase
-import com.souiid.demoproject.domain.usecase.user.ObserveCurrentUserUseCase
-import com.souiid.demoproject.domain.usecase.user.SearchUsersUseCase
-import com.souiid.demoproject.domain.usecase.user.UnfollowUserUseCase
+import com.souiid.demoproject.firebase.domain.model.AppError
+import com.souiid.demoproject.firebase.domain.model.AppResult
+import com.souiid.demoproject.firebase.domain.model.User
+import com.souiid.demoproject.firebase.domain.usecase.user.FollowUserUseCase
+import com.souiid.demoproject.firebase.domain.usecase.user.GetFollowingUserIdsUseCase
+import com.souiid.demoproject.firebase.domain.usecase.user.GetFollowingUsersUseCase
+import com.souiid.demoproject.firebase.domain.usecase.user.ObserveCurrentUserUseCase
+import com.souiid.demoproject.firebase.domain.usecase.user.SearchUsersUseCase
+import com.souiid.demoproject.firebase.domain.usecase.user.UnfollowUserUseCase
 import com.souiid.demoproject.ui.screens.app.firebase.feed.FirebaseFeedViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow

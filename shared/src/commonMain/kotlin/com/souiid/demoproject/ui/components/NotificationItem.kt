@@ -10,7 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.souiid.demoproject.domain.model.AppNotification
+import com.souiid.demoproject.firebase.domain.model.AppNotification
 import com.souiid.demoproject.ui.components.others.AppIcon
 import com.souiid.demoproject.ui.components.text.TText
 import com.souiid.demoproject.ui.components.text.TTextStyle

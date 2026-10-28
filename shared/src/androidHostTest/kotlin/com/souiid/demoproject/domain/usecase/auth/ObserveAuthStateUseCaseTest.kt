@@ -1,7 +1,8 @@
 package com.souiid.demoproject.domain.usecase.auth
 
-import com.souiid.demoproject.domain.model.AuthState
-import com.souiid.demoproject.domain.repository.IAuthRepository
+import com.souiid.demoproject.firebase.domain.model.AuthState
+import com.souiid.demoproject.firebase.domain.repository.IAuthRepository
+import com.souiid.demoproject.firebase.domain.usecase.auth.ObserveAuthStateUseCase
 import dev.gitlive.firebase.auth.FirebaseUser
 import io.mockk.every
 import io.mockk.mockk

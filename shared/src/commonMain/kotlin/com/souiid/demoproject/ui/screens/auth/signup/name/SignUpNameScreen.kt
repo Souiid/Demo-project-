@@ -3,7 +3,7 @@ package com.souiid.demoproject.ui.screens.auth.signup.name
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.input.ImeAction
-import com.souiid.demoproject.domain.model.AppError
+import com.souiid.demoproject.firebase.domain.model.AppError
 import com.souiid.demoproject.ui.components.button.TButton
 import com.souiid.demoproject.ui.components.others.TScreen
 import com.souiid.demoproject.ui.components.textfield.TTextField

@@ -1,7 +1,7 @@
 package com.souiid.demoproject.domain.auth
 
-import com.souiid.demoproject.domain.repository.IAuthRepository
-import com.souiid.demoproject.domain.usecase.auth.SignOutUseCase
+import com.souiid.demoproject.firebase.domain.repository.IAuthRepository
+import com.souiid.demoproject.firebase.domain.usecase.auth.SignOutUseCase
 import dev.mokkery.MockMode
 import dev.mokkery.answering.throws
 import dev.mokkery.everySuspend

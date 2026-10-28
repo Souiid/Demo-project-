@@ -5,9 +5,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.souiid.demoproject.domain.model.AppError
-import com.souiid.demoproject.domain.model.AppResult
-import com.souiid.demoproject.domain.usecase.auth.SignInUseCase
+import com.souiid.demoproject.firebase.domain.model.AppError
+import com.souiid.demoproject.firebase.domain.model.AppResult
+import com.souiid.demoproject.firebase.domain.usecase.auth.SignInUseCase
 import kotlinx.coroutines.launch
 
 class SignInViewModel(

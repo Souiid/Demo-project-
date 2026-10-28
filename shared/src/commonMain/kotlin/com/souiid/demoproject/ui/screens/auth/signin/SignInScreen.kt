@@ -4,7 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.input.ImeAction
-import com.souiid.demoproject.domain.model.AppError
+import com.souiid.demoproject.firebase.domain.model.AppError
 import com.souiid.demoproject.ui.components.button.TButton
 import com.souiid.demoproject.ui.components.button.TButtonType
 import com.souiid.demoproject.ui.components.others.TScreen

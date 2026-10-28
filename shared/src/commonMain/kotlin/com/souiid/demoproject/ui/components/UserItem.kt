@@ -11,7 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.souiid.demoproject.domain.model.User
+import com.souiid.demoproject.firebase.domain.model.User
 import com.souiid.demoproject.ui.components.button.TButton
 import com.souiid.demoproject.ui.components.others.TKamelImage
 import com.souiid.demoproject.ui.components.text.TText

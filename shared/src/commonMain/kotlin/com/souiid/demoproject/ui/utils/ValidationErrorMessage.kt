@@ -1,7 +1,7 @@
 package com.souiid.demoproject.ui.utils
 
 import androidx.compose.runtime.Composable
-import com.souiid.demoproject.domain.model.AppError
+import com.souiid.demoproject.firebase.domain.model.AppError
 import demoproject.shared.generated.resources.*
 import org.jetbrains.compose.resources.stringResource
 

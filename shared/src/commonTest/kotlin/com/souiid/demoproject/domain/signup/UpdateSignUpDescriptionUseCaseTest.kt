@@ -1,8 +1,8 @@
 package com.souiid.demoproject.domain.signup
 
-import com.souiid.demoproject.domain.model.AppResult
-import com.souiid.demoproject.domain.repository.ISignUpRepository
-import com.souiid.demoproject.domain.usecase.signup.UpdateSignUpDescriptionUseCase
+import com.souiid.demoproject.firebase.domain.model.AppResult
+import com.souiid.demoproject.firebase.domain.repository.ISignUpRepository
+import com.souiid.demoproject.firebase.domain.usecase.signup.UpdateSignUpDescriptionUseCase
 import dev.mokkery.MockMode
 import dev.mokkery.mock
 import dev.mokkery.verify

@@ -16,15 +16,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.souiid.demoproject.domain.model.ProfileStats
-import com.souiid.demoproject.domain.model.User
+import com.souiid.demoproject.firebase.domain.model.ProfileStats
+import com.souiid.demoproject.firebase.domain.model.User
 import com.souiid.demoproject.ui.components.button.TButton
 import com.souiid.demoproject.ui.components.button.TButtonType
 import com.souiid.demoproject.ui.components.others.TKamelImage
 import com.souiid.demoproject.ui.components.others.TScreen
 import com.souiid.demoproject.ui.components.text.TText
 import com.souiid.demoproject.ui.components.text.TTextStyle
-import com.souiid.demoproject.ui.screens.app.firebase.feed.FirebaseFeedViewModel
 import demoproject.shared.generated.resources.Res
 import demoproject.shared.generated.resources.follow
 import demoproject.shared.generated.resources.signOut
