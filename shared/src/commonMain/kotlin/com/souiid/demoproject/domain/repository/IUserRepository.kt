@@ -10,7 +10,7 @@ interface IUserRepository {
     val currentUser: StateFlow<User?>
     suspend fun fetchUser(userId: String): AppResult<User>
     suspend fun updateUser(firstName: String, lastName: String, description: String, photoUrl: String? = null): AppResult<Unit>
-    suspend fun uploadPhoto(uri: String): AppResult<String>
+    suspend fun uploadPhoto(uri: String, mimeType: String): AppResult<String>
     suspend fun searchUsers(query: String): AppResult<List<User>>
     suspend fun followUser(targetUserId: String): AppResult<Unit>
     suspend fun unfollowUser(targetUserId: String): AppResult<Unit>

@@ -24,6 +24,7 @@ class EditProfileViewModel(
     var lastName by mutableStateOf(currentUser.value?.lastName.orEmpty())
     var description by mutableStateOf(currentUser.value?.description.orEmpty())
     var photoUri by mutableStateOf<String?>(null)
+    var photoMimeType by mutableStateOf<String?>(null)
 
     var isLoading by mutableStateOf(false)
         private set
@@ -56,7 +57,7 @@ class EditProfileViewModel(
                 var photoUrl: String? = null
 
                 if (photoUri != null) {
-                    when (val result = uploadPhotoUseCase(photoUri!!)) {
+                    when (val result = uploadPhotoUseCase(photoUri!!, photoMimeType!!)) {
                         is AppResult.Success -> photoUrl = result.data
                         is AppResult.Failure -> {
                             error = result.error

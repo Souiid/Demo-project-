@@ -11,11 +11,12 @@ import dev.gitlive.firebase.auth.auth
 import dev.gitlive.firebase.firestore.firestore
 import dev.gitlive.firebase.functions.functions
 import dev.gitlive.firebase.storage.storage
+import dev.gitlive.firebase.storage.storageMetadata
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlin.coroutines.cancellation.CancellationException
 
-class UserRepository: IUserRepository {
+class UserRepository : IUserRepository {
 
     private val firestore = Firebase.firestore
     private val auth: FirebaseAuth = Firebase.auth
@@ -77,13 +78,13 @@ class UserRepository: IUserRepository {
         }
     }
 
-    override suspend fun uploadPhoto(uri: String): AppResult<String> {
-        val userId = Firebase.auth.currentUser?.uid
-            ?: return AppResult.Failure(AppError.Unknown())
-
+    override suspend fun uploadPhoto(uri: String, mimeType: String): AppResult<String> {
+        val userId = Firebase.auth.currentUser?.uid ?: return AppResult.Failure(AppError.Unknown())
         return try {
             val reference = Firebase.storage.reference.child("users/$userId/profile.jpg")
-            reference.putFile(createFileFromUri(uri))
+            reference.putFile(createFileFromUri(uri), storageMetadata {
+                contentType = mimeType
+            })
             AppResult.Success(reference.getDownloadUrl())
         } catch (e: CancellationException) {
             throw e
@@ -140,7 +141,8 @@ class UserRepository: IUserRepository {
 
     override suspend fun getFollowingUserIds(userId: String): AppResult<Set<String>> {
         return try {
-            val snapshot = firestore.collection("users").document(userId).collection("following").get()
+            val snapshot =
+                firestore.collection("users").document(userId).collection("following").get()
             AppResult.Success(snapshot.documents.map { it.id }.toSet())
         } catch (e: CancellationException) {
             throw e
@@ -151,7 +153,8 @@ class UserRepository: IUserRepository {
 
     override suspend fun getFollowingUsers(userId: String): AppResult<List<User>> {
         return try {
-            val following = firestore.collection("users").document(userId).collection("following").get()
+            val following =
+                firestore.collection("users").document(userId).collection("following").get()
 
             val users = following.documents.mapNotNull { document ->
                 val snapshot = firestore.collection("users").document(document.id).get()
@@ -168,7 +171,8 @@ class UserRepository: IUserRepository {
 
     override suspend fun getFollowerUserIds(userId: String): AppResult<Set<String>> {
         return try {
-            val snapshot = firestore.collection("users").document(userId).collection("followers").get()
+            val snapshot =
+                firestore.collection("users").document(userId).collection("followers").get()
             AppResult.Success(snapshot.documents.map { it.id }.toSet())
         } catch (e: CancellationException) {
             throw e

@@ -35,7 +35,7 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun PhotoPicker(
     photoUri: String?,
-    onPhotoSelected: (String?) -> Unit,
+    onPhotoSelected: (String?, String?) -> Unit,
     content: @Composable (photoUri: String?, openPicker: () -> Unit) -> Unit
 ) {
     var showSheet by remember { mutableStateOf(false) }
@@ -55,7 +55,9 @@ fun PhotoPicker(
     LaunchedEffect(picker.result) {
         when (val result = picker.result) {
             is ImagePickerResult.Success -> {
-                result.first?.uri?.let(onPhotoSelected)
+                result.first?.let { photo ->
+                    onPhotoSelected(photo.uri, photo.mimeType)
+                }
                 showSheet = false
                 picker.reset()
             }
@@ -100,7 +102,7 @@ fun PhotoPicker(
                         type = TButtonType.TEXT,
                         color = MaterialTheme.colorScheme.error,
                         onClick = {
-                            onPhotoSelected(null)
+                            onPhotoSelected(null, null)
                             showSheet = false
                         }
                     )

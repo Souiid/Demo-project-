@@ -49,7 +49,10 @@ fun EditProfileScreen() {
             EditProfilePhoto(
                 user = user,
                 photoUri = viewModel.photoUri,
-                onPhotoSelected = { viewModel.photoUri = it }
+                onPhotoSelected = { uri, mimeType ->
+                    viewModel.photoUri = uri
+                    viewModel.photoMimeType = mimeType
+                }
             )
             EditProfileFields(viewModel)
             EditProfileSaveButton(viewModel)
@@ -114,7 +117,7 @@ private fun EditProfileSaveButton(viewModel: EditProfileViewModel) {
 private fun EditProfilePhoto(
     user: User,
     photoUri: String?,
-    onPhotoSelected: (String?) -> Unit
+    onPhotoSelected: (String?, String?) -> Unit
 ) {
     PhotoPicker(
         photoUri = photoUri,

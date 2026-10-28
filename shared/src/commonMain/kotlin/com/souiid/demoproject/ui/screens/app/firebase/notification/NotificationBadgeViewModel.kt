@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import com.souiid.demoproject.platform.updateAppBadge
+import kotlin.coroutines.cancellation.CancellationException
 
 
 class NotificationBadgeViewModel(
@@ -26,16 +27,21 @@ class NotificationBadgeViewModel(
     init {
         viewModelScope.launch {
             observeCurrentUserUseCase().collectLatest { user ->
-                currentUserId = user?.id
+                if (user == null) return@collectLatest
+                currentUserId = user.id
                 _unreadCount.value = 0
                 updateAppBadge(0)
 
-                if (user == null) return@collectLatest
-
-                observeNotificationsUseCase(user.id).collect { notifications ->
-                    val count = notifications.count { !it.isRead }
-                    _unreadCount.value = count
-                    updateAppBadge(count)
+                try {
+                    observeNotificationsUseCase(user.id).collect { notifications ->
+                        val count = notifications.count { !it.isRead }
+                        _unreadCount.value = count
+                        updateAppBadge(count)
+                    }
+                } catch (error: CancellationException) {
+                    throw error
+                } catch (error: Exception) {
+                    println("Failed to observe notifications: $error")
                 }
             }
         }
