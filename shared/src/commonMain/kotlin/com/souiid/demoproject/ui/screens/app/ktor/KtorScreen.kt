@@ -5,10 +5,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.souiid.demoproject.data.testMealApi
 import demoproject.shared.generated.resources.Res
 import demoproject.shared.generated.resources.datastore
+import demoproject.shared.generated.resources.ktor
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -18,7 +21,7 @@ fun KtorScreen() {
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = stringResource(Res.string.datastore),
+            text = stringResource(Res.string.ktor),
             style = MaterialTheme.typography.headlineLarge
         )
     }

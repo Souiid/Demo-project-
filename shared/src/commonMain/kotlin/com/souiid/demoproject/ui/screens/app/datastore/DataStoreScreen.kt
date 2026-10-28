@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import demoproject.shared.generated.resources.Res
+import demoproject.shared.generated.resources.datastore
 import demoproject.shared.generated.resources.ktor
 import org.jetbrains.compose.resources.stringResource
 
@@ -18,7 +19,7 @@ fun DataStoreScreen() {
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = stringResource(Res.string.ktor),
+            text = stringResource(Res.string.datastore),
             style = MaterialTheme.typography.headlineLarge
         )
     }
