@@ -85,5 +85,7 @@
     <string name="postDaysAgo">%1$d days ago</string>
     <string name="posts">Posts</string>
     <string name="feed">Feed</string>
+    <string name="searchMeal">Search meal</string>
+    <string name="search">Search</string>
 
 </resources>

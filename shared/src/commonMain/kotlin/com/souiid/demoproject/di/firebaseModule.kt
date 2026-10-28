@@ -53,7 +53,7 @@ import com.souiid.demoproject.ui.screens.auth.signup.description.SignUpDescripti
 import com.souiid.demoproject.ui.screens.auth.signup.name.SignUpNameViewModel
 import org.koin.dsl.module
 
-val appModule = module {
+val firebaseModule = module {
 
     //REPOSITORY
 
