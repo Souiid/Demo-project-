@@ -56,7 +56,7 @@ sealed interface Route {
 
 //__________________________________________________________
 
-    //DATASTORE
+    //ROOM
     @Serializable
-    data object DataStore : Route
+    data object Room : Route
 }

@@ -3,7 +3,7 @@
 
     <string name="firebase">Firebase</string>
     <string name="ktor">Ktor</string>
-    <string name="datastore">DataStore</string>
+    <string name="room">Room</string>
 
     <string name="save">Save</string>
     <string name="name">Name</string>

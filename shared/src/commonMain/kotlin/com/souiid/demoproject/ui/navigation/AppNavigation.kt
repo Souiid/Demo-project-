@@ -22,9 +22,13 @@ import com.souiid.demoproject.ui.components.others.AppBottomBar
 import com.souiid.demoproject.ui.components.others.AppIcon
 import com.souiid.demoproject.ui.components.others.BottomBarItem
 import com.souiid.demoproject.ui.components.others.TTopBar
-import com.souiid.demoproject.ui.screens.app.datastore.DataStoreScreen
+import com.souiid.demoproject.ui.screens.app.room.DataStoreScreen
 import com.souiid.demoproject.ui.screens.app.firebase.notification.NotificationBadgeViewModel
-import com.souiid.demoproject.ui.screens.app.ktor.home.HomeMealScreen
+import demoproject.shared.generated.resources.Res
+import demoproject.shared.generated.resources.firebase
+import demoproject.shared.generated.resources.ktor
+import demoproject.shared.generated.resources.room
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 
 @Composable
@@ -61,14 +65,14 @@ fun AppNavigation() {
     val selectedItem = when {
         destination?.hierarchy?.any { it.hasRoute<Route.Firebase>() } == true -> BottomBarItem.FIREBASE
         destination?.hierarchy?.any { it.hasRoute<Route.Ktor>() } == true -> BottomBarItem.KTOR
-        destination?.hasRoute<Route.DataStore>() == true -> BottomBarItem.DATASTORE
+        destination?.hasRoute<Route.Room>() == true -> BottomBarItem.ROOM
         else -> BottomBarItem.FIREBASE
     }
 
     val isNotPrimaryScreen = when {
         destination?.hasRoute<Route.FirebaseFeed>() == true -> false
         destination?.hasRoute<Route.HomeMeal>() == true -> false
-        destination?.hasRoute<Route.DataStore>() == true -> false
+        destination?.hasRoute<Route.Room>() == true -> false
         else -> true
     }
 
@@ -76,9 +80,9 @@ fun AppNavigation() {
         topBar = {
             TTopBar(
                 title = when (selectedItem) {
-                    BottomBarItem.FIREBASE -> "Firebase"
-                    BottomBarItem.KTOR -> "Ktor"
-                    BottomBarItem.DATASTORE -> "DataStore"
+                    BottomBarItem.FIREBASE -> stringResource(Res.string.firebase)
+                    BottomBarItem.KTOR -> stringResource(Res.string.ktor)
+                    BottomBarItem.ROOM -> stringResource(Res.string.room)
                 },
                 onBack = if (isNotPrimaryScreen) {
                     { navController.popBackStack() }
@@ -148,7 +152,7 @@ fun AppNavigation() {
 
             ktorNavigation(navController)
 
-            composable<Route.DataStore> {
+            composable<Route.Room> {
                 DataStoreScreen()
             }
         }

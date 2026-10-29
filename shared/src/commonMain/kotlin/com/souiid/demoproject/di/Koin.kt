@@ -7,6 +7,11 @@ fun initKoin(config: KoinAppDeclaration? = null) {
 
     startKoin {
         config?.invoke(this)
-        modules(firebaseModule, ktorModule)
+        modules(
+            firebaseModule,
+            ktorModule,
+            databaseModule,
+            platformDatabaseModule
+        )
     }
 }

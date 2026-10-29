@@ -8,7 +8,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import com.souiid.demoproject.ui.navigation.Route
 import demoproject.shared.generated.resources.Res
 import demoproject.shared.generated.resources.firebase
-import demoproject.shared.generated.resources.datastore
+import demoproject.shared.generated.resources.room
 import demoproject.shared.generated.resources.ktor
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
@@ -21,7 +21,7 @@ enum class BottomBarItem(
 ) {
     FIREBASE(Res.string.firebase, Route.FirebaseFeed(), AppIcon.Firebase, AppIcon.UnselectedFirebase),
     KTOR(Res.string.ktor, Route.Ktor, AppIcon.Ktor, AppIcon.UnselectedKtor),
-    DATASTORE(Res.string.datastore, Route.DataStore, AppIcon.DataStore, AppIcon.UnselectedDataStore)
+    ROOM(Res.string.room, Route.Room, AppIcon.Room, AppIcon.UnselectedRoom)
 }
 
 @Composable
