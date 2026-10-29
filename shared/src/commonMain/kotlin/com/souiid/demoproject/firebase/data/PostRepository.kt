@@ -17,7 +17,7 @@ import kotlinx.coroutines.flow.map
 
 class PostRepository : IPostRepository {
 
-    private val functions = Firebase.functions
+    private val functions = Firebase.functions("europe-west1")
     private val firestore = Firebase.firestore
 
     override suspend fun createPost(content: String): AppResult<Unit> {
@@ -67,7 +67,7 @@ class PostRepository : IPostRepository {
 
     override suspend fun likePost(postId: String): AppResult<Unit> {
         return try {
-            Firebase.functions.httpsCallable("likePost").invoke(mapOf("postId" to postId))
+            functions.httpsCallable("likePost").invoke(mapOf("postId" to postId))
             AppResult.Success(Unit)
         } catch (e: Exception) {
             AppResult.Failure(AppError.Unknown())
@@ -76,7 +76,7 @@ class PostRepository : IPostRepository {
 
     override suspend fun unlikePost(postId: String): AppResult<Unit> {
         return try {
-            Firebase.functions.httpsCallable("unlikePost").invoke(mapOf("postId" to postId))
+            functions.httpsCallable("unlikePost").invoke(mapOf("postId" to postId))
             AppResult.Success(Unit)
         } catch (e: Exception) {
             AppResult.Failure(AppError.Unknown())

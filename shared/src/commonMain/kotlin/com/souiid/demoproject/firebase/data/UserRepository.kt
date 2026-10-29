@@ -20,7 +20,7 @@ class UserRepository : IUserRepository {
 
     private val firestore = Firebase.firestore
     private val auth: FirebaseAuth = Firebase.auth
-    private val functions = Firebase.functions
+    private val functions = Firebase.functions("europe-west1")
 
     private val _currentUser = MutableStateFlow<User?>(null)
     override val currentUser = _currentUser.asStateFlow()

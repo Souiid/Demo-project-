@@ -1,12 +1,16 @@
-const {setGlobalOptions} = require("firebase-functions");
+const {setGlobalOptions} = require("firebase-functions/v2");
 const {onCall, HttpsError} = require("firebase-functions/v2/https");
 const admin = require("firebase-admin");
 
-setGlobalOptions({maxInstances: 10});
+setGlobalOptions({
+  region: "europe-west1",
+  maxInstances: 10,
+});
 
 admin.initializeApp();
 
 const db = admin.firestore();
+
 
 /**
  * Sends a Firebase Cloud Messaging notification.
