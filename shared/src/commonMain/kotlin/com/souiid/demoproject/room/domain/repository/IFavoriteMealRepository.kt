@@ -1,4 +1,4 @@
-package com.souiid.demoproject.room.domain
+package com.souiid.demoproject.room.domain.repository
 
 import com.souiid.demoproject.ktor.domain.model.Meal
 import kotlinx.coroutines.flow.Flow

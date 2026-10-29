@@ -5,7 +5,7 @@ import com.souiid.demoproject.room.data.local.FavoriteMealDao
 import com.souiid.demoproject.room.data.mapper.toDomain
 import com.souiid.demoproject.room.data.mapper.toFavoriteEntity
 import com.souiid.demoproject.room.data.mapper.toFavoriteIngredientEntities
-import com.souiid.demoproject.room.domain.IFavoriteMealRepository
+import com.souiid.demoproject.room.domain.repository.IFavoriteMealRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlin.time.Clock
