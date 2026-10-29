@@ -6,7 +6,7 @@ import com.souiid.demoproject.ktor.domain.repository.IMealRepository
 import com.souiid.demoproject.ktor.domain.usecase.GetMealCategoriesUseCase
 import com.souiid.demoproject.ktor.domain.usecase.GetMealsByCategoryUseCase
 import com.souiid.demoproject.ktor.domain.usecase.SearchMealsUseCase
-import com.souiid.demoproject.ui.screens.app.ktor.HomeMealViewModel
+import com.souiid.demoproject.ui.screens.app.ktor.home.HomeMealViewModel
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.serialization.kotlinx.json.json

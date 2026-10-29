@@ -24,7 +24,7 @@ import com.souiid.demoproject.ui.components.others.BottomBarItem
 import com.souiid.demoproject.ui.components.others.TTopBar
 import com.souiid.demoproject.ui.screens.app.datastore.DataStoreScreen
 import com.souiid.demoproject.ui.screens.app.firebase.notification.NotificationBadgeViewModel
-import com.souiid.demoproject.ui.screens.app.ktor.HomeMealScreen
+import com.souiid.demoproject.ui.screens.app.ktor.home.HomeMealScreen
 import org.koin.compose.koinInject
 
 @Composable
@@ -60,12 +60,17 @@ fun AppNavigation() {
 
     val selectedItem = when {
         destination?.hierarchy?.any { it.hasRoute<Route.Firebase>() } == true -> BottomBarItem.FIREBASE
-        destination?.hasRoute<Route.Ktor>() == true -> BottomBarItem.KTOR
+        destination?.hierarchy?.any { it.hasRoute<Route.Ktor>() } == true -> BottomBarItem.KTOR
         destination?.hasRoute<Route.DataStore>() == true -> BottomBarItem.DATASTORE
         else -> BottomBarItem.FIREBASE
     }
 
-    val isNotPrimaryScreen = destination?.hasRoute<Route.FirebaseFeed>() == false
+    val isNotPrimaryScreen = when {
+        destination?.hasRoute<Route.FirebaseFeed>() == true -> false
+        destination?.hasRoute<Route.HomeMeal>() == true -> false
+        destination?.hasRoute<Route.DataStore>() == true -> false
+        else -> true
+    }
 
     Scaffold(
         topBar = {
@@ -141,9 +146,7 @@ fun AppNavigation() {
         ) {
             firebaseNavigation(navController)
 
-            composable<Route.Ktor> {
-                HomeMealScreen()
-            }
+            ktorNavigation(navController)
 
             composable<Route.DataStore> {
                 DataStoreScreen()

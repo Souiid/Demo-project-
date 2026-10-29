@@ -1,18 +1,13 @@
 package com.souiid.demoproject.ui.navigation
 
-import com.souiid.demoproject.ui.screens.app.firebase.profile.ProfileListType
 import kotlinx.serialization.Serializable
 
 sealed interface Route {
 
+    //FIREBASE
+
     @Serializable
     data object Firebase : Route
-
-    @Serializable
-    data object Ktor : Route
-
-    @Serializable
-    data object DataStore : Route
 
     @Serializable
     data object SignIn : Route
@@ -46,4 +41,22 @@ sealed interface Route {
 
     @Serializable
     data object NotificationCenter : Route
+
+//__________________________________________________________
+
+    //KTOR
+    @Serializable
+    data object Ktor : Route
+
+    @Serializable
+    data object HomeMeal : Route
+
+    @Serializable
+    data class MealDetail(val mealId: String)
+
+//__________________________________________________________
+
+    //DATASTORE
+    @Serializable
+    data object DataStore : Route
 }

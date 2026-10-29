@@ -1,4 +1,4 @@
-package com.souiid.demoproject.ui.screens.app.ktor
+package com.souiid.demoproject.ui.screens.app.ktor.home
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -28,7 +28,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 
 @Composable
-fun HomeMealScreen() {
+fun HomeMealScreen(onMealClick: (String) -> Unit) {
     val viewModel: HomeMealViewModel = koinInject()
     val categories by viewModel.categories.collectAsState()
     val selectedCategory by viewModel.selectedCategory.collectAsState()
@@ -86,7 +86,12 @@ fun HomeMealScreen() {
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 items(meals, key = { it.id }) { meal ->
-                    MealItem(meal)
+                    MealItem(
+                        meal,
+                        onClick = {
+                            onMealClick(meal.id)
+                        }
+                    )
                 }
             }
         }

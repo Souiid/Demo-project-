@@ -1,4 +1,4 @@
-package com.souiid.demoproject.ui.screens.app.ktor
+package com.souiid.demoproject.ui.screens.app.ktor.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

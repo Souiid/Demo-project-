@@ -1,5 +1,6 @@
 package com.souiid.demoproject.ui.components.item.ktor
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
@@ -13,8 +14,12 @@ import com.souiid.demoproject.ui.components.others.TKamelImage
 import com.souiid.demoproject.ui.components.text.TText
 
 @Composable
-fun MealItem(meal: Meal) {
+fun MealItem(
+    meal: Meal,
+    onClick: () -> Unit
+) {
     Column(
+        modifier = Modifier.clickable(onClick = onClick),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         meal.imageUrl?.let { imageUrl ->
