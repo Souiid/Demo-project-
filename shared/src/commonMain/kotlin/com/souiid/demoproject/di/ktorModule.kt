@@ -40,6 +40,5 @@ val ktorModule = module {
 
     //VIEWMODEL
     factory { HomeMealViewModel(get(), get(), get()) }
-    factory { MealDetailViewModel(get(), get(), get(), get()) }
-
+    factory { MealDetailViewModel(get(), get(), get(), get(), get()) }
 }

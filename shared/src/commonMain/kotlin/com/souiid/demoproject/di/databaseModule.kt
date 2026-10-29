@@ -6,6 +6,7 @@ import com.souiid.demoproject.room.data.local.AppDatabase
 import com.souiid.demoproject.room.data.repository.FavoriteMealRepository
 import com.souiid.demoproject.room.domain.repository.IFavoriteMealRepository
 import com.souiid.demoproject.room.domain.usecase.AddFavoriteMealUseCase
+import com.souiid.demoproject.room.domain.usecase.GetFavoriteMealByIdUseCase
 import com.souiid.demoproject.room.domain.usecase.ObserveFavoriteMealsUseCase
 import com.souiid.demoproject.room.domain.usecase.ObserveIsFavoriteUseCase
 import com.souiid.demoproject.room.domain.usecase.RemoveFavoriteMealUseCase
@@ -31,5 +32,6 @@ val databaseModule = module {
     factory { AddFavoriteMealUseCase(get()) }
     factory { RemoveFavoriteMealUseCase(get()) }
     factory { FavoriteMealsViewModel(get()) }
+    factory { GetFavoriteMealByIdUseCase(get()) }
 
 }

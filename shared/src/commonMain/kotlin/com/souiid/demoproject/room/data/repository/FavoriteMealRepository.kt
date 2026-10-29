@@ -34,4 +34,10 @@ class FavoriteMealRepository(
     override suspend fun removeFavorite(mealId: String) {
         dao.deleteFavorite(mealId)
     }
+
+    override suspend fun getFavoriteById(mealId: String): Meal? {
+        val favorite = dao.getFavoriteById(mealId) ?: return null
+        val ingredients = dao.getIngredients(mealId)
+        return favorite.toDomain(ingredients)
+    }
 }

@@ -8,4 +8,5 @@ interface IFavoriteMealRepository {
     fun observeIsFavorite(mealId: String): Flow<Boolean>
     suspend fun addFavorite(meal: Meal)
     suspend fun removeFavorite(mealId: String)
+    suspend fun getFavoriteById(mealId: String): Meal?
 }

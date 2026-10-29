@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.souiid.demoproject.ktor.domain.model.Meal
 import com.souiid.demoproject.ktor.domain.usecase.GetMealByIdUseCase
 import com.souiid.demoproject.room.domain.usecase.AddFavoriteMealUseCase
+import com.souiid.demoproject.room.domain.usecase.GetFavoriteMealByIdUseCase
 import com.souiid.demoproject.room.domain.usecase.ObserveIsFavoriteUseCase
 import com.souiid.demoproject.room.domain.usecase.RemoveFavoriteMealUseCase
 import kotlinx.coroutines.CancellationException
@@ -15,6 +16,7 @@ import kotlinx.coroutines.launch
 
 class MealDetailViewModel(
     private val getMealByIdUseCase: GetMealByIdUseCase,
+    private val getFavoriteMealByIdUseCase: GetFavoriteMealByIdUseCase,
     private val observeIsFavoriteUseCase: ObserveIsFavoriteUseCase,
     private val addFavoriteMealUseCase: AddFavoriteMealUseCase,
     private val removeFavoriteMealUseCase: RemoveFavoriteMealUseCase
@@ -35,6 +37,8 @@ class MealDetailViewModel(
     private var favoriteJob: Job? = null
     private var isUpdatingFavorite = false
 
+
+
     fun loadMeal(mealId: String) {
         favoriteJob?.cancel()
         _isFavorite.value = false
@@ -48,7 +52,9 @@ class MealDetailViewModel(
             _meal.value = null
 
             try {
-                _meal.value = getMealByIdUseCase(mealId)
+                val localMeal = getFavoriteMealByIdUseCase(mealId)
+                _meal.value = localMeal ?: getMealByIdUseCase(mealId)
+
                 if (_meal.value == null) _error.value = "Meal not found"
             } catch (e: CancellationException) {
                 throw e
@@ -59,6 +65,8 @@ class MealDetailViewModel(
             }
         }
     }
+
+
 
     fun toggleFavorite() {
         val currentMeal = _meal.value ?: return
