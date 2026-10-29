@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -23,15 +24,15 @@ import demoproject.shared.generated.resources.Res
 import demoproject.shared.generated.resources.*
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
+import demoproject.shared.generated.resources.removeFromFavorites
 
 @Composable
-fun MealDetailScreen(
-    mealId: String
-) {
+fun MealDetailScreen(mealId: String) {
     val viewModel: MealDetailViewModel = koinInject()
     val meal by viewModel.meal.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     val error by viewModel.error.collectAsState()
+    val isFavorite by viewModel.isFavorite.collectAsState()
 
     LaunchedEffect(mealId) {
         viewModel.loadMeal(mealId)
@@ -53,14 +54,22 @@ fun MealDetailScreen(
             }
 
             meal != null -> {
-                MealDetailContent(meal = meal!!)
+                MealDetailContent(
+                    meal = meal!!,
+                    isFavorite = isFavorite,
+                    onFavoriteClick = viewModel::toggleFavorite
+                )
             }
         }
     }
 }
 
 @Composable
-private fun MealDetailContent(meal: Meal) {
+private fun MealDetailContent(
+    meal: Meal,
+    isFavorite: Boolean,
+    onFavoriteClick: () -> Unit
+) {
     Column(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -79,14 +88,17 @@ private fun MealDetailContent(meal: Meal) {
             )
 
             IconButton(
-                onClick = {}, // Favorites will be implemented later
+                onClick = onFavoriteClick,
                 modifier = Modifier.align(Alignment.TopEnd)
                     .padding(12.dp)
                     .background(MaterialTheme.colorScheme.surface, CircleShape)
             ) {
                 Icon(
-                    imageVector = Icons.Outlined.FavoriteBorder,
-                    contentDescription = stringResource(Res.string.addToFavorites)
+                    imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
+                    contentDescription = stringResource(
+                        if (isFavorite) Res.string.removeFromFavorites else Res.string.addToFavorites
+                    ),
+                    tint = if (isFavorite) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface
                 )
             }
         }

@@ -90,5 +90,6 @@
     <string name="ingredients">Ingredients</string>
     <string name="instructions">Instructions</string>
     <string name="addToFavorites">Add to favorites</string>
+    <string name="removeFromFavorites">Remove from favorites</string>
 
 </resources>
