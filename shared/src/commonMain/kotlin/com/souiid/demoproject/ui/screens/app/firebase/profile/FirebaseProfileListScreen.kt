@@ -1,6 +1,5 @@
 package com.souiid.demoproject.ui.screens.app.firebase.profile
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
@@ -9,11 +8,10 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.souiid.demoproject.ui.components.PostItem
-import com.souiid.demoproject.ui.components.UserItem
+import com.souiid.demoproject.ui.components.item.firebase.PostItem
+import com.souiid.demoproject.ui.components.item.firebase.UserItem
 import com.souiid.demoproject.ui.components.others.TScreen
 import com.souiid.demoproject.ui.components.text.TText
 import com.souiid.demoproject.ui.components.text.TTextStyle

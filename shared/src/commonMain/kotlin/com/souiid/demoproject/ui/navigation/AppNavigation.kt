@@ -24,7 +24,7 @@ import com.souiid.demoproject.ui.components.others.BottomBarItem
 import com.souiid.demoproject.ui.components.others.TTopBar
 import com.souiid.demoproject.ui.screens.app.datastore.DataStoreScreen
 import com.souiid.demoproject.ui.screens.app.firebase.notification.NotificationBadgeViewModel
-import com.souiid.demoproject.ui.screens.app.ktor.MealCategoryScreen
+import com.souiid.demoproject.ui.screens.app.ktor.HomeMealScreen
 import org.koin.compose.koinInject
 
 @Composable
@@ -142,7 +142,7 @@ fun AppNavigation() {
             firebaseNavigation(navController)
 
             composable<Route.Ktor> {
-                MealCategoryScreen()
+                HomeMealScreen()
             }
 
             composable<Route.DataStore> {

@@ -1,4 +1,4 @@
-package com.souiid.demoproject.ui.components
+package com.souiid.demoproject.ui.components.item.firebase
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement

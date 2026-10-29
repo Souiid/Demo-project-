@@ -4,8 +4,9 @@ import com.souiid.demoproject.ktor.data.remote.MealApi
 import com.souiid.demoproject.ktor.data.repository.MealRepository
 import com.souiid.demoproject.ktor.domain.repository.IMealRepository
 import com.souiid.demoproject.ktor.domain.usecase.GetMealCategoriesUseCase
+import com.souiid.demoproject.ktor.domain.usecase.GetMealsByCategoryUseCase
 import com.souiid.demoproject.ktor.domain.usecase.SearchMealsUseCase
-import com.souiid.demoproject.ui.screens.app.ktor.MealCategoryListViewModel
+import com.souiid.demoproject.ui.screens.app.ktor.HomeMealViewModel
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.serialization.kotlinx.json.json
@@ -32,7 +33,8 @@ val ktorModule = module {
     //USECASE
     factory { SearchMealsUseCase(get()) }
     factory { GetMealCategoriesUseCase(get()) }
+    factory { GetMealsByCategoryUseCase(get()) }
 
     //VIEWMODEL
-    factory { MealCategoryListViewModel(get()) }
+    factory { HomeMealViewModel(get(), get()) }
 }

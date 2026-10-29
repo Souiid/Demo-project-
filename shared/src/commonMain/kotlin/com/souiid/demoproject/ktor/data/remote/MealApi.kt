@@ -21,4 +21,10 @@ class MealApi(
     suspend fun getCategories(): MealCategoryResponseDTO {
         return client.get("$baseUrl/categories.php").body()
     }
+
+    suspend fun getMealsByCategory(category: String): MealResponseDTO {
+        return client.get("$baseUrl/filter.php") {
+            parameter("c", category)
+        }.body()
+    }
 }

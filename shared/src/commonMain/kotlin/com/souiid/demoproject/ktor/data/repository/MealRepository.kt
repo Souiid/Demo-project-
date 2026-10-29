@@ -17,4 +17,8 @@ class MealRepository(
     override suspend fun getCategories(): List<MealCategory> {
         return mealApi.getCategories().categories.map { it.toDomain() }
     }
+
+    override suspend fun getMealsByCategory(category: String): List<Meal> {
+        return mealApi.getMealsByCategory(category).meals?.map { it.toDomain() } ?: emptyList()
+    }
 }
