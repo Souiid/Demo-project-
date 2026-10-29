@@ -22,7 +22,7 @@ import com.souiid.demoproject.ui.components.others.AppBottomBar
 import com.souiid.demoproject.ui.components.others.AppIcon
 import com.souiid.demoproject.ui.components.others.BottomBarItem
 import com.souiid.demoproject.ui.components.others.TTopBar
-import com.souiid.demoproject.ui.screens.app.room.DataStoreScreen
+import com.souiid.demoproject.ui.screens.app.room.FavoriteMealsScreen
 import com.souiid.demoproject.ui.screens.app.firebase.notification.NotificationBadgeViewModel
 import demoproject.shared.generated.resources.Res
 import demoproject.shared.generated.resources.firebase
@@ -153,7 +153,11 @@ fun AppNavigation() {
             ktorNavigation(navController)
 
             composable<Route.Room> {
-                DataStoreScreen()
+                FavoriteMealsScreen(
+                    onMealClick = { mealId ->
+                        navController.navigate(Route.MealDetail(mealId))
+                    }
+                )
             }
         }
     }

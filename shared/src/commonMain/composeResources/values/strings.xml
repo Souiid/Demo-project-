@@ -91,5 +91,6 @@
     <string name="instructions">Instructions</string>
     <string name="addToFavorites">Add to favorites</string>
     <string name="removeFromFavorites">Remove from favorites</string>
+    <string name="noFavoriteMeals">You have no favorites meals</string>
 
 </resources>
