@@ -31,7 +31,8 @@ fun MealCategoryItem(
     ) {
         TKamelImage(
             imageUrl = category.imageUrl,
-            modifier = Modifier.size(64.dp).clip(RoundedCornerShape(12.dp))
+            modifier = Modifier.size(64.dp),
+            shape = RoundedCornerShape(12.dp)
         )
 
         TText(

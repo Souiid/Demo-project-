@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.souiid.demoproject.ktor.domain.model.Meal
 import com.souiid.demoproject.ui.components.others.TKamelImage
@@ -21,8 +20,8 @@ fun MealItem(meal: Meal) {
         meal.imageUrl?.let { imageUrl ->
             TKamelImage(
                 imageUrl = imageUrl,
-                modifier = Modifier.fillMaxWidth().aspectRatio(1f)
-                    .clip(RoundedCornerShape(12.dp))
+                modifier = Modifier.fillMaxWidth().aspectRatio(1f),
+                shape = RoundedCornerShape(12.dp)
             )
         }
 

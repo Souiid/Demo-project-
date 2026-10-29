@@ -19,6 +19,12 @@ import com.souiid.demoproject.ui.components.item.ktor.MealCategoryItem
 import com.souiid.demoproject.ui.components.item.ktor.MealItem
 import com.souiid.demoproject.ui.components.others.TScreen
 import com.souiid.demoproject.ui.components.text.TText
+import com.souiid.demoproject.ui.components.textfield.TTextField
+import com.souiid.demoproject.ui.components.textfield.TTextFieldType
+import demoproject.shared.generated.resources.Res
+import demoproject.shared.generated.resources.results
+import demoproject.shared.generated.resources.searchMeal
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 
 @Composable
@@ -27,6 +33,7 @@ fun HomeMealScreen() {
     val categories by viewModel.categories.collectAsState()
     val selectedCategory by viewModel.selectedCategory.collectAsState()
     val meals by viewModel.meals.collectAsState()
+    val searchQuery by viewModel.searchQuery.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     val error by viewModel.error.collectAsState()
 
@@ -35,20 +42,33 @@ fun HomeMealScreen() {
             modifier = Modifier.fillMaxSize().padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            LazyRow(
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                items(categories, key = { it.id }) { category ->
-                    MealCategoryItem(
-                        category = category,
-                        isSelected = selectedCategory?.id == category.id,
-                        onClick = { viewModel.selectCategory(category) }
-                    )
+            TTextField(
+                value = searchQuery,
+                onValueChange = viewModel::updateSearchQuery,
+                type = TTextFieldType.SEARCH,
+                labelTitle = stringResource(Res.string.searchMeal)
+            )
+
+            if (searchQuery.isBlank()) {
+                LazyRow(
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    items(categories, key = { it.id }) { category ->
+                        MealCategoryItem(
+                            category = category,
+                            isSelected = selectedCategory?.id == category.id,
+                            onClick = { viewModel.selectCategory(category) }
+                        )
+                    }
                 }
             }
 
-            selectedCategory?.let {
-                TText(text = it.name)
+            if (searchQuery.isNotBlank()) {
+                TText(text = stringResource(Res.string.results))
+            } else {
+                selectedCategory?.let {
+                    TText(text = it.name)
+                }
             }
 
             if (isLoading) {
@@ -61,6 +81,7 @@ fun HomeMealScreen() {
 
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
+                modifier = Modifier.fillMaxSize(),
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {

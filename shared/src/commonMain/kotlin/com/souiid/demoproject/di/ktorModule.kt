@@ -36,5 +36,5 @@ val ktorModule = module {
     factory { GetMealsByCategoryUseCase(get()) }
 
     //VIEWMODEL
-    factory { HomeMealViewModel(get(), get()) }
+    factory { HomeMealViewModel(get(), get(), get()) }
 }
