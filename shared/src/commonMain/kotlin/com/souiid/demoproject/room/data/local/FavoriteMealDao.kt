@@ -10,8 +10,9 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface FavoriteMealDao {
 
+    @Transaction
     @Query("SELECT * FROM favorite_meals")
-    fun observeFavorites(): Flow<List<FavoriteMealEntity>>
+    fun observeFavorites(): Flow<List<FavoriteMealWithIngredients>>
 
     @Query("SELECT * FROM favorite_meals WHERE id = :mealId LIMIT 1")
     suspend fun getFavoriteById(mealId: String): FavoriteMealEntity?
