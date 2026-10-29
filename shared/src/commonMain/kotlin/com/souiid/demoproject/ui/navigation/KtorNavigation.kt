@@ -21,8 +21,7 @@ fun NavGraphBuilder.ktorNavigation(navController: NavController) {
         composable<Route.MealDetail> { backStackEntry ->
             val route = backStackEntry.toRoute<Route.MealDetail>()
             MealDetailScreen(
-                mealId = route.mealId,
-                onBack = { navController.popBackStack() }
+                mealId = route.mealId
             )
         }
     }

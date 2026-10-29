@@ -1,6 +1,7 @@
 package com.souiid.demoproject.ktor.data.repository
 
 import com.souiid.demoproject.ktor.data.mapper.toDomain
+import com.souiid.demoproject.ktor.data.mapper.toMealDetail
 import com.souiid.demoproject.ktor.data.remote.MealApi
 import com.souiid.demoproject.ktor.domain.model.Meal
 import com.souiid.demoproject.ktor.domain.model.MealCategory
@@ -20,5 +21,9 @@ class MealRepository(
 
     override suspend fun getMealsByCategory(category: String): List<Meal> {
         return mealApi.getMealsByCategory(category).meals?.map { it.toDomain() } ?: emptyList()
+    }
+
+    override suspend fun getMealById(mealId: String): Meal? {
+        return mealApi.getMealById(mealId).meals?.firstOrNull()?.toMealDetail()
     }
 }

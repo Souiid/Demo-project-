@@ -6,5 +6,6 @@ data class Meal(
     val category: String?,
     val area: String?,
     val instructions: String?,
-    val imageUrl: String?
+    val imageUrl: String?,
+    val ingredients: List<MealIngredient> = emptyList()
 )

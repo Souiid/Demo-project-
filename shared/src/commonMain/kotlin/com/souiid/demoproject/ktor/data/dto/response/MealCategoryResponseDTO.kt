@@ -1,4 +1,4 @@
-package com.souiid.demoproject.ktor.data.dto
+package com.souiid.demoproject.ktor.data.dto.response
 
 import kotlinx.serialization.Serializable
 

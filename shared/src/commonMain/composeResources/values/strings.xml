@@ -87,5 +87,8 @@
     <string name="feed">Feed</string>
     <string name="searchMeal">Search meal</string>
     <string name="search">Search</string>
+    <string name="ingredients">Ingredients</string>
+    <string name="instructions">Instructions</string>
+    <string name="addToFavorites">Add to favorites</string>
 
 </resources>

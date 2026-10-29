@@ -7,4 +7,5 @@ interface IMealRepository {
     suspend fun searchMeals(query: String): List<Meal>
     suspend fun getCategories(): List<MealCategory>
     suspend fun getMealsByCategory(category: String): List<Meal>
+    suspend fun getMealById(mealId: String): Meal?
 }

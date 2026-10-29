@@ -24,13 +24,9 @@ fun TExpandableSections(
     sectionContent: @Composable (Int) -> Unit
 ) {
 
-    LazyColumn {
-
-        items(sectionTitles.size) { index ->
-
-            ExpandableSectionItem(
-                title = sectionTitles[index]
-            ) {
+    Column {
+        sectionTitles.forEachIndexed { index, title ->
+            ExpandableSectionItem(title = title) {
                 sectionContent(index)
             }
         }
