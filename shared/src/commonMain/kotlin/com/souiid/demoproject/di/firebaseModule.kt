@@ -18,6 +18,7 @@ import com.souiid.demoproject.firebase.domain.usecase.notification.MarkNotificat
 import com.souiid.demoproject.firebase.domain.usecase.notification.ObserveNotificationsUseCase
 import com.souiid.demoproject.firebase.domain.usecase.notification.SaveNotificationTokenUseCase
 import com.souiid.demoproject.firebase.domain.usecase.post.CreatePostUseCase
+import com.souiid.demoproject.firebase.domain.usecase.post.DeletePostUseCase
 import com.souiid.demoproject.firebase.domain.usecase.post.GetFeedPostsUseCase
 import com.souiid.demoproject.firebase.domain.usecase.post.GetLikedPostIdsUseCase
 import com.souiid.demoproject.firebase.domain.usecase.post.GetUserPostsUseCase
@@ -105,6 +106,7 @@ val firebaseModule = module {
     factory { SaveNotificationTokenUseCase(get()) }
     factory { ObserveNotificationsUseCase(get()) }
     factory { MarkNotificationsAsReadUseCase(get()) }
+    factory { DeletePostUseCase(get()) }
 
 //________________________________________________________
 
@@ -119,7 +121,7 @@ val firebaseModule = module {
     factory { FirebaseProfileViewModel(get(), get(), get(), get(), get(), get()) }
     factory { EditProfileViewModel(get(), get(), get()) }
     factory { FriendsViewModel(get(), get(), get(), get()) }
-    factory { FirebaseProfileListViewModel(get(), get(), get(), get(), get(), get(), get()) }
+    factory { FirebaseProfileListViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get()) }
     factory { NotificationCenterViewModel(get(), get()) }
     factory { NotificationBadgeViewModel(get(), get(), get()) }
     single { FollowViewModel(get(), get(), get(), get(), get()) }

@@ -92,5 +92,9 @@
     <string name="addToFavorites">Add to favorites</string>
     <string name="removeFromFavorites">Remove from favorites</string>
     <string name="noFavoriteMeals">You have no favorites meals</string>
+    <string name="delete_post">Delete post</string>
+    <string name="delete_post_confirmation">Are you sure you want to delete this post? This action cannot be undone.</string>
+    <string name="delete">Delete</string>
+    <string name="cancel">Cancel</string>
 
 </resources>

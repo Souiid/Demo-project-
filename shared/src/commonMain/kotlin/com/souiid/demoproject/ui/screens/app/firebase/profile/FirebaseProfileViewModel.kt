@@ -38,6 +38,8 @@ class FirebaseProfileViewModel(
     private val _profileStats = MutableStateFlow(ProfileStats())
     val profileStats = _profileStats.asStateFlow()
 
+    private var appliedDeletionCount = 0
+
     var isLoadingStats by mutableStateOf(false)
         private set
 
@@ -49,25 +51,18 @@ class FirebaseProfileViewModel(
 
     init {
         viewModelScope.launch {
-            var previousIds: Set<String>? = null
+            feedViewModel.deletedPostCounts.collect { counts ->
+                val userId = _displayedUser.value?.id ?: return@collect
+                val total = counts[userId] ?: 0
+                val difference = total - appliedDeletionCount
 
-            followViewModel.followingUserIds.collect { ids ->
-                val previous = previousIds
-                previousIds = ids
-
-                if (previous == null || isLoadingStats) return@collect
-
-                val displayedId = _displayedUser.value?.id ?: return@collect
-                if (displayedId == currentUser.value?.id) return@collect
-
-                val wasFollowing = displayedId in previous
-                val isFollowing = displayedId in ids
-
-                if (wasFollowing != isFollowing) {
+                if (difference > 0 && !isLoadingStats) {
                     _profileStats.value = _profileStats.value.copy(
-                        followers = (_profileStats.value.followers + if (isFollowing) 1 else -1).coerceAtLeast(0)
+                        posts = (_profileStats.value.posts - difference).coerceAtLeast(0)
                     )
                 }
+
+                appliedDeletionCount = total
             }
         }
     }
@@ -80,6 +75,7 @@ class FirebaseProfileViewModel(
             error = null
             _displayedUser.value = null
             _profileStats.value = ProfileStats()
+            appliedDeletionCount = feedViewModel.deletedPostCounts.value[userId ?: currentUser.value?.id] ?: 0
 
             try {
                 val user = currentUser.value
@@ -113,6 +109,7 @@ class FirebaseProfileViewModel(
                     is AppResult.Success -> {
                         if (_displayedUser.value?.id == userId) {
                             _profileStats.value = result.data
+                            appliedDeletionCount = feedViewModel.deletedPostCounts.value[userId] ?: 0
                         }
                     }
                     is AppResult.Failure -> error = result.error

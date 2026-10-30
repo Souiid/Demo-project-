@@ -326,6 +326,41 @@ exports.createPost = onCall(async (request) => {
 
 
 /*
+ * Delete post
+ */
+exports.deletePost = onCall(async (request) => {
+  const userId = request.auth?.uid;
+  const postId = request.data?.postId;
+
+  if (!userId) {
+    throw new HttpsError("unauthenticated", "User must be authenticated.");
+  }
+
+  if (typeof postId !== "string" || !postId.trim()) {
+    throw new HttpsError("invalid-argument", "Post ID is required.");
+  }
+
+  const postRef = db.collection("posts").doc(postId);
+  const post = await postRef.get();
+
+  if (!post.exists) {
+    throw new HttpsError("not-found", "Post not found.");
+  }
+
+  if (post.get("authorId") !== userId) {
+    throw new HttpsError(
+        "permission-denied",
+        "You can only delete your own posts.",
+    );
+  }
+
+  await db.recursiveDelete(postRef);
+
+  return {success: true};
+});
+
+
+/*
  * Like post
  */
 exports.likePost = onCall(async (request) => {
@@ -442,3 +477,5 @@ exports.unlikePost = onCall(async (request) => {
 
   return {isLiked};
 });
+
+

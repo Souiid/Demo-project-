@@ -61,6 +61,7 @@ fun TDialog(
         confirmButton = {
             TButton(
                 text = confirmText,
+                type = TButtonType.REFUSE,
                 onClick = onConfirm
             )
         },
@@ -68,7 +69,7 @@ fun TDialog(
             dismissText?.let {
                 TButton(
                     text = it,
-                    type = TButtonType.REFUSE,
+                    type = TButtonType.NEUTRAL,
                     onClick = onDismiss
                 )
             }

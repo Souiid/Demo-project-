@@ -37,10 +37,18 @@ fun TButton(
     val isEnabled = enabled && !isLoading
 
     when (type) {
-        TButtonType.PRIMARY, TButtonType.REFUSE -> {
-            val isRefuse = type == TButtonType.REFUSE
-            val containerColor = if (isRefuse) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
-            val contentColor = if (isRefuse) MaterialTheme.colorScheme.onError else MaterialTheme.colorScheme.onPrimary
+        TButtonType.PRIMARY, TButtonType.REFUSE, TButtonType.NEUTRAL -> {
+            val containerColor = when (type) {
+                TButtonType.REFUSE -> MaterialTheme.colorScheme.error
+                TButtonType.NEUTRAL -> MaterialTheme.colorScheme.surfaceVariant
+                else -> MaterialTheme.colorScheme.primary
+            }
+
+            val contentColor = when (type) {
+                TButtonType.REFUSE -> MaterialTheme.colorScheme.onError
+                TButtonType.NEUTRAL -> MaterialTheme.colorScheme.onSurface
+                else -> MaterialTheme.colorScheme.onPrimary
+            }
 
             Button(
                 onClick = onClick,

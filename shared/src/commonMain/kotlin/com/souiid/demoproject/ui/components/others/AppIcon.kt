@@ -5,6 +5,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Article
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Language
@@ -19,6 +20,7 @@ import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material.icons.outlined.Language
 import androidx.compose.material.icons.outlined.LocalFireDepartment
 import androidx.compose.material.icons.outlined.Storage
+import androidx.compose.ui.graphics.vector.ImageVector
 
 
 object AppIcon {
@@ -43,6 +45,7 @@ object AppIcon {
     val Person = Icons.Default.Person
 
     val Add = Icons.Default.Add
+    val Delete = Icons.Default.Delete
 
     val Favorite = Icons.Default.Favorite
     val FavoriteBorder = Icons.Default.FavoriteBorder

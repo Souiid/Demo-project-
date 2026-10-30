@@ -7,6 +7,7 @@ import com.souiid.demoproject.firebase.domain.model.AppResult
 import com.souiid.demoproject.firebase.domain.model.LikeSyncState
 import com.souiid.demoproject.firebase.domain.model.Post
 import com.souiid.demoproject.firebase.domain.model.User
+import com.souiid.demoproject.firebase.domain.usecase.post.DeletePostUseCase
 import com.souiid.demoproject.firebase.domain.usecase.post.GetLikedPostIdsUseCase
 import com.souiid.demoproject.firebase.domain.usecase.post.GetUserPostsUseCase
 import com.souiid.demoproject.firebase.domain.usecase.post.LikePostUseCase
@@ -14,6 +15,7 @@ import com.souiid.demoproject.firebase.domain.usecase.post.UnlikePostUseCase
 import com.souiid.demoproject.firebase.domain.usecase.user.FetchUserUseCase
 import com.souiid.demoproject.firebase.domain.usecase.user.GetFollowerUserIdsUseCase
 import com.souiid.demoproject.firebase.domain.usecase.user.GetFollowingUsersUseCase
+import com.souiid.demoproject.ui.screens.app.firebase.feed.FirebaseFeedViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,7 +32,9 @@ class FirebaseProfileListViewModel(
     private val fetchUserUseCase: FetchUserUseCase,
     private val likePostUseCase: LikePostUseCase,
     private val unlikePostUseCase: UnlikePostUseCase,
-    private val getLikedPostIdsUseCase: GetLikedPostIdsUseCase
+    private val getLikedPostIdsUseCase: GetLikedPostIdsUseCase,
+    private val deletePostUseCase: DeletePostUseCase,
+    private val feedViewModel: FirebaseFeedViewModel
 ) : ViewModel() {
 
     private val _posts = MutableStateFlow<List<Post>>(emptyList())
@@ -44,6 +48,9 @@ class FirebaseProfileListViewModel(
 
     private val _author = MutableStateFlow<User?>(null)
     val author = _author.asStateFlow()
+
+    private val _deletingPostIds = MutableStateFlow<Set<String>>(emptySet())
+    val deletingPostIds = _deletingPostIds.asStateFlow()
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading = _isLoading.asStateFlow()
@@ -247,4 +254,38 @@ class FirebaseProfileListViewModel(
         resetLikeSync()
         super.onCleared()
     }
+
+    fun deletePost(postId: String) {
+        val post = _posts.value.find { it.id == postId } ?: return
+        if (_posts.value.none { it.id == postId } || postId in _deletingPostIds.value) return
+
+        _deletingPostIds.value += postId
+        val currentGeneration = generation
+
+        viewModelScope.launch {
+            try {
+                when (val result = deletePostUseCase(postId)) {
+                    is AppResult.Success -> {
+                        if (currentGeneration == generation) {
+                            likeSyncStates.remove(postId)?.debounceJob?.cancel()
+                            likeSyncJobs.remove(postId)?.cancel()
+                            _posts.value = _posts.value.filterNot { it.id == postId }
+                            _likedPostIds.value -= postId
+                        }
+
+                        feedViewModel.notifyPostDeleted(post.authorId)
+                        feedViewModel.refreshPosts()
+                    }
+                    is AppResult.Failure -> {
+                        if (currentGeneration == generation) _error.value = result.error
+                    }
+                }
+            } catch (e: CancellationException) {
+                throw e
+            } finally {
+                _deletingPostIds.value -= postId
+            }
+        }
+    }
+
 }

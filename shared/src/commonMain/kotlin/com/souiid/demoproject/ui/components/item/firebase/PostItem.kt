@@ -1,3 +1,4 @@
+
 package com.souiid.demoproject.ui.components.item.firebase
 
 import androidx.compose.foundation.clickable
@@ -28,6 +29,9 @@ fun PostItem(
     post: Post,
     author: User?,
     isLiked: Boolean = false,
+    isCurrentUser: Boolean = false,
+    isDeleting: Boolean = false,
+    onDelete: () -> Unit = {},
     onLike: () -> Unit = {},
     onAuthorClick: (String) -> Unit
 ) {
@@ -36,30 +40,49 @@ fun PostItem(
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         Row(
-            modifier = Modifier.clickable(onClick = { onAuthorClick(post.authorId) }),
+            modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            TKamelImage(
-                imageUrl = author?.photoUrl.orEmpty(),
-                modifier = Modifier.size(44.dp)
+            Row(
+                modifier = Modifier.weight(1f).clickable { onAuthorClick(post.authorId) },
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                TText(
-                    text = author?.firstName?.firstOrNull()?.toString() ?: "?",
-                    style = TTextStyle.BODY
-                )
+                TKamelImage(
+                    imageUrl = author?.photoUrl.orEmpty(),
+                    modifier = Modifier.size(44.dp)
+                ) {
+                    TText(
+                        text = author?.firstName?.firstOrNull()?.toString() ?: "?",
+                        style = TTextStyle.BODY
+                    )
+                }
+
+                Column {
+                    TText(
+                        text = author?.let { "${it.firstName} ${it.lastName}" } ?: "Unknown user",
+                        style = TTextStyle.SUBTITLE
+                    )
+
+                    TText(
+                        text = PostDateFormatter.format(post.createdAt),
+                        style = TTextStyle.DESCRIPTION
+                    )
+                }
             }
 
-            Column {
-                TText(
-                    text = author?.let { "${it.firstName} ${it.lastName}" } ?: "Unknown user",
-                    style = TTextStyle.SUBTITLE
-                )
-
-                TText(
-                    text = PostDateFormatter.format(post.createdAt),
-                    style = TTextStyle.DESCRIPTION
-                )
+            if (isCurrentUser) {
+                if (isDeleting) {
+                    CircularProgressIndicator(modifier = Modifier.size(24.dp))
+                } else {
+                    IconButton(onClick = onDelete) {
+                        Icon(
+                            imageVector = AppIcon.Delete,
+                            contentDescription = "Delete post"
+                        )
+                    }
+                }
             }
         }
 
@@ -74,6 +97,7 @@ fun PostItem(
         ) {
             IconButton(
                 onClick = onLike,
+                enabled = !isDeleting
             ) {
                 Icon(
                     imageVector = if (isLiked) AppIcon.Favorite else AppIcon.FavoriteBorder,

@@ -31,6 +31,17 @@ class PostRepository : IPostRepository {
         }
     }
 
+    override suspend fun deletePost(postId: String): AppResult<Unit> {
+        return try {
+            functions.httpsCallable("deletePost").invoke(mapOf("postId" to postId))
+            AppResult.Success(Unit)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            AppResult.Failure(AppError.Unknown())
+        }
+    }
+
     override suspend fun getFeedPosts(authorIds: List<String>): AppResult<List<Post>> {
         return try {
             if (authorIds.isEmpty()) return AppResult.Success(emptyList())
