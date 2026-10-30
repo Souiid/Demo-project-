@@ -40,6 +40,7 @@ import com.souiid.demoproject.firebase.domain.usecase.user.UnfollowUserUseCase
 import com.souiid.demoproject.firebase.domain.usecase.user.UpdateUserUseCase
 import com.souiid.demoproject.firebase.domain.usecase.user.UploadPhotoUseCase
 import com.souiid.demoproject.ui.navigation.authgate.AuthGateViewModel
+import com.souiid.demoproject.ui.screens.app.firebase.FollowViewModel
 import com.souiid.demoproject.ui.screens.app.firebase.editprofile.EditProfileViewModel
 import com.souiid.demoproject.ui.screens.app.firebase.feed.FirebaseFeedViewModel
 import com.souiid.demoproject.ui.screens.app.firebase.profile.FirebaseProfileViewModel
@@ -115,10 +116,11 @@ val firebaseModule = module {
     factory { SignUpDescriptionViewModel(get(), get()) }
     factory { SignUpCredentialViewModel(get()) }
     factory { SignInViewModel(get()) }
-    factory { FirebaseProfileViewModel(get(), get(), get(), get(), get(), get(), get(), get()) }
+    factory { FirebaseProfileViewModel(get(), get(), get(), get(), get(), get()) }
     factory { EditProfileViewModel(get(), get(), get()) }
-    factory { FriendsViewModel(get(), get(), get(), get(), get(), get(), get()) }
+    factory { FriendsViewModel(get(), get(), get(), get()) }
     factory { FirebaseProfileListViewModel(get(), get(), get(), get(), get(), get(), get()) }
     factory { NotificationCenterViewModel(get(), get()) }
     factory { NotificationBadgeViewModel(get(), get(), get()) }
+    single { FollowViewModel(get(), get(), get(), get(), get()) }
 }

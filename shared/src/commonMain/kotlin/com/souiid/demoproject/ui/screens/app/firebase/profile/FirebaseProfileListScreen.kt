@@ -1,3 +1,4 @@
+
 package com.souiid.demoproject.ui.screens.app.firebase.profile
 
 import androidx.compose.foundation.layout.Column
@@ -15,6 +16,8 @@ import com.souiid.demoproject.ui.components.item.firebase.UserItem
 import com.souiid.demoproject.ui.components.others.TScreen
 import com.souiid.demoproject.ui.components.text.TText
 import com.souiid.demoproject.ui.components.text.TTextStyle
+import com.souiid.demoproject.ui.screens.app.firebase.FollowViewModel
+import com.souiid.demoproject.firebase.domain.usecase.user.ObserveCurrentUserUseCase
 import demoproject.shared.generated.resources.Res
 import demoproject.shared.generated.resources.posts
 import demoproject.shared.generated.resources.followers
@@ -29,13 +32,19 @@ fun FirebaseProfileListScreen(
     onUserClick: (String) -> Unit
 ) {
     val viewModel: FirebaseProfileListViewModel = koinInject()
+    val followViewModel: FollowViewModel = koinInject()
+    val observeCurrentUserUseCase: ObserveCurrentUserUseCase = koinInject()
 
     val posts by viewModel.posts.collectAsStateWithLifecycle()
     val users by viewModel.users.collectAsStateWithLifecycle()
     val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
-    val error by viewModel.error.collectAsStateWithLifecycle()
     val author by viewModel.author.collectAsStateWithLifecycle()
     val likedPostIds by viewModel.likedPostIds.collectAsStateWithLifecycle()
+
+    val currentUser by observeCurrentUserUseCase().collectAsStateWithLifecycle()
+    val followingUserIds by followViewModel.followingUserIds.collectAsStateWithLifecycle()
+    val updatingUserIds by followViewModel.updatingUserIds.collectAsStateWithLifecycle()
+    val isFollowingLoading by followViewModel.isLoading.collectAsStateWithLifecycle()
 
     val title = when (type) {
         ProfileListType.POSTS -> stringResource(Res.string.posts)
@@ -56,9 +65,7 @@ fun FirebaseProfileListScreen(
             } else {
                 when (type) {
                     ProfileListType.POSTS -> {
-                        LazyColumn(
-                            modifier = Modifier.fillMaxSize()
-                        ) {
+                        LazyColumn(modifier = Modifier.fillMaxSize()) {
                             items(posts, key = { it.id }) { post ->
                                 PostItem(
                                     post = post,
@@ -72,13 +79,15 @@ fun FirebaseProfileListScreen(
                     }
 
                     ProfileListType.FOLLOWERS, ProfileListType.FOLLOWING -> {
-                        LazyColumn(
-                            modifier = Modifier.fillMaxSize()
-                        ) {
+                        LazyColumn(modifier = Modifier.fillMaxSize()) {
                             items(users, key = { it.id }) { user ->
                                 UserItem(
                                     user = user,
-                                    onUserClick = { onUserClick(user.id) }
+                                    isFollowing = (if (user.id == currentUser?.id) null else user.id in followingUserIds) == true,
+                                    isUpdating = isFollowingLoading || user.id in updatingUserIds,
+                                    isCurrentUser = user.id == currentUser?.id,
+                                    onUserClick = { onUserClick(user.id) },
+                                    onFollowClick = { followViewModel.toggleFollow(user.id) }
                                 )
                             }
                         }

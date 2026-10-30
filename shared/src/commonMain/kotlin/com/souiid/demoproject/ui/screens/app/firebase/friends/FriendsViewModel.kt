@@ -1,3 +1,4 @@
+
 package com.souiid.demoproject.ui.screens.app.firebase.friends
 
 import androidx.lifecycle.ViewModel
@@ -5,31 +6,25 @@ import androidx.lifecycle.viewModelScope
 import com.souiid.demoproject.firebase.domain.model.AppError
 import com.souiid.demoproject.firebase.domain.model.AppResult
 import com.souiid.demoproject.firebase.domain.model.User
-import com.souiid.demoproject.firebase.domain.usecase.user.FollowUserUseCase
-import com.souiid.demoproject.firebase.domain.usecase.user.GetFollowingUserIdsUseCase
 import com.souiid.demoproject.firebase.domain.usecase.user.GetFollowingUsersUseCase
 import com.souiid.demoproject.firebase.domain.usecase.user.ObserveCurrentUserUseCase
 import com.souiid.demoproject.firebase.domain.usecase.user.SearchUsersUseCase
-import com.souiid.demoproject.firebase.domain.usecase.user.UnfollowUserUseCase
-import com.souiid.demoproject.ui.screens.app.firebase.feed.FirebaseFeedViewModel
+import com.souiid.demoproject.ui.screens.app.firebase.FollowViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(FlowPreview::class)
 class FriendsViewModel(
     private val searchUsersUseCase: SearchUsersUseCase,
-    private val followUserUseCase: FollowUserUseCase,
-    private val unfollowUserUseCase: UnfollowUserUseCase,
-    private val getFollowingUserIdsUseCase: GetFollowingUserIdsUseCase,
     private val getFollowingUsersUseCase: GetFollowingUsersUseCase,
     private val observeCurrentUserUseCase: ObserveCurrentUserUseCase,
-    private val feedViewModel: FirebaseFeedViewModel
+    private val followViewModel: FollowViewModel
 ) : ViewModel() {
 
     private val _searchQuery = MutableStateFlow("")
@@ -44,22 +39,11 @@ class FriendsViewModel(
     private val _error = MutableStateFlow<AppError?>(null)
     val error = _error.asStateFlow()
 
-    private val _followingUserIds = MutableStateFlow<Set<String>>(emptySet())
-    val followingUserIds = _followingUserIds.asStateFlow()
-
-    private val _updatingUserIds = MutableStateFlow<Set<String>>(emptySet())
-    val updatingUserIds = _updatingUserIds.asStateFlow()
-
-    private val _isFollowingLoading = MutableStateFlow(true)
-    val isFollowingLoading = _isFollowingLoading.asStateFlow()
-
     private val _followingUsers = MutableStateFlow<List<User>>(emptyList())
     val followingUsers = _followingUsers.asStateFlow()
 
     private val _isFollowingUsersLoading = MutableStateFlow(false)
     val isFollowingUsersLoading = _isFollowingUsersLoading.asStateFlow()
-
-    val userId = observeCurrentUserUseCase().value?.id
 
     init {
         viewModelScope.launch {
@@ -87,74 +71,28 @@ class FriendsViewModel(
                 }
         }
 
-        loadFollowing()
-        loadFollowingUsers()
+        viewModelScope.launch {
+            followViewModel.followingUserIds.collectLatest {
+                loadFollowingUsers()
+            }
+        }
     }
 
     fun onSearchQueryChange(query: String) {
         _searchQuery.value = query
     }
 
-    fun followUser(userId: String) {
-        updateFollow(userId, true)
-    }
+    private suspend fun loadFollowingUsers() {
+        val userId = observeCurrentUserUseCase().value?.id ?: return
+        _isFollowingUsersLoading.value = true
 
-    fun unfollowUser(userId: String) {
-        updateFollow(userId, false)
-    }
-
-    private fun updateFollow(userId: String, follow: Boolean) {
-        if (userId in _updatingUserIds.value) return
-
-        viewModelScope.launch {
-            _updatingUserIds.value += userId
-
-            val result = if (follow) followUserUseCase(userId) else unfollowUserUseCase(userId)
-
-            when (result) {
-                is AppResult.Success -> {
-                    _followingUserIds.value = if (follow) {
-                        _followingUserIds.value + userId
-                    } else {
-                        _followingUserIds.value - userId
-                    }
-                    feedViewModel.refreshPosts()
-                    loadFollowingUsers()
-                }
+        try {
+            when (val result = getFollowingUsersUseCase(userId)) {
+                is AppResult.Success -> _followingUsers.value = result.data
                 is AppResult.Failure -> _error.value = result.error
             }
-
-            _updatingUserIds.value -= userId
-        }
-    }
-
-    private fun loadFollowing() {
-        val userId = userId ?: return
-        viewModelScope.launch {
-            _isFollowingLoading.value = true
-            try {
-                when (val result = getFollowingUserIdsUseCase(userId)) {
-                    is AppResult.Success -> _followingUserIds.value = result.data
-                    is AppResult.Failure -> _error.value = result.error
-                }
-            } finally {
-                _isFollowingLoading.value = false
-            }
-        }
-    }
-
-    private fun loadFollowingUsers() {
-        val userId = userId ?: return
-        viewModelScope.launch {
-            _isFollowingUsersLoading.value = true
-            try {
-                when (val result = getFollowingUsersUseCase(userId)) {
-                    is AppResult.Success -> _followingUsers.value = result.data
-                    is AppResult.Failure -> _error.value = result.error
-                }
-            } finally {
-                _isFollowingUsersLoading.value = false
-            }
+        } finally {
+            _isFollowingUsersLoading.value = false
         }
     }
 }

@@ -25,6 +25,7 @@ import com.souiid.demoproject.ui.components.others.TKamelImage
 import com.souiid.demoproject.ui.components.others.TScreen
 import com.souiid.demoproject.ui.components.text.TText
 import com.souiid.demoproject.ui.components.text.TTextStyle
+import com.souiid.demoproject.ui.screens.app.firebase.FollowViewModel
 import demoproject.shared.generated.resources.Res
 import demoproject.shared.generated.resources.follow
 import demoproject.shared.generated.resources.signOut
@@ -43,11 +44,14 @@ fun FirebaseProfileScreen(
 
 ) {
     val viewModel: FirebaseProfileViewModel = koinInject()
+    val followViewModel: FollowViewModel = koinInject()
+
     val displayedUser by viewModel.displayedUser.collectAsStateWithLifecycle()
     val currentUser by viewModel.currentUser.collectAsStateWithLifecycle()
     val profileStats by viewModel.profileStats.collectAsStateWithLifecycle()
-    val isFollowing by viewModel.isFollowing.collectAsStateWithLifecycle()
-    val isUpdatingFollow by viewModel.isUpdatingFollow.collectAsStateWithLifecycle()
+    val followingUserIds by followViewModel.followingUserIds.collectAsStateWithLifecycle()
+    val updatingUserIds by followViewModel.updatingUserIds.collectAsStateWithLifecycle()
+    val isFollowingLoading by followViewModel.isLoading.collectAsStateWithLifecycle()
 
     LaunchedEffect(userId) {
         viewModel.loadUser(userId)
@@ -65,9 +69,9 @@ fun FirebaseProfileScreen(
                     stats = profileStats,
                     isLoadingStats = viewModel.isLoadingStats,
                     isCurrentUser = currentUser?.id != null && displayedUser?.id == currentUser?.id,
-                    isFollowing = isFollowing,
-                    isUpdatingFollow = isUpdatingFollow,
-                    onFollowClick = viewModel::toggleFollow,
+                    isFollowing = displayedUser!!.id in followingUserIds,
+                    isUpdatingFollow = isFollowingLoading || displayedUser!!.id in updatingUserIds,
+                    onFollowClick = { followViewModel.toggleFollow(displayedUser!!.id) },
                     goToEditProfile = goToEditProfile,
                     onSignOut = viewModel::signOut,
                     onStatClick = onStatClick

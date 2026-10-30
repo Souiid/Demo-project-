@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.souiid.demoproject.firebase.domain.model.User
 import com.souiid.demoproject.ui.components.button.TButton
+import com.souiid.demoproject.ui.components.button.TButtonType
 import com.souiid.demoproject.ui.components.others.TKamelImage
 import com.souiid.demoproject.ui.components.text.TText
 import com.souiid.demoproject.ui.components.text.TTextStyle
@@ -25,10 +26,10 @@ import org.jetbrains.compose.resources.stringResource
 fun UserItem(
     user: User,
     onUserClick: () -> Unit,
-    isFollowing: Boolean? = null,
+    isFollowing: Boolean,
     isUpdating: Boolean = false,
-    onFollowClick: () -> Unit = {},
-    onUnfollowClick: () -> Unit = {}
+    isCurrentUser: Boolean = false,
+    onFollowClick: () -> Unit
 ) {
     Row(
         modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
@@ -45,23 +46,17 @@ fun UserItem(
             )
         }
 
-        Column(
-            modifier = Modifier.weight(1f).clickable(onClick = onUserClick)
-        ) {
-            TText(
-                text = "${user.firstName} ${user.lastName}",
-                style = TTextStyle.SUBTITLE
-            )
+        Column(modifier = Modifier.weight(1f).clickable(onClick = onUserClick)) {
+            TText(text = "${user.firstName} ${user.lastName}", style = TTextStyle.SUBTITLE)
         }
 
-        if (isFollowing != null) {
+        if (!isCurrentUser) {
             TButton(
                 text = stringResource(if (isFollowing) Res.string.unfollow else Res.string.follow),
+                type = if (isFollowing) TButtonType.REFUSE else TButtonType.PRIMARY,
+                isLoading = isUpdating,
                 enabled = !isUpdating,
-                onClick = {
-                    if (isFollowing) onUnfollowClick()
-                    else onFollowClick()
-                }
+                onClick = onFollowClick
             )
         }
     }
