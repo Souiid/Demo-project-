@@ -128,25 +128,24 @@ class FirebaseProfileViewModel(
     fun toggleFollow() {
         val userId = _displayedUser.value?.id ?: return
         val currentUserId = currentUser.value?.id ?: return
-        if (userId == currentUserId || _isUpdatingFollow.value || isLoading) return
+        if (userId == currentUserId || _isUpdatingFollow.value || isLoading || isLoadingStats) return
+
+        _isUpdatingFollow.value = true
 
         viewModelScope.launch {
-            _isUpdatingFollow.value = true
             error = null
 
             try {
                 val wasFollowing = _isFollowing.value
-                val result = if (wasFollowing) {
-                    unfollowUserUseCase(userId)
-                } else {
-                    followUserUseCase(userId)
-                }
+                val result = if (wasFollowing) unfollowUserUseCase(userId) else followUserUseCase(userId)
 
                 when (result) {
                     is AppResult.Success -> {
                         if (_displayedUser.value?.id == userId) {
                             _isFollowing.value = !wasFollowing
-                            loadProfileStats(userId)
+                            _profileStats.value = _profileStats.value.copy(
+                                followers = (_profileStats.value.followers + if (wasFollowing) -1 else 1).coerceAtLeast(0)
+                            )
                         }
 
                         feedViewModel.refreshPosts()

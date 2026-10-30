@@ -20,6 +20,7 @@ import com.souiid.demoproject.firebase.domain.model.ProfileStats
 import com.souiid.demoproject.firebase.domain.model.User
 import com.souiid.demoproject.ui.components.button.TButton
 import com.souiid.demoproject.ui.components.button.TButtonType
+import com.souiid.demoproject.ui.components.others.AnimatedCounter
 import com.souiid.demoproject.ui.components.others.TKamelImage
 import com.souiid.demoproject.ui.components.others.TScreen
 import com.souiid.demoproject.ui.components.text.TText
@@ -141,19 +142,19 @@ private fun ProfileContent(
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 ProfileStat(
-                    value = stats.posts.toString(),
+                    value = stats.posts,
                     label = stringResource(Res.string.posts),
                     onClick = { onStatClick(user.id, ProfileListType.POSTS) }
                 )
 
                 ProfileStat(
-                    value = stats.followers.toString(),
+                    value = stats.followers,
                     label = stringResource(Res.string.followers),
                     onClick = { onStatClick(user.id, ProfileListType.FOLLOWERS) }
                 )
 
                 ProfileStat(
-                    value = stats.following.toString(),
+                    value = stats.following,
                     label = stringResource(Res.string.followings),
                     onClick = { onStatClick(user.id, ProfileListType.FOLLOWING) }
                 )
@@ -188,7 +189,7 @@ private fun ProfileContent(
 
 @Composable
 private fun ProfileStat(
-    value: String,
+    value: Int,
     label: String,
     onClick: () -> Unit
 ) {
@@ -196,7 +197,7 @@ private fun ProfileStat(
         modifier = Modifier.clickable(onClick = onClick),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        TText(text = value, style = TTextStyle.TITLE)
+        AnimatedCounter(value = value)
         TText(text = label, style = TTextStyle.BODY)
     }
 }
