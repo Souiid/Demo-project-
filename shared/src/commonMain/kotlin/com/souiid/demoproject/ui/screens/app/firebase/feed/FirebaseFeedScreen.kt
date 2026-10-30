@@ -131,11 +131,11 @@ fun FirebaseFeedScreen(
 
     if (showCreatePostSheet) {
         CreatePostSheet(
-            content = viewModel.content,
             isPublishing = viewModel.isPublishing,
-            onContentChange = viewModel::onContentChange,
             onPublish = viewModel::createPost,
-            onDismiss = { if (!viewModel.isPublishing) showCreatePostSheet = false }
+            onDismiss = {
+                if (!viewModel.isPublishing) showCreatePostSheet = false
+            }
         )
     }
 }

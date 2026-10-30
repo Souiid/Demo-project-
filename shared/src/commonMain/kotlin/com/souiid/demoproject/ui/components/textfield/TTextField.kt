@@ -1,3 +1,4 @@
+
 package com.souiid.demoproject.ui.components.textfield
 
 import androidx.compose.foundation.layout.Column
@@ -12,6 +13,7 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.*
 import androidx.compose.ui.unit.dp
 import com.souiid.demoproject.ui.components.others.AppIcon
@@ -24,24 +26,30 @@ fun TTextField(
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
     type: TTextFieldType = TTextFieldType.TEXT,
-
     labelTitle: String? = null,
     placeholder: String? = null,
-
     imeAction: ImeAction = ImeAction.Next,
-
     singleLine: Boolean = type != TTextFieldType.DESCRIPTION,
     minLines: Int = if (type == TTextFieldType.DESCRIPTION) 4 else 1,
     maxLines: Int = Int.MAX_VALUE,
-
     leadingIcon: @Composable (() -> Unit)? = null,
     trailingContent: @Composable (() -> Unit)? = null,
-
     shape: Shape = OutlinedTextFieldDefaults.shape,
-
     errorMessage: String? = null
 ) {
     var passwordVisible by remember { mutableStateOf(false) }
+    var textFieldValue by remember { mutableStateOf(TextFieldValue(value)) }
+
+    if (textFieldValue.text != value) {
+        textFieldValue = textFieldValue.copy(
+            text = value,
+            selection = TextRange(
+                textFieldValue.selection.start.coerceIn(0, value.length),
+                textFieldValue.selection.end.coerceIn(0, value.length)
+            )
+        )
+    }
+
     val isError = !errorMessage.isNullOrBlank()
 
     val keyboardType = when (type) {
@@ -67,29 +75,26 @@ fun TTextField(
     Column(modifier = modifier) {
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
-            value = value,
-            onValueChange = onValueChange,
-
+            value = textFieldValue,
+            onValueChange = { newValue ->
+                textFieldValue = newValue
+                if (newValue.text != value) onValueChange(newValue.text)
+            },
             label = labelTitle?.let { { TText(it) } },
             placeholder = placeholder?.let { { TText(it) } },
-
             singleLine = singleLine,
             minLines = minLines,
             maxLines = maxLines,
-
             keyboardOptions = KeyboardOptions(
                 keyboardType = keyboardType,
                 imeAction = finalImeAction
             ),
-
             visualTransformation = visualTransformation,
             shape = shape,
             isError = isError,
-
             leadingIcon = if (type == TTextFieldType.SEARCH) {
                 { Icon(imageVector = AppIcon.Search, contentDescription = null) }
             } else leadingIcon,
-
             trailingIcon = {
                 when (type) {
                     TTextFieldType.PASSWORD -> {
@@ -100,8 +105,11 @@ fun TTextField(
                             )
                         }
                     }
-                    TTextFieldType.SEARCH if value.isNotEmpty() -> {
-                        IconButton(onClick = { onValueChange("") }) {
+                    TTextFieldType.SEARCH -> if (value.isNotEmpty()) {
+                        IconButton(onClick = {
+                            textFieldValue = TextFieldValue("")
+                            onValueChange("")
+                        }) {
                             Icon(imageVector = AppIcon.Close, contentDescription = null)
                         }
                     }

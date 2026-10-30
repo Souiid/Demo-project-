@@ -1,9 +1,14 @@
+
 package com.souiid.demoproject.ui.components
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.souiid.demoproject.ui.components.button.TButton
@@ -20,12 +25,12 @@ import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun CreatePostSheet(
-    content: String,
     isPublishing: Boolean,
-    onContentChange: (String) -> Unit,
-    onPublish: () -> Unit,
+    onPublish: (String) -> Unit,
     onDismiss: () -> Unit
 ) {
+    var content by remember { mutableStateOf("") }
+
     TBottomSheet(onDismissRequest = onDismiss) {
         TText(
             text = stringResource(Res.string.createPost),
@@ -36,21 +41,19 @@ fun CreatePostSheet(
 
         TTextField(
             value = content,
-            onValueChange = onContentChange,
+            onValueChange = { content = it },
             type = TTextFieldType.DESCRIPTION,
             placeholder = stringResource(Res.string.writePost)
         )
 
         Spacer(Modifier.height(16.dp))
 
-        if (isPublishing) {
-            CircularProgressIndicator()
-        }
+        if (isPublishing) CircularProgressIndicator()
 
         TButton(
             text = stringResource(Res.string.publish),
             enabled = content.isNotBlank() && content.length <= 1000 && !isPublishing,
-            onClick = onPublish
+            onClick = { onPublish(content) }
         )
 
         Spacer(Modifier.height(16.dp))

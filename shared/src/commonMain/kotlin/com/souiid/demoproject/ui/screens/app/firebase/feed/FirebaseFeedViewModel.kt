@@ -29,8 +29,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import kotlin.time.Duration.Companion.milliseconds
 
 
@@ -43,7 +41,8 @@ class FirebaseFeedViewModel(
     private val unlikePostUseCase: UnlikePostUseCase,
     private val getLikedPostIdsUseCase: GetLikedPostIdsUseCase,
     private val saveNotificationTokenUseCase: SaveNotificationTokenUseCase
-) : ViewModel() {
+) : ViewModel()
+{
 
     val currentUser = observeCurrentUserUseCase()
 
@@ -62,8 +61,6 @@ class FirebaseFeedViewModel(
     var isLoadingPosts by mutableStateOf(false)
         private set
 
-    var content by mutableStateOf("")
-        private set
 
     var isPublishing by mutableStateOf(false)
         private set
@@ -209,11 +206,7 @@ class FirebaseFeedViewModel(
         }
     }
 
-    fun onContentChange(value: String) {
-        content = value
-    }
-
-    fun createPost() {
+    fun createPost(content: String) {
         if (isPublishing || content.isBlank() || content.length > 1000) return
 
         viewModelScope.launch {
@@ -223,10 +216,7 @@ class FirebaseFeedViewModel(
 
             try {
                 when (val result = createPostUseCase(content)) {
-                    is AppResult.Success -> {
-                        content = ""
-                        isPostCreated = true
-                    }
+                    is AppResult.Success -> isPostCreated = true
                     is AppResult.Failure -> error = result.error
                 }
             } finally {
@@ -406,7 +396,6 @@ class FirebaseFeedViewModel(
         likedPostIds = emptySet()
         checkedLikePostIds = emptySet()
 
-        content = ""
         isLoading = false
         isLoadingPosts = false
         isPublishing = false
