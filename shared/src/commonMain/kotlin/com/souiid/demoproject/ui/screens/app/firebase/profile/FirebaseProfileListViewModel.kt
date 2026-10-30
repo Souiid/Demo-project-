@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.souiid.demoproject.firebase.domain.model.AppError
 import com.souiid.demoproject.firebase.domain.model.AppResult
+import com.souiid.demoproject.firebase.domain.model.LikeSyncState
 import com.souiid.demoproject.firebase.domain.model.Post
 import com.souiid.demoproject.firebase.domain.model.User
 import com.souiid.demoproject.firebase.domain.usecase.post.GetLikedPostIdsUseCase
@@ -13,9 +14,14 @@ import com.souiid.demoproject.firebase.domain.usecase.post.UnlikePostUseCase
 import com.souiid.demoproject.firebase.domain.usecase.user.FetchUserUseCase
 import com.souiid.demoproject.firebase.domain.usecase.user.GetFollowerUserIdsUseCase
 import com.souiid.demoproject.firebase.domain.usecase.user.GetFollowingUsersUseCase
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlin.coroutines.cancellation.CancellationException
+import kotlin.time.Duration.Companion.milliseconds
+
 
 class FirebaseProfileListViewModel(
     private val getUserPostsUseCase: GetUserPostsUseCase,
@@ -36,9 +42,6 @@ class FirebaseProfileListViewModel(
     private val _likedPostIds = MutableStateFlow<Set<String>>(emptySet())
     val likedPostIds = _likedPostIds.asStateFlow()
 
-    private val _updatingLikePostIds = MutableStateFlow<Set<String>>(emptySet())
-    val updatingLikePostIds = _updatingLikePostIds.asStateFlow()
-
     private val _author = MutableStateFlow<User?>(null)
     val author = _author.asStateFlow()
 
@@ -48,28 +51,41 @@ class FirebaseProfileListViewModel(
     private val _error = MutableStateFlow<AppError?>(null)
     val error = _error.asStateFlow()
 
+    private val likeSyncStates = mutableMapOf<String, LikeSyncState>()
+    private val likeSyncJobs = mutableMapOf<String, Job>()
+    private var loadJob: Job? = null
+    private var generation = 0
+
     fun loadData(userId: String, type: ProfileListType) {
-        viewModelScope.launch {
+        loadJob?.cancel()
+        resetLikeSync()
+        val currentGeneration = ++generation
+
+        loadJob = viewModelScope.launch {
             _isLoading.value = true
             _error.value = null
             _posts.value = emptyList()
             _users.value = emptyList()
-            _updatingLikePostIds.value = emptySet()
+            _likedPostIds.value = emptySet()
             _author.value = null
 
             try {
                 when (type) {
-                    ProfileListType.POSTS -> loadPosts(userId)
-                    ProfileListType.FOLLOWERS -> loadFollowers(userId)
-                    ProfileListType.FOLLOWING -> loadFollowing(userId)
+                    ProfileListType.POSTS -> loadPosts(userId, currentGeneration)
+                    ProfileListType.FOLLOWERS -> loadFollowers(userId, currentGeneration)
+                    ProfileListType.FOLLOWING -> loadFollowing(userId, currentGeneration)
                 }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (_: Exception) {
+                if (currentGeneration == generation) _error.value = AppError.Unknown()
             } finally {
-                _isLoading.value = false
+                if (currentGeneration == generation) _isLoading.value = false
             }
         }
     }
 
-    private suspend fun loadPosts(userId: String) {
+    private suspend fun loadPosts(userId: String, currentGeneration: Int) {
         when (val result = fetchUserUseCase(userId)) {
             is AppResult.Success -> _author.value = result.data
             is AppResult.Failure -> {
@@ -81,8 +97,19 @@ class FirebaseProfileListViewModel(
         when (val result = getUserPostsUseCase(userId)) {
             is AppResult.Success -> {
                 _posts.value = result.data
+
                 when (val likesResult = getLikedPostIdsUseCase(result.data.map { it.id })) {
-                    is AppResult.Success -> _likedPostIds.value = likesResult.data
+                    is AppResult.Success -> {
+                        if (currentGeneration != generation) return
+
+                        _likedPostIds.value = likesResult.data
+
+                        result.data.forEach { post ->
+                            likeSyncStates[post.id] = LikeSyncState(
+                                confirmedLiked = post.id in likesResult.data
+                            )
+                        }
+                    }
                     is AppResult.Failure -> _error.value = likesResult.error
                 }
             }
@@ -90,7 +117,7 @@ class FirebaseProfileListViewModel(
         }
     }
 
-    private suspend fun loadFollowers(userId: String) {
+    private suspend fun loadFollowers(userId: String, currentGeneration: Int) {
         when (val result = getFollowerUserIdsUseCase(userId)) {
             is AppResult.Success -> {
                 val followers = mutableListOf<User>()
@@ -105,44 +132,119 @@ class FirebaseProfileListViewModel(
                     }
                 }
 
-                _users.value = followers
+                if (currentGeneration == generation) _users.value = followers
             }
             is AppResult.Failure -> _error.value = result.error
         }
     }
 
-    private suspend fun loadFollowing(userId: String) {
+    private suspend fun loadFollowing(userId: String, currentGeneration: Int) {
         when (val result = getFollowingUsersUseCase(userId)) {
-            is AppResult.Success -> _users.value = result.data
+            is AppResult.Success -> {
+                if (currentGeneration == generation) _users.value = result.data
+            }
             is AppResult.Failure -> _error.value = result.error
         }
     }
 
     fun toggleLike(postId: String) {
-        if (postId in _updatingLikePostIds.value || _posts.value.none { it.id == postId }) return
+        if (_posts.value.none { it.id == postId }) return
+        val state = likeSyncStates[postId] ?: return
 
-        _updatingLikePostIds.value += postId
+        val wasLiked = postId in _likedPostIds.value
+        val desiredLiked = !wasLiked
 
-        viewModelScope.launch {
+        state.revision++
+
+        _likedPostIds.value = if (desiredLiked) _likedPostIds.value + postId else _likedPostIds.value - postId
+        _posts.value = _posts.value.map {
+            if (it.id == postId) {
+                it.copy(likesCount = (it.likesCount + if (desiredLiked) 1 else -1).coerceAtLeast(0))
+            } else it
+        }
+
+        state.debounceJob?.cancel()
+
+        val currentGeneration = generation
+        val revision = state.revision
+
+        state.debounceJob = viewModelScope.launch {
+            delay(500.milliseconds)
+
+            if (currentGeneration != generation || revision != state.revision) return@launch
+
+            state.debounceJob = null
+            syncLike(postId, currentGeneration)
+        }
+    }
+
+    private fun syncLike(postId: String, currentGeneration: Int) {
+        if (currentGeneration != generation) return
+
+        val state = likeSyncStates[postId] ?: return
+        if (state.syncing || state.debounceJob?.isActive == true) return
+
+        val desiredLiked = postId in _likedPostIds.value
+        if (desiredLiked == state.confirmedLiked) return
+
+        state.syncing = true
+        val requestRevision = state.revision
+
+        val job = viewModelScope.launch {
             try {
-                val wasLiked = postId in _likedPostIds.value
-                val result = if (wasLiked) unlikePostUseCase(postId) else likePostUseCase(postId)
+                val result = if (desiredLiked) likePostUseCase(postId) else unlikePostUseCase(postId)
+                if (currentGeneration != generation || likeSyncStates[postId] !== state) return@launch
 
                 when (result) {
-                    is AppResult.Success -> {
-                        _likedPostIds.value = if (wasLiked) _likedPostIds.value - postId else _likedPostIds.value + postId
-
-                        _posts.value = _posts.value.map { post ->
-                            if (post.id == postId) {
-                                post.copy(likesCount = (post.likesCount + if (wasLiked) -1 else 1).coerceAtLeast(0))
-                            } else post
+                    is AppResult.Success -> state.confirmedLiked = desiredLiked
+                    is AppResult.Failure -> {
+                        _error.value = result.error
+                        if (state.revision == requestRevision) {
+                            rollbackLike(postId, state.confirmedLiked)
                         }
                     }
-                    is AppResult.Failure -> _error.value = result.error
                 }
+            } catch (e: CancellationException) {
+                throw e
             } finally {
-                _updatingLikePostIds.value -= postId
+                if (currentGeneration == generation && likeSyncStates[postId] === state) {
+                    state.syncing = false
+
+                    if (state.revision != requestRevision && state.debounceJob == null) {
+                        syncLike(postId, currentGeneration)
+                    }
+                }
             }
         }
+
+        likeSyncJobs[postId] = job
+        job.invokeOnCompletion {
+            if (likeSyncJobs[postId] === job) likeSyncJobs.remove(postId)
+        }
+    }
+
+    private fun rollbackLike(postId: String, confirmedLiked: Boolean) {
+        val currentLiked = postId in _likedPostIds.value
+        if (currentLiked == confirmedLiked) return
+
+        _likedPostIds.value = if (confirmedLiked) _likedPostIds.value + postId else _likedPostIds.value - postId
+
+        _posts.value = _posts.value.map {
+            if (it.id == postId) {
+                it.copy(likesCount = (it.likesCount + if (confirmedLiked) 1 else -1).coerceAtLeast(0))
+            } else it
+        }
+    }
+
+    private fun resetLikeSync() {
+        likeSyncStates.values.forEach { it.debounceJob?.cancel() }
+        likeSyncJobs.values.forEach { it.cancel() }
+        likeSyncStates.clear()
+        likeSyncJobs.clear()
+    }
+
+    override fun onCleared() {
+        resetLikeSync()
+        super.onCleared()
     }
 }

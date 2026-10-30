@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.souiid.demoproject.firebase.domain.model.AppError
 import com.souiid.demoproject.firebase.domain.model.AppResult
+import com.souiid.demoproject.firebase.domain.model.LikeSyncState
 import com.souiid.demoproject.firebase.domain.model.Post
 import com.souiid.demoproject.firebase.domain.model.User
 import com.souiid.demoproject.firebase.domain.usecase.notification.SaveNotificationTokenUseCase
@@ -22,9 +23,14 @@ import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.auth
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import kotlin.time.Duration.Companion.milliseconds
+
 
 class FirebaseFeedViewModel(
     private val fetchUserUseCase: FetchUserUseCase,
@@ -66,15 +72,17 @@ class FirebaseFeedViewModel(
     var likedPostIds by mutableStateOf<Set<String>>(emptySet())
         private set
 
-    var updatingLikePostIds by mutableStateOf<Set<String>>(emptySet())
-        private set
-
     private var observedUserId: String? = null
     private var feedJob: Job? = null
     private var feedGeneration = 0
     private var checkedLikePostIds = emptySet<String>()
 
-    init{
+    private val likeSyncStates = mutableMapOf<String, LikeSyncState>()
+    private val likeSyncJobs = mutableMapOf<String, Job>()
+    private val remoteLikeCounts = mutableMapOf<String, Int>()
+    private val pendingLikeAcknowledgements = mutableMapOf<String, Boolean>()
+
+    init {
         observeNotificationToken()
     }
 
@@ -113,16 +121,17 @@ class FirebaseFeedViewModel(
         observedUserId = userId
         feedJob?.cancel()
 
+        if (forceRestart) {
+            resetLikeSync()
+            checkedLikePostIds = emptySet()
+            likedPostIds = emptySet()
+        }
+
         val generation = ++feedGeneration
 
         feedJob = viewModelScope.launch {
             isLoadingPosts = posts.isEmpty()
             error = null
-
-            if (forceRestart) {
-                checkedLikePostIds = emptySet()
-                likedPostIds = emptySet()
-            }
 
             try {
                 observeFeedPostsUseCase()
@@ -136,9 +145,49 @@ class FirebaseFeedViewModel(
                         val currentPostIds = updatedPosts.map { it.id }.toSet()
                         val newPosts = updatedPosts.filter { it.id !in checkedLikePostIds }
 
-                        posts = updatedPosts
+                        updatedPosts.forEach { remotePost ->
+                            remoteLikeCounts[remotePost.id] = remotePost.likesCount
+
+                            val acknowledgedLiked = pendingLikeAcknowledgements[remotePost.id]
+                            if (acknowledgedLiked != null) {
+                                val state = likeSyncStates[remotePost.id]
+                                val confirmedLiked = state?.confirmedLiked ?: acknowledgedLiked
+                                val expectedCount = if (acknowledgedLiked) 1 else -1
+                                val localPost = posts.find { it.id == remotePost.id }
+
+                                if (state != null && !state.syncing && state.debounceJob?.isActive != true &&
+                                    confirmedLiked == acknowledgedLiked && localPost != null &&
+                                    remotePost.likesCount == localPost.likesCount
+                                ) {
+                                    pendingLikeAcknowledgements.remove(remotePost.id)
+                                }
+                            }
+                        }
+
+                        posts = updatedPosts.map { remotePost ->
+                            val state = likeSyncStates[remotePost.id]
+                            val localPost = posts.find { it.id == remotePost.id }
+                            val hasPendingLike = state != null &&
+                                    (state.syncing || state.debounceJob?.isActive == true ||
+                                            remotePost.id in pendingLikeAcknowledgements)
+
+                            if (hasPendingLike && localPost != null) {
+                                remotePost.copy(likesCount = localPost.likesCount)
+                            } else {
+                                remotePost
+                            }
+                        }
+
                         likedPostIds = likedPostIds.intersect(currentPostIds)
                         checkedLikePostIds = checkedLikePostIds.intersect(currentPostIds)
+
+                        val removedPostIds = likeSyncStates.keys.filter { it !in currentPostIds }
+                        removedPostIds.forEach { postId ->
+                            likeSyncStates.remove(postId)?.debounceJob?.cancel()
+                            likeSyncJobs.remove(postId)?.cancel()
+                            remoteLikeCounts.remove(postId)
+                            pendingLikeAcknowledgements.remove(postId)
+                        }
 
                         isLoadingPosts = false
 
@@ -186,31 +235,102 @@ class FirebaseFeedViewModel(
     }
 
     fun toggleLike(postId: String) {
-        if (postId in updatingLikePostIds || posts.none { it.id == postId }) return
+        val post = posts.find { it.id == postId } ?: return
+        if (postId !in checkedLikePostIds) return
 
-        updatingLikePostIds = updatingLikePostIds + postId
+        val state = likeSyncStates.getOrPut(postId) {
+            LikeSyncState(confirmedLiked = postId in likedPostIds)
+        }
+
+        val wasLiked = postId in likedPostIds
+        val desiredLiked = !wasLiked
+
+        state.revision++
+
+        likedPostIds = if (desiredLiked) likedPostIds + postId else likedPostIds - postId
+        posts = posts.map {
+            if (it.id == postId) {
+                it.copy(likesCount = (it.likesCount + if (desiredLiked) 1 else -1).coerceAtLeast(0))
+            } else it
+        }
+
+        state.debounceJob?.cancel()
+
         val generation = feedGeneration
+        val revision = state.revision
 
-        viewModelScope.launch {
-            error = null
+        state.debounceJob = viewModelScope.launch {
+            delay(500.milliseconds)
 
+            if (generation != feedGeneration || revision != state.revision) return@launch
+
+            state.debounceJob = null
+            syncLike(postId, generation)
+        }
+    }
+
+    private fun syncLike(postId: String, generation: Int) {
+        if (generation != feedGeneration || postId !in checkedLikePostIds) return
+
+        val state = likeSyncStates[postId] ?: return
+        if (state.syncing || state.debounceJob?.isActive == true) return
+
+        val desiredLiked = postId in likedPostIds
+        if (desiredLiked == state.confirmedLiked) return
+
+        state.syncing = true
+        val requestRevision = state.revision
+
+        val job = viewModelScope.launch {
             try {
-                val wasLiked = postId in likedPostIds
-                val result = if (wasLiked) unlikePostUseCase(postId) else likePostUseCase(postId)
-
-                if (generation != feedGeneration) return@launch
+                val result = if (desiredLiked) likePostUseCase(postId) else unlikePostUseCase(postId)
+                if (generation != feedGeneration || likeSyncStates[postId] !== state) return@launch
 
                 when (result) {
                     is AppResult.Success -> {
-                        likedPostIds = if (wasLiked) likedPostIds - postId else likedPostIds + postId
+                        state.confirmedLiked = desiredLiked
+                        pendingLikeAcknowledgements[postId] = desiredLiked
                     }
-                    is AppResult.Failure -> error = result.error
+
+                    is AppResult.Failure -> {
+                        error = result.error
+
+                        if (state.revision == requestRevision) {
+                            rollbackLike(postId, state.confirmedLiked)
+                        }
+                    }
                 }
+            } catch (e: CancellationException) {
+                throw e
             } finally {
-                if (generation == feedGeneration) {
-                    updatingLikePostIds = updatingLikePostIds - postId
+                if (generation == feedGeneration && likeSyncStates[postId] === state) {
+                    state.syncing = false
+
+                    if (state.revision != requestRevision && state.debounceJob == null) {
+                        syncLike(postId, generation)
+                    }
                 }
             }
+        }
+
+        likeSyncJobs[postId] = job
+        job.invokeOnCompletion {
+            if (likeSyncJobs[postId] === job) {
+                likeSyncJobs.remove(postId)
+            }
+        }
+    }
+
+    private fun rollbackLike(postId: String, confirmedLiked: Boolean) {
+        val currentLiked = postId in likedPostIds
+        if (currentLiked == confirmedLiked) return
+
+        likedPostIds = if (confirmedLiked) likedPostIds + postId else likedPostIds - postId
+
+        posts = posts.map {
+            if (it.id == postId) {
+                it.copy(likesCount = (it.likesCount + if (confirmedLiked) 1 else -1).coerceAtLeast(0))
+            } else it
         }
     }
 
@@ -242,14 +362,30 @@ class FirebaseFeedViewModel(
         when (val result = getLikedPostIdsUseCase(uncheckedPostIds)) {
             is AppResult.Success -> {
                 if (generation == feedGeneration) {
+                    uncheckedPostIds.forEach { postId ->
+                        val isLiked = postId in result.data
+                        likeSyncStates[postId] = LikeSyncState(confirmedLiked = isLiked)
+                    }
+
                     likedPostIds = likedPostIds + result.data
                     checkedLikePostIds = checkedLikePostIds + uncheckedPostIds
                 }
             }
+
             is AppResult.Failure -> {
                 if (generation == feedGeneration) error = result.error
             }
         }
+    }
+
+    private fun resetLikeSync() {
+        likeSyncStates.values.forEach { it.debounceJob?.cancel() }
+        likeSyncJobs.values.forEach { it.cancel() }
+
+        likeSyncStates.clear()
+        likeSyncJobs.clear()
+        remoteLikeCounts.clear()
+        pendingLikeAcknowledgements.clear()
     }
 
     fun clear() {
@@ -258,11 +394,12 @@ class FirebaseFeedViewModel(
         feedGeneration++
         observedUserId = null
 
+        resetLikeSync()
+
         posts = emptyList()
         authors = emptyMap()
         likedPostIds = emptySet()
         checkedLikePostIds = emptySet()
-        updatingLikePostIds = emptySet()
 
         content = ""
         isLoading = false
@@ -286,9 +423,10 @@ class FirebaseFeedViewModel(
                 } catch (e: CancellationException) {
                     throw e
                 } catch (_: Exception) {
-                    // Token registration failure should not block the feed
+
                 }
             }
         }
     }
 }
+

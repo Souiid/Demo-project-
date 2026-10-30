@@ -28,7 +28,6 @@ fun PostItem(
     post: Post,
     author: User?,
     isLiked: Boolean = false,
-    isUpdatingLike: Boolean = false,
     onLike: () -> Unit = {},
     onAuthorClick: (String) -> Unit
 ) {
@@ -75,20 +74,12 @@ fun PostItem(
         ) {
             IconButton(
                 onClick = onLike,
-                enabled = !isUpdatingLike
             ) {
-                if (isUpdatingLike) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(20.dp),
-                        strokeWidth = 2.dp
-                    )
-                } else {
-                    Icon(
-                        imageVector = if (isLiked) AppIcon.Favorite else AppIcon.FavoriteBorder,
-                        contentDescription = if (isLiked) "Unlike" else "Like",
-                        tint = if (isLiked) MaterialTheme.colorScheme.error else LocalContentColor.current
-                    )
-                }
+                Icon(
+                    imageVector = if (isLiked) AppIcon.Favorite else AppIcon.FavoriteBorder,
+                    contentDescription = if (isLiked) "Unlike" else "Like",
+                    tint = if (isLiked) MaterialTheme.colorScheme.error else LocalContentColor.current
+                )
             }
 
             TText(

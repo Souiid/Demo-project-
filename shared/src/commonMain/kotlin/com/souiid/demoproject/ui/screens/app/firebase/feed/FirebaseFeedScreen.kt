@@ -105,11 +105,9 @@ fun FirebaseFeedScreen(
                                 post = post,
                                 author = viewModel.authors[post.authorId],
                                 isLiked = post.id in viewModel.likedPostIds,
-                                isUpdatingLike = post.id in viewModel.updatingLikePostIds,
                                 onLike = { viewModel.toggleLike(post.id) },
                                 onAuthorClick = { onUserClick(post.authorId) }
                             )
-
                         }
                     }
                 }

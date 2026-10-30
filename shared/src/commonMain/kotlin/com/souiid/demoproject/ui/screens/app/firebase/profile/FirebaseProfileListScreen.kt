@@ -36,7 +36,6 @@ fun FirebaseProfileListScreen(
     val error by viewModel.error.collectAsStateWithLifecycle()
     val author by viewModel.author.collectAsStateWithLifecycle()
     val likedPostIds by viewModel.likedPostIds.collectAsStateWithLifecycle()
-    val updatingLikePostIds by viewModel.updatingLikePostIds.collectAsStateWithLifecycle()
 
     val title = when (type) {
         ProfileListType.POSTS -> stringResource(Res.string.posts)
@@ -65,7 +64,6 @@ fun FirebaseProfileListScreen(
                                     post = post,
                                     author = author,
                                     isLiked = post.id in likedPostIds,
-                                    isUpdatingLike = post.id in updatingLikePostIds,
                                     onLike = { viewModel.toggleLike(post.id) },
                                     onAuthorClick = onUserClick
                                 )
