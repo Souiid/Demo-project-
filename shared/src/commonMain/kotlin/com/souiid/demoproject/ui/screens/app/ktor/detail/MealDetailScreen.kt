@@ -1,7 +1,16 @@
 package com.souiid.demoproject.ui.screens.app.ktor.detail
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -11,20 +20,26 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import com.souiid.demoproject.ktor.domain.model.Meal
 import com.souiid.demoproject.ui.components.others.TExpandableSections
 import com.souiid.demoproject.ui.components.others.TKamelImage
 import com.souiid.demoproject.ui.components.others.TScreen
 import com.souiid.demoproject.ui.components.text.TText
+import com.souiid.demoproject.ui.components.text.TTextStyle
+import com.souiid.demoproject.ui.theme.Dimens
 import demoproject.shared.generated.resources.Res
-import demoproject.shared.generated.resources.*
+import demoproject.shared.generated.resources.addToFavorites
+import demoproject.shared.generated.resources.ingredients
+import demoproject.shared.generated.resources.instructions
+import demoproject.shared.generated.resources.removeFromFavorites
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
-import demoproject.shared.generated.resources.removeFromFavorites
 
 @Composable
 fun MealDetailScreen(mealId: String) {
@@ -42,7 +57,7 @@ fun MealDetailScreen(mealId: String) {
         when {
             isLoading -> {
                 Box(
-                    modifier = Modifier.fillMaxWidth().height(300.dp),
+                    modifier = Modifier.fillMaxWidth().height(Dimens.mealLoadingHeight),
                     contentAlignment = Alignment.Center
                 ) {
                     CircularProgressIndicator()
@@ -50,7 +65,7 @@ fun MealDetailScreen(mealId: String) {
             }
 
             error != null -> {
-                TText(text = error.orEmpty())
+                TText(text = error.orEmpty(), style = TTextStyle.ERROR)
             }
 
             meal != null -> {
@@ -72,11 +87,12 @@ private fun MealDetailContent(
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(Dimens.standardPadding)
     ) {
-        Spacer(modifier = Modifier.height(8.dp))
-
-        TText(text = meal.name)
+        TText(
+            text = meal.name,
+            style = TTextStyle.SUBTITLE
+        )
 
         Box(
             modifier = Modifier.fillMaxWidth().aspectRatio(1.5f)
@@ -84,13 +100,13 @@ private fun MealDetailContent(
             TKamelImage(
                 imageUrl = meal.imageUrl,
                 modifier = Modifier.fillMaxSize(),
-                shape = RoundedCornerShape(16.dp)
+                shape = RoundedCornerShape(Dimens.largeRadius)
             )
 
             IconButton(
                 onClick = onFavoriteClick,
                 modifier = Modifier.align(Alignment.TopEnd)
-                    .padding(12.dp)
+                    .padding(Dimens.mediumSpace)
                     .background(MaterialTheme.colorScheme.surface, CircleShape)
             ) {
                 Icon(
@@ -104,12 +120,13 @@ private fun MealDetailContent(
         }
 
         Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+            horizontalArrangement = Arrangement.spacedBy(Dimens.smallSpace)
         ) {
-            meal.category?.let { TText(text = it) }
-            meal.area?.let { TText(text = it) }
+            meal.category?.let { MealInfoBadge(it) }
+            meal.area?.let { MealInfoBadge(it) }
         }
+
+        Spacer(modifier = Modifier.height(Dimens.smallSpace))
 
         TExpandableSections(
             sectionTitles = listOf(
@@ -119,14 +136,24 @@ private fun MealDetailContent(
         ) { index ->
             when (index) {
                 0 -> {
-                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Column(verticalArrangement = Arrangement.spacedBy(Dimens.mediumSpace)) {
                         meal.ingredients.forEach { ingredient ->
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween
+                                horizontalArrangement = Arrangement.spacedBy(Dimens.standardPadding),
+                                verticalAlignment = Alignment.Top
                             ) {
-                                TText(text = ingredient.name)
-                                TText(text = ingredient.measure)
+                                Box(modifier = Modifier.weight(1f)) {
+                                    TText(
+                                        text = ingredient.name,
+                                        style = TTextStyle.BODY
+                                    )
+                                }
+
+                                TText(
+                                    text = ingredient.measure,
+                                    style = TTextStyle.DESCRIPTION
+                                )
                             }
                         }
                     }
@@ -136,11 +163,32 @@ private fun MealDetailContent(
                     meal.instructions?.takeIf { it.isNotBlank() }?.let {
                         TText(
                             text = it,
+                            style = TTextStyle.BODY,
                             maxLines = Int.MAX_VALUE
                         )
                     }
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun MealInfoBadge(text: String) {
+    Box(
+        modifier = Modifier
+            .background(
+                color = MaterialTheme.colorScheme.surfaceVariant,
+                shape = RoundedCornerShape(Dimens.mediumRadius)
+            )
+            .padding(
+                horizontal = Dimens.mediumSpace,
+                vertical = Dimens.smallSpace
+            )
+    ) {
+        TText(
+            text = text,
+            style = TTextStyle.DESCRIPTION
+        )
     }
 }

@@ -33,4 +33,5 @@ object Dimens {
     val mealCategoryImageSize = 64.dp
     val mealCategoryIndicatorWidth = 32.dp
     val mealCategoryIndicatorThickness = 2.dp
+    val mealLoadingHeight = 300.dp
 }

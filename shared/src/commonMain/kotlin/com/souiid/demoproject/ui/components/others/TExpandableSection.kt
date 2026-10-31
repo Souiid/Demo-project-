@@ -4,18 +4,23 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.souiid.demoproject.ui.components.text.TText
+import com.souiid.demoproject.ui.components.text.TTextStyle
 import com.souiid.demoproject.ui.theme.Dimens
 
 @Composable
@@ -23,7 +28,6 @@ fun TExpandableSections(
     sectionTitles: List<String>,
     sectionContent: @Composable (Int) -> Unit
 ) {
-
     Column {
         sectionTitles.forEachIndexed { index, title ->
             ExpandableSectionItem(title = title) {
@@ -38,37 +42,39 @@ fun ExpandableSectionItem(
     title: String,
     content: @Composable () -> Unit
 ) {
+    var expanded by remember(title) { mutableStateOf(false) }
 
-    var expanded by remember {
-        mutableStateOf(false)
-    }
-
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable {
-                expanded = !expanded
-            }
-            .padding(Dimens.standardPadding)
-    ) {
-
+    Column(modifier = Modifier.fillMaxWidth()) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
+            modifier = Modifier.fillMaxWidth()
+                .clickable { expanded = !expanded }
+                .padding(vertical = Dimens.standardPadding),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-
-            TText(title,)
-
             TText(
-                if (expanded) "▲" else "▼",
+                text = title,
+                style = TTextStyle.ITEM_TITLE
+            )
+
+            Icon(
+                imageVector = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
 
         if (expanded) {
-
-            Spacer(modifier = Modifier.height(Dimens.mediumSpace))
-
-            content()
+            Column(
+                modifier = Modifier.fillMaxWidth().padding(bottom = Dimens.standardPadding)
+            ) {
+                content()
+            }
         }
+
+        HorizontalDivider(
+            color = MaterialTheme.colorScheme.outlineVariant,
+            thickness = Dimens.dividerThickness
+        )
     }
 }
