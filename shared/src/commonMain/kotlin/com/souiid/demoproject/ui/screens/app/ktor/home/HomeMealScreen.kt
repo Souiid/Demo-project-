@@ -3,24 +3,25 @@ package com.souiid.demoproject.ui.screens.app.ktor.home
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import com.souiid.demoproject.ui.components.item.ktor.MealCategoryItem
 import com.souiid.demoproject.ui.components.item.ktor.MealItem
 import com.souiid.demoproject.ui.components.others.TScreen
 import com.souiid.demoproject.ui.components.text.TText
+import com.souiid.demoproject.ui.components.text.TTextStyle
 import com.souiid.demoproject.ui.components.textfield.TTextField
 import com.souiid.demoproject.ui.components.textfield.TTextFieldType
+import com.souiid.demoproject.ui.theme.Dimens
 import demoproject.shared.generated.resources.Res
 import demoproject.shared.generated.resources.results
 import demoproject.shared.generated.resources.searchMeal
@@ -39,19 +40,19 @@ fun HomeMealScreen(onMealClick: (String) -> Unit) {
 
     TScreen {
         Column(
-            modifier = Modifier.fillMaxSize().padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(Dimens.standardPadding)
         ) {
             TTextField(
                 value = searchQuery,
                 onValueChange = viewModel::updateSearchQuery,
                 type = TTextFieldType.SEARCH,
-                labelTitle = stringResource(Res.string.searchMeal)
+                placeholder = stringResource(Res.string.searchMeal)
             )
 
             if (searchQuery.isBlank()) {
                 LazyRow(
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    horizontalArrangement = Arrangement.spacedBy(Dimens.mediumSpace)
                 ) {
                     items(categories, key = { it.id }) { category ->
                         MealCategoryItem(
@@ -64,10 +65,16 @@ fun HomeMealScreen(onMealClick: (String) -> Unit) {
             }
 
             if (searchQuery.isNotBlank()) {
-                TText(text = stringResource(Res.string.results))
+                TText(
+                    text = stringResource(Res.string.results),
+                    style = TTextStyle.ITEM_TITLE
+                )
             } else {
                 selectedCategory?.let {
-                    TText(text = it.name)
+                    TText(
+                        text = it.name,
+                        style = TTextStyle.ITEM_TITLE
+                    )
                 }
             }
 
@@ -76,21 +83,23 @@ fun HomeMealScreen(onMealClick: (String) -> Unit) {
             }
 
             error?.let {
-                TText(text = it)
+                TText(
+                    text = it,
+                    style = TTextStyle.DESCRIPTION,
+                    color = MaterialTheme.colorScheme.error
+                )
             }
 
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
                 modifier = Modifier.fillMaxSize(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                horizontalArrangement = Arrangement.spacedBy(Dimens.mediumSpace),
+                verticalArrangement = Arrangement.spacedBy(Dimens.standardPadding)
             ) {
                 items(meals, key = { it.id }) { meal ->
                     MealItem(
-                        meal,
-                        onClick = {
-                            onMealClick(meal.id)
-                        }
+                        meal = meal,
+                        onClick = { onMealClick(meal.id) }
                     )
                 }
             }

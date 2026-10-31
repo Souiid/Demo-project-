@@ -28,4 +28,9 @@ object Dimens {
 
     val profileAvatarSize = 80.dp
     val profileStatMinHeight = 64.dp
+
+    val mealCategoryWidth = 76.dp
+    val mealCategoryImageSize = 64.dp
+    val mealCategoryIndicatorWidth = 32.dp
+    val mealCategoryIndicatorThickness = 2.dp
 }

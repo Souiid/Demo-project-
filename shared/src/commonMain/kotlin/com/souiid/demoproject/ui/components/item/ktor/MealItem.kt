@@ -8,10 +8,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.text.style.TextOverflow
 import com.souiid.demoproject.ktor.domain.model.Meal
 import com.souiid.demoproject.ui.components.others.TKamelImage
 import com.souiid.demoproject.ui.components.text.TText
+import com.souiid.demoproject.ui.components.text.TTextStyle
+import com.souiid.demoproject.ui.theme.Dimens
 
 @Composable
 fun MealItem(
@@ -19,17 +21,22 @@ fun MealItem(
     onClick: () -> Unit
 ) {
     Column(
-        modifier = Modifier.clickable(onClick = onClick),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        modifier = Modifier.fillMaxWidth().clickable(onClick = onClick),
+        verticalArrangement = Arrangement.spacedBy(Dimens.smallSpace)
     ) {
         meal.imageUrl?.let { imageUrl ->
             TKamelImage(
                 imageUrl = imageUrl,
                 modifier = Modifier.fillMaxWidth().aspectRatio(1f),
-                shape = RoundedCornerShape(12.dp)
+                shape = RoundedCornerShape(Dimens.mediumRadius)
             )
         }
 
-        TText(text = meal.name)
+        TText(
+            text = meal.name,
+            style = TTextStyle.ITEM_TITLE,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis
+        )
     }
 }
