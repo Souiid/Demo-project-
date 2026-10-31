@@ -1,6 +1,5 @@
 package com.souiid.demoproject.ui.screens.app.firebase.feed
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -8,8 +7,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -20,7 +21,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.souiid.demoproject.ui.components.CreatePostSheet
 import com.souiid.demoproject.ui.components.item.firebase.PostItem
@@ -31,9 +31,8 @@ import com.souiid.demoproject.ui.components.text.TTextStyle
 import com.souiid.demoproject.ui.theme.Dimens
 import demoproject.shared.generated.resources.Res
 import demoproject.shared.generated.resources.createPost
-import org.jetbrains.compose.resources.stringResource
-import org.koin.compose.koinInject
 import demoproject.shared.generated.resources.feed
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -42,19 +41,14 @@ fun FirebaseFeedScreen(
     onUserClick: (String) -> Unit
 ) {
     val viewModel: FirebaseFeedViewModel = koinViewModel()
-
     val currentUser by viewModel.currentUser.collectAsStateWithLifecycle()
     var showCreatePostSheet by remember { mutableStateOf(false) }
-
     val listState = rememberLazyListState()
 
     LaunchedEffect(postId, viewModel.posts) {
         if (postId == null || viewModel.isLoadingPosts) return@LaunchedEffect
-
         val index = viewModel.posts.indexOfFirst { it.id == postId }
-        if (index >= 0) {
-            listState.animateScrollToItem(index)
-        }
+        if (index >= 0) listState.animateScrollToItem(index)
     }
 
     LaunchedEffect(Unit) {
@@ -74,22 +68,21 @@ fun FirebaseFeedScreen(
 
     TScreen(horizontalAlignment = Alignment.Start) {
         TText(
-            modifier = Modifier.padding(vertical = Dimens.standardPadding),
             text = stringResource(Res.string.feed),
-            style = TTextStyle.TITLE
+            style = TTextStyle.SUBTITLE,
+            modifier = Modifier.padding(vertical = Dimens.standardPadding)
         )
+
         Box(modifier = Modifier.fillMaxSize()) {
             when {
                 viewModel.isLoadingPosts -> {
-                    CircularProgressIndicator(
-                        modifier = Modifier.align(Alignment.Center)
-                    )
+                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                 }
 
                 viewModel.posts.isEmpty() -> {
                     TText(
                         text = "No posts yet",
-                        style = TTextStyle.BODY,
+                        style = TTextStyle.DESCRIPTION,
                         modifier = Modifier.align(Alignment.Center)
                     )
                 }
@@ -98,8 +91,10 @@ fun FirebaseFeedScreen(
                     LazyColumn(
                         modifier = Modifier.fillMaxSize(),
                         state = listState,
-                        contentPadding = PaddingValues(bottom = 88.dp),
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                        contentPadding = PaddingValues(
+                            top = Dimens.smallSpace,
+                            bottom = Dimens.feedBottomPadding
+                        )
                     ) {
                         items(viewModel.posts, key = { it.id }) { post ->
                             PostItem(
@@ -109,6 +104,12 @@ fun FirebaseFeedScreen(
                                 onLike = { viewModel.toggleLike(post.id) },
                                 onAuthorClick = { onUserClick(post.authorId) }
                             )
+
+                            HorizontalDivider(
+                                modifier = Modifier.padding(vertical = Dimens.largeSpace),
+                                thickness = Dimens.dividerThickness,
+                                color = MaterialTheme.colorScheme.outlineVariant
+                            )
                         }
                     }
                 }
@@ -116,9 +117,8 @@ fun FirebaseFeedScreen(
 
             FloatingActionButton(
                 onClick = { showCreatePostSheet = true },
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(16.dp),
+                modifier = Modifier.align(Alignment.BottomEnd).padding(Dimens.standardPadding),
+                shape = CircleShape,
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = MaterialTheme.colorScheme.onPrimary
             ) {

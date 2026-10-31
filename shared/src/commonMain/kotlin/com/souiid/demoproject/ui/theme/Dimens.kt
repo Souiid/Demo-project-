@@ -20,4 +20,9 @@ object Dimens {
 
     val standardIconSize = 18.dp
     val avatarSize = 44.dp
+
+    val iconButtonSize = 40.dp
+
+    val feedBottomPadding = 88.dp
+    val dividerThickness = 0.5.dp
 }

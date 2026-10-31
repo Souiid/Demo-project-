@@ -1,4 +1,3 @@
-
 package com.souiid.demoproject.ui.components
 
 import androidx.compose.foundation.layout.Spacer
@@ -10,13 +9,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import com.souiid.demoproject.ui.components.button.TButton
 import com.souiid.demoproject.ui.components.others.TBottomSheet
 import com.souiid.demoproject.ui.components.text.TText
 import com.souiid.demoproject.ui.components.text.TTextStyle
 import com.souiid.demoproject.ui.components.textfield.TTextField
 import com.souiid.demoproject.ui.components.textfield.TTextFieldType
+import com.souiid.demoproject.ui.theme.Dimens
 import demoproject.shared.generated.resources.Res
 import demoproject.shared.generated.resources.createPost
 import demoproject.shared.generated.resources.publish
@@ -34,10 +33,10 @@ fun CreatePostSheet(
     TBottomSheet(onDismissRequest = onDismiss) {
         TText(
             text = stringResource(Res.string.createPost),
-            style = TTextStyle.TITLE
+            style = TTextStyle.SUBTITLE
         )
 
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(Dimens.standardPadding))
 
         TTextField(
             value = content,
@@ -46,7 +45,7 @@ fun CreatePostSheet(
             placeholder = stringResource(Res.string.writePost)
         )
 
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(Dimens.standardPadding))
 
         if (isPublishing) CircularProgressIndicator()
 
@@ -56,6 +55,6 @@ fun CreatePostSheet(
             onClick = { onPublish(content) }
         )
 
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(Dimens.standardPadding))
     }
 }
