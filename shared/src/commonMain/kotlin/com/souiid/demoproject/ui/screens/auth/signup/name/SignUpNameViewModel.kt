@@ -19,6 +19,8 @@ class SignUpNameViewModel(
     var lastName by mutableStateOf(signUpInfo.value.lastName)
     var error by mutableStateOf<AppError.Validation?>(null)
         private set
+    val isContinueEnabled: Boolean
+        get() = firstName.isNotBlank() && lastName.isNotBlank()
 
     fun clearError() {
         error = null

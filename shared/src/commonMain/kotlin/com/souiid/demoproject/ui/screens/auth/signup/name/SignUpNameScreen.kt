@@ -20,6 +20,7 @@ fun SignUpNameScreen(onContinueClick: () -> Unit) {
 
     SignUpScreen(
         title = stringResource(Res.string.whatIsYourName),
+        isContinueEnabled = viewModel.isContinueEnabled,
         onContinueClick = {
             if (viewModel.updateName()) onContinueClick()
         }

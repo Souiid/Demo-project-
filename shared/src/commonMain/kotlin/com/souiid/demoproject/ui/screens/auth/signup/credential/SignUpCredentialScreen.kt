@@ -28,6 +28,7 @@ fun SignUpCredentialScreen() {
     SignUpScreen(
         title = stringResource(Res.string.createYourAccount),
         buttonText = stringResource(Res.string.signUp),
+        isContinueEnabled = viewModel.isContinueEnabled,
         onContinueClick = { viewModel.signUp() },
         isLoading = viewModel.isLoading
     ) {

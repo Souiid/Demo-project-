@@ -20,6 +20,15 @@ class SignUpCredentialViewModel(
     var error by mutableStateOf<AppError?>(null)
         private set
 
+
+    val isContinueEnabled: Boolean
+        get() = signUpUseCase.isValidEmail(email) &&
+                password.length >= 8 &&
+                password == confirmPassword &&
+                !isLoading
+
+
+
     var isLoading by mutableStateOf(false)
         private set
 
