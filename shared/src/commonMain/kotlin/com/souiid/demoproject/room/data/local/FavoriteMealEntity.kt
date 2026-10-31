@@ -3,7 +3,7 @@ package com.souiid.demoproject.room.data.local
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "favorite_meals")
+@Entity(tableName = RoomConstants.Tables.FAVORITE_MEALS)
 data class FavoriteMealEntity(
     @PrimaryKey val id: String,
     val name: String,

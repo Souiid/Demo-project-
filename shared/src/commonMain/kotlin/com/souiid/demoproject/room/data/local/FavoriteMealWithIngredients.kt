@@ -6,8 +6,8 @@ import androidx.room.Relation
 data class FavoriteMealWithIngredients(
     @Embedded val meal: FavoriteMealEntity,
     @Relation(
-        parentColumn = "id",
-        entityColumn = "mealId"
+        parentColumn = RoomConstants.Columns.ID,
+        entityColumn = RoomConstants.Columns.MEAL_ID
     )
     val ingredients: List<FavoriteMealIngredientEntity>
 )
