@@ -107,5 +107,6 @@
     <string name="favorites">Favorites</string>
     <string name="profileLoadError">Unable to load profile</string>
     <string name="retry">Retry</string>
+    <string name="noNotifications">No notifications yet</string>
 
 </resources>
