@@ -1,5 +1,7 @@
 package com.souiid.demoproject.ui.components.others
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -10,6 +12,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import com.souiid.demoproject.ui.components.text.TText
 import com.souiid.demoproject.ui.components.text.TTextStyle
 import com.souiid.demoproject.ui.navigation.Route
+import com.souiid.demoproject.ui.theme.Dimens
 import demoproject.shared.generated.resources.Res
 import demoproject.shared.generated.resources.firebase
 import demoproject.shared.generated.resources.room
@@ -28,45 +31,53 @@ enum class BottomBarItem(
     ROOM(Res.string.room, Route.Room, AppIcon.Room, AppIcon.UnselectedRoom)
 }
 
+
 @Composable
 fun AppBottomBar(
     selectedItem: BottomBarItem,
     onItemSelected: (BottomBarItem) -> Unit
 ) {
-    NavigationBar(
-        containerColor = MaterialTheme.colorScheme.surface,
-        contentColor = MaterialTheme.colorScheme.onSurface
-    ) {
-        BottomBarItem.entries.forEach { item ->
-            val isSelected = selectedItem == item
-            val label = stringResource(item.stringResource)
+    Column {
+        HorizontalDivider(
+            thickness = Dimens.dividerThickness,
+            color = MaterialTheme.colorScheme.outlineVariant
+        )
 
-            NavigationBarItem(
-                selected = isSelected,
-                onClick = { onItemSelected(item) },
-                alwaysShowLabel = true,
-                icon = {
-                    Icon(
-                        imageVector = if (isSelected) item.selectedIcon else item.unselectedIcon,
-                        contentDescription = label
+        NavigationBar(
+            containerColor = MaterialTheme.colorScheme.surface,
+            contentColor = MaterialTheme.colorScheme.onSurface
+        ) {
+            BottomBarItem.entries.forEach { item ->
+                val isSelected = selectedItem == item
+                val label = stringResource(item.stringResource)
+
+                NavigationBarItem(
+                    selected = isSelected,
+                    onClick = { onItemSelected(item) },
+                    alwaysShowLabel = true,
+                    icon = {
+                        Icon(
+                            imageVector = if (isSelected) item.selectedIcon else item.unselectedIcon,
+                            contentDescription = label
+                        )
+                    },
+                    label = {
+                        TText(
+                            text = label,
+                            style = TTextStyle.LABEL,
+                            color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+                            maxLines = 1
+                        )
+                    },
+                    colors = NavigationBarItemDefaults.colors(
+                        selectedIconColor = MaterialTheme.colorScheme.primary,
+                        selectedTextColor = MaterialTheme.colorScheme.primary,
+                        unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                        unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                        indicatorColor = MaterialTheme.colorScheme.primaryContainer
                     )
-                },
-                label = {
-                    TText(
-                        text = label,
-                        style = TTextStyle.LABEL,
-                        color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
-                        maxLines = 1
-                    )
-                },
-                colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = MaterialTheme.colorScheme.primary,
-                    selectedTextColor = MaterialTheme.colorScheme.primary,
-                    unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                    unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                    indicatorColor = MaterialTheme.colorScheme.primaryContainer
                 )
-            )
+            }
         }
     }
 }
