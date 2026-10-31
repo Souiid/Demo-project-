@@ -5,4 +5,5 @@ enum class TButtonType {
     REFUSE,
     NEUTRAL,
     TEXT,
+    ICON_TEXT
 }

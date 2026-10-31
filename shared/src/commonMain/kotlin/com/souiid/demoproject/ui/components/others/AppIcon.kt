@@ -3,6 +3,7 @@ package com.souiid.demoproject.ui.components.others
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Article
+import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
@@ -54,5 +55,7 @@ object AppIcon {
     val NotificationLike = Icons.Default.Favorite
     val NotificationFollower = Icons.Default.PersonAdd
     val NotificationPost = Icons.AutoMirrored.Filled.Article
+
+    val SignOut = Icons.AutoMirrored.Filled.Logout
 
 }

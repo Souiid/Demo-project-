@@ -9,29 +9,35 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.souiid.demoproject.firebase.domain.model.ProfileStats
 import com.souiid.demoproject.firebase.domain.model.User
 import com.souiid.demoproject.ui.components.button.TButton
 import com.souiid.demoproject.ui.components.button.TButtonType
 import com.souiid.demoproject.ui.components.others.AnimatedCounter
+import com.souiid.demoproject.ui.components.others.AppIcon
 import com.souiid.demoproject.ui.components.others.TKamelImage
 import com.souiid.demoproject.ui.components.others.TScreen
 import com.souiid.demoproject.ui.components.text.TText
 import com.souiid.demoproject.ui.components.text.TTextStyle
 import com.souiid.demoproject.ui.screens.app.firebase.FollowViewModel
+import com.souiid.demoproject.ui.theme.Dimens
 import demoproject.shared.generated.resources.Res
+import demoproject.shared.generated.resources.editProfile
 import demoproject.shared.generated.resources.follow
 import demoproject.shared.generated.resources.followers
-import demoproject.shared.generated.resources.followings
+import demoproject.shared.generated.resources.following
 import demoproject.shared.generated.resources.posts
+import demoproject.shared.generated.resources.profileLoadError
+import demoproject.shared.generated.resources.retry
 import demoproject.shared.generated.resources.signOut
 import demoproject.shared.generated.resources.unfollow
 import org.jetbrains.compose.resources.stringResource
@@ -85,12 +91,12 @@ fun FirebaseProfileScreen(
 
             viewModel.error != null -> {
                 TText(
-                    text = "Unable to load profile",
+                    text = stringResource(Res.string.profileLoadError),
                     style = TTextStyle.BODY
                 )
 
                 TButton(
-                    text = "Retry",
+                    text = stringResource(Res.string.retry),
                     onClick = { viewModel.loadUser(userId, forceRefresh = true) }
                 )
             }
@@ -113,35 +119,41 @@ private fun ProfileContent(
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
+        verticalArrangement = Arrangement.spacedBy(Dimens.extraLargeSpace)
     ) {
-        TKamelImage(
-            imageUrl = user.photoUrl,
-            modifier = Modifier.size(96.dp)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(Dimens.standardPadding)
         ) {
-            TText(
-                text = "${user.firstName.firstOrNull() ?: ""}${user.lastName.firstOrNull() ?: ""}",
-                style = TTextStyle.TITLE
-            )
+            TKamelImage(
+                imageUrl = user.photoUrl,
+                modifier = Modifier.size(Dimens.profileAvatarSize)
+            ) {
+                TText(
+                    text = "${user.firstName.firstOrNull() ?: ""}${user.lastName.firstOrNull() ?: ""}",
+                    style = TTextStyle.SUBTITLE
+                )
+            }
+
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(Dimens.tinySpace)
+            ) {
+                TText(
+                    text = "${user.firstName} ${user.lastName}",
+                    style = TTextStyle.SUBTITLE
+                )
+
+                if (user.description.isNotBlank()) {
+                    TText(
+                        text = user.description,
+                        style = TTextStyle.DESCRIPTION,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
         }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        TText(
-            text = "${user.firstName} ${user.lastName}",
-            style = TTextStyle.TITLE
-        )
-
-        if (user.description.isNotBlank()) {
-            Spacer(modifier = Modifier.height(12.dp))
-
-            TText(
-                text = user.description,
-                style = TTextStyle.BODY
-            )
-        }
-
-        Spacer(modifier = Modifier.height(24.dp))
 
         if (hasLoadedStats) {
             Row(
@@ -149,20 +161,23 @@ private fun ProfileContent(
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 ProfileStat(
+                    modifier = Modifier.weight(1f),
                     value = stats.posts,
                     label = stringResource(Res.string.posts),
                     onClick = { onStatClick(user.id, ProfileListType.POSTS) }
                 )
 
                 ProfileStat(
+                    modifier = Modifier.weight(1f),
                     value = stats.followers,
                     label = stringResource(Res.string.followers),
                     onClick = { onStatClick(user.id, ProfileListType.FOLLOWERS) }
                 )
 
                 ProfileStat(
+                    modifier = Modifier.weight(1f),
                     value = stats.following,
-                    label = stringResource(Res.string.followings),
+                    label = stringResource(Res.string.following),
                     onClick = { onStatClick(user.id, ProfileListType.FOLLOWING) }
                 )
             }
@@ -170,24 +185,30 @@ private fun ProfileContent(
             CircularProgressIndicator()
         }
 
-        Spacer(modifier = Modifier.height(24.dp))
-
         if (isCurrentUser) {
             TButton(
-                text = "Edit profile",
+                modifier = Modifier.fillMaxWidth(),
+                text = stringResource(Res.string.editProfile),
                 onClick = goToEditProfile
             )
 
-            Spacer(modifier = Modifier.height(12.dp))
+            HorizontalDivider(
+                color = MaterialTheme.colorScheme.outlineVariant,
+                thickness = Dimens.dividerThickness
+            )
 
             TButton(
                 text = stringResource(Res.string.signOut),
+                type = TButtonType.ICON_TEXT,
+                icon = AppIcon.SignOut,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 onClick = onSignOut
             )
         } else {
             TButton(
+                modifier = Modifier.fillMaxWidth(),
                 text = stringResource(if (isFollowing) Res.string.unfollow else Res.string.follow),
-                type = if (isFollowing) TButtonType.REFUSE else TButtonType.PRIMARY,
+                type = if (isFollowing) TButtonType.NEUTRAL else TButtonType.PRIMARY,
                 isLoading = isUpdatingFollow,
                 enabled = !isUpdatingFollow,
                 onClick = onFollowClick
@@ -198,15 +219,26 @@ private fun ProfileContent(
 
 @Composable
 private fun ProfileStat(
+    modifier: Modifier = Modifier,
     value: Int,
     label: String,
     onClick: () -> Unit
 ) {
     Column(
-        modifier = Modifier.clickable(onClick = onClick),
-        horizontalAlignment = Alignment.CenterHorizontally
+        modifier = modifier
+            .height(Dimens.profileStatMinHeight)
+            .clickable(onClick = onClick),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
         AnimatedCounter(value = value)
-        TText(text = label, style = TTextStyle.BODY)
+
+        Spacer(modifier = Modifier.height(Dimens.tinySpace))
+
+        TText(
+            text = label,
+            style = TTextStyle.LABEL,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
     }
 }

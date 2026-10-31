@@ -25,4 +25,7 @@ object Dimens {
 
     val feedBottomPadding = 88.dp
     val dividerThickness = 0.5.dp
+
+    val profileAvatarSize = 80.dp
+    val profileStatMinHeight = 64.dp
 }
