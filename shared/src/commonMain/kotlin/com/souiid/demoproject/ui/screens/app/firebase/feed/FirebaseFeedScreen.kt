@@ -67,12 +67,6 @@ fun FirebaseFeedScreen(
     }
 
     TScreen(horizontalAlignment = Alignment.Start) {
-        TText(
-            text = stringResource(Res.string.feed),
-            style = TTextStyle.SUBTITLE,
-            modifier = Modifier.padding(vertical = Dimens.standardPadding)
-        )
-
         Box(modifier = Modifier.fillMaxSize()) {
             when {
                 viewModel.isLoadingPosts -> {

@@ -97,4 +97,13 @@
     <string name="delete">Delete</string>
     <string name="cancel">Cancel</string>
 
+
+    <string name="profile">Profile</string>
+    <string name="editProfile">Edit profile</string>
+    <string name="notifications">Notifications</string>
+    <string name="users">Users</string>
+    <string name="meals">Meals</string>
+    <string name="mealDetails">Meal details</string>
+    <string name="favorites">Favorites</string>
+
 </resources>

@@ -13,21 +13,36 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import com.souiid.demoproject.ui.components.others.AppBottomBar
 import com.souiid.demoproject.ui.components.others.AppIcon
 import com.souiid.demoproject.ui.components.others.BottomBarItem
 import com.souiid.demoproject.ui.components.others.TTopBar
-import com.souiid.demoproject.ui.screens.app.room.FavoriteMealsScreen
 import com.souiid.demoproject.ui.screens.app.firebase.notification.NotificationBadgeViewModel
+import com.souiid.demoproject.ui.screens.app.room.FavoriteMealsScreen
 import demoproject.shared.generated.resources.Res
+import demoproject.shared.generated.resources.editProfile
+import demoproject.shared.generated.resources.favorites
+import demoproject.shared.generated.resources.feed
 import demoproject.shared.generated.resources.firebase
+import demoproject.shared.generated.resources.followers
+import demoproject.shared.generated.resources.followings
 import demoproject.shared.generated.resources.ktor
+import demoproject.shared.generated.resources.mealDetails
+import demoproject.shared.generated.resources.meals
+import demoproject.shared.generated.resources.notifications
+import demoproject.shared.generated.resources.posts
+import demoproject.shared.generated.resources.profile
 import demoproject.shared.generated.resources.room
+import demoproject.shared.generated.resources.search
+import demoproject.shared.generated.resources.signIn
+import demoproject.shared.generated.resources.signUp
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 
@@ -79,11 +94,7 @@ fun AppNavigation() {
     Scaffold(
         topBar = {
             TTopBar(
-                title = when (selectedItem) {
-                    BottomBarItem.FIREBASE -> stringResource(Res.string.firebase)
-                    BottomBarItem.KTOR -> stringResource(Res.string.ktor)
-                    BottomBarItem.ROOM -> stringResource(Res.string.room)
-                },
+                title = getScreenTitle(backStackEntry, selectedItem),
                 onBack = if (isNotPrimaryScreen) {
                     { navController.popBackStack() }
                 } else null,
@@ -92,14 +103,14 @@ fun AppNavigation() {
                         IconButton(onClick = { navController.navigate(Route.Friends) }) {
                             Icon(
                                 imageVector = AppIcon.Search,
-                                contentDescription = "Search"
+                                contentDescription = stringResource(Res.string.search)
                             )
                         }
 
                         IconButton(onClick = { navController.navigate(Route.FirebaseProfile(null)) }) {
                             Icon(
                                 imageVector = AppIcon.Person,
-                                contentDescription = "Profile"
+                                contentDescription = stringResource(Res.string.profile)
                             )
                         }
 
@@ -120,7 +131,7 @@ fun AppNavigation() {
                             ) {
                                 Icon(
                                     imageVector = AppIcon.Notifications,
-                                    contentDescription = "Notifications"
+                                    contentDescription = stringResource(Res.string.notifications)
                                 )
                             }
                         }
@@ -149,7 +160,6 @@ fun AppNavigation() {
             modifier = Modifier.padding(paddingValues)
         ) {
             firebaseNavigation(navController)
-
             ktorNavigation(navController)
 
             composable<Route.Room> {
@@ -159,6 +169,44 @@ fun AppNavigation() {
                     }
                 )
             }
+        }
+    }
+}
+
+@Composable
+private fun getScreenTitle(
+    backStackEntry: NavBackStackEntry?,
+    selectedItem: BottomBarItem
+): String {
+    val destination = backStackEntry?.destination
+
+    return when {
+        destination?.hasRoute<Route.FirebaseFeed>() == true -> stringResource(Res.string.feed)
+        destination?.hasRoute<Route.FirebaseProfile>() == true -> stringResource(Res.string.profile)
+        destination?.hasRoute<Route.EditProfile>() == true -> stringResource(Res.string.editProfile)
+        destination?.hasRoute<Route.Friends>() == true -> stringResource(Res.string.search)
+
+        destination?.hasRoute<Route.FirebaseProfileList>() == true -> {
+            when (backStackEntry.toRoute<Route.FirebaseProfileList>().type.lowercase()) {
+                "followers" -> stringResource(Res.string.followers)
+                "following" -> stringResource(Res.string.followings)
+                else -> stringResource(Res.string.posts)
+            }
+        }
+
+        destination?.hasRoute<Route.NotificationCenter>() == true -> stringResource(Res.string.notifications)
+        destination?.hasRoute<Route.SignIn>() == true -> stringResource(Res.string.signIn)
+        destination?.hasRoute<Route.SignUpName>() == true -> stringResource(Res.string.signUp)
+        destination?.hasRoute<Route.SignUpDescription>() == true -> stringResource(Res.string.signUp)
+        destination?.hasRoute<Route.SignUpCredential>() == true -> stringResource(Res.string.signUp)
+        destination?.hasRoute<Route.HomeMeal>() == true -> stringResource(Res.string.meals)
+        destination?.hasRoute<Route.MealDetail>() == true -> stringResource(Res.string.mealDetails)
+        destination?.hasRoute<Route.Room>() == true -> stringResource(Res.string.favorites)
+
+        else -> when (selectedItem) {
+            BottomBarItem.FIREBASE -> stringResource(Res.string.firebase)
+            BottomBarItem.KTOR -> stringResource(Res.string.ktor)
+            BottomBarItem.ROOM -> stringResource(Res.string.room)
         }
     }
 }
