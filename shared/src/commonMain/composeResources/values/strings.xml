@@ -114,5 +114,7 @@
     <string name="createYourAccount">Create you account</string>
     <string name="finalStep">Final step</string>
     <string name="stepOf">Step %1$d of %2$d</string>
+    <string name="unknowUser">Unknow user</string>">
+
 
 </resources>

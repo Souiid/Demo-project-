@@ -21,6 +21,10 @@ import com.souiid.demoproject.ui.components.text.TText
 import com.souiid.demoproject.ui.components.text.TTextStyle
 import com.souiid.demoproject.ui.theme.Dimens
 import com.souiid.demoproject.ui.utils.PostDateFormatter
+import demoproject.shared.generated.resources.Res
+import demoproject.shared.generated.resources.errorUnknown
+import demoproject.shared.generated.resources.unknowUser
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun PostItem(
@@ -61,7 +65,9 @@ fun PostItem(
                     verticalArrangement = Arrangement.spacedBy(Dimens.tinySpace)
                 ) {
                     TText(
-                        text = author?.let { "${it.firstName} ${it.lastName}" } ?: "Unknown user",
+                        text = author?.let { "${it.firstName} ${it.lastName}" } ?: stringResource(
+                            Res.string.unknowUser
+                        ),
                         style = TTextStyle.ITEM_TITLE,
                         maxLines = 1
                     )
