@@ -45,6 +45,7 @@
     <string name="password">Password</string>
     <string name="firstName">First name</string>
     <string name="lastName">Last name</string>
+    <string name="dontHaveAccount">Don't have an account?</string>
 
     <string name="continueLabel">Continue</string>
     <string name="description">Description</string>
