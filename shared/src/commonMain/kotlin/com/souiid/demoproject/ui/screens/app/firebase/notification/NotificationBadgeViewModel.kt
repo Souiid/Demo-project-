@@ -12,7 +12,6 @@ import kotlinx.coroutines.launch
 import com.souiid.demoproject.platform.updateAppBadge
 import kotlin.coroutines.cancellation.CancellationException
 
-
 class NotificationBadgeViewModel(
     private val observeCurrentUserUseCase: ObserveCurrentUserUseCase,
     private val observeNotificationsUseCase: ObserveNotificationsUseCase,

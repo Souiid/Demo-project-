@@ -23,7 +23,7 @@ import kotlin.coroutines.cancellation.CancellationException
 
 class FirebaseProfileViewModel(
     private val fetchUserUseCase: FetchUserUseCase,
-    private val observeCurrentUserUseCase: ObserveCurrentUserUseCase,
+    observeCurrentUserUseCase: ObserveCurrentUserUseCase,
     private val signOutUseCase: SignOutUseCase,
     private val observeProfileFollowsUseCase: ObserveProfileFollowsUseCase,
     private val observeUserPostsUseCase: ObserveUserPostsUseCase
@@ -43,9 +43,6 @@ class FirebaseProfileViewModel(
     val profileStats = _profileStats.asStateFlow()
 
     var hasLoadedStats by mutableStateOf(false)
-        private set
-
-    var isLoadingStats by mutableStateOf(false)
         private set
 
     var isLoading by mutableStateOf(false)
@@ -82,7 +79,6 @@ class FirebaseProfileViewModel(
         }
 
         isLoading = _displayedUser.value == null
-        isLoadingStats = !hasLoadedStats
         error = null
 
         loadJob = viewModelScope.launch {
@@ -133,14 +129,12 @@ class FirebaseProfileViewModel(
 
                     _profileStats.value = stats
                     hasLoadedStats = true
-                    isLoadingStats = false
                 }
             } catch (e: CancellationException) {
                 throw e
             } catch (_: Exception) {
                 if (currentGeneration == generation) {
                     error = AppError.Unknown()
-                    isLoadingStats = false
                 }
             }
         }
@@ -160,7 +154,6 @@ class FirebaseProfileViewModel(
                 _profileStats.value = ProfileStats()
                 hasLoadedStats = false
                 isLoading = false
-                isLoadingStats = false
                 error = null
             } catch (e: CancellationException) {
                 throw e

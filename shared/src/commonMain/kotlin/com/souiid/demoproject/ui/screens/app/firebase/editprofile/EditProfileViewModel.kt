@@ -28,8 +28,6 @@ class EditProfileViewModel(
 
     var isLoading by mutableStateOf(false)
         private set
-    var isSuccess by mutableStateOf(false)
-        private set
     var error by mutableStateOf<AppError?>(null)
         private set
 
@@ -42,7 +40,6 @@ class EditProfileViewModel(
 
         viewModelScope.launch {
             isLoading = true
-            isSuccess = false
             error = null
 
             try {
@@ -67,7 +64,7 @@ class EditProfileViewModel(
                 }
 
                 when (val result = updateUserUseCase(firstName, lastName, description, photoUrl)) {
-                    is AppResult.Success -> isSuccess = true
+                    is AppResult.Success -> {}
                     is AppResult.Failure -> error = result.error
                 }
             } finally {

@@ -71,21 +71,21 @@ fun FirebaseProfileScreen(
             }
 
             displayedUser != null -> {
-                val user = displayedUser!!
-
-                key(user.id) {
-                    ProfileContent(
-                        user = user,
-                        stats = profileStats,
-                        hasLoadedStats = viewModel.hasLoadedStats,
-                        isCurrentUser = currentUser?.id == user.id,
-                        isFollowing = user.id in followingUserIds,
-                        isUpdatingFollow = isFollowingLoading || user.id in updatingUserIds,
-                        onFollowClick = { followViewModel.toggleFollow(user.id) },
-                        goToEditProfile = goToEditProfile,
-                        onSignOut = viewModel::signOut,
-                        onStatClick = onStatClick
-                    )
+                displayedUser?.let { user->
+                    key(user.id) {
+                        ProfileContent(
+                            user = user,
+                            stats = profileStats,
+                            hasLoadedStats = viewModel.hasLoadedStats,
+                            isCurrentUser = currentUser?.id == user.id,
+                            isFollowing = user.id in followingUserIds,
+                            isUpdatingFollow = isFollowingLoading || user.id in updatingUserIds,
+                            onFollowClick = { followViewModel.toggleFollow(user.id) },
+                            goToEditProfile = goToEditProfile,
+                            onSignOut = viewModel::signOut,
+                            onStatClick = onStatClick
+                        )
+                    }
                 }
             }
 

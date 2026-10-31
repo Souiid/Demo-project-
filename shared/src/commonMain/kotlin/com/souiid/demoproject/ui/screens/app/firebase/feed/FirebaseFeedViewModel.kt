@@ -1,4 +1,3 @@
-
 package com.souiid.demoproject.ui.screens.app.firebase.feed
 
 import androidx.compose.runtime.getValue
@@ -25,13 +24,10 @@ import dev.gitlive.firebase.auth.auth
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
-
 
 class FirebaseFeedViewModel(
     private val fetchUserUseCase: FetchUserUseCase,
@@ -47,9 +43,6 @@ class FirebaseFeedViewModel(
 {
 
     val currentUser = observeCurrentUserUseCase()
-
-    private val _deletedPostCounts = MutableStateFlow<Map<String, Int>>(emptyMap())
-    val deletedPostCounts = _deletedPostCounts.asStateFlow()
 
     var error by mutableStateOf<AppError?>(null)
         private set
@@ -156,7 +149,6 @@ class FirebaseFeedViewModel(
                             if (acknowledgedLiked != null) {
                                 val state = likeSyncStates[remotePost.id]
                                 val confirmedLiked = state?.confirmedLiked ?: acknowledgedLiked
-                                val expectedCount = if (acknowledgedLiked) 1 else -1
                                 val localPost = posts.find { it.id == remotePost.id }
 
                                 if (state != null && !state.syncing && state.debounceJob?.isActive != true &&
@@ -232,7 +224,6 @@ class FirebaseFeedViewModel(
     }
 
     fun toggleLike(postId: String) {
-        val post = posts.find { it.id == postId } ?: return
         if (postId !in checkedLikePostIds) return
 
         val state = likeSyncStates.getOrPut(postId) {
@@ -409,7 +400,7 @@ class FirebaseFeedViewModel(
         observePosts(forceRestart = true)
     }
 
-    fun observeNotificationToken() {
+   private fun observeNotificationToken() {
         viewModelScope.launch {
             currentUser.collectLatest { user ->
                 if (user == null) return@collectLatest
@@ -424,11 +415,4 @@ class FirebaseFeedViewModel(
             }
         }
     }
-
-    fun notifyPostDeleted(authorId: String) {
-        _deletedPostCounts.value = _deletedPostCounts.value.toMutableMap().apply {
-            this[authorId] = (this[authorId] ?: 0) + 1
-        }
-    }
 }
-

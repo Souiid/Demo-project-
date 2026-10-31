@@ -37,7 +37,6 @@ import demoproject.shared.generated.resources.lastName
 import demoproject.shared.generated.resources.modifyPhoto
 import demoproject.shared.generated.resources.save
 import org.jetbrains.compose.resources.stringResource
-import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -56,7 +55,13 @@ fun EditProfileScreen() {
                 }
             )
             EditProfileFields(viewModel)
-            EditProfileSaveButton(viewModel)
+            TButton(
+                text = stringResource(Res.string.save),
+                onClick = {
+                    viewModel.updateUser()
+                },
+                isLoading = viewModel.isLoading
+            )
         }
     }
 }
@@ -100,17 +105,6 @@ private fun EditProfileFields(viewModel: EditProfileViewModel) {
         },
         type = TTextFieldType.TEXT,
         imeAction = ImeAction.Done
-    )
-}
-
-@Composable
-private fun EditProfileSaveButton(viewModel: EditProfileViewModel) {
-    TButton(
-        text = stringResource(Res.string.save),
-        onClick = {
-            viewModel.updateUser()
-        },
-        isLoading = viewModel.isLoading
     )
 }
 

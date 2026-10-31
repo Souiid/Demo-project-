@@ -8,7 +8,6 @@ import com.souiid.demoproject.firebase.domain.usecase.user.FollowUserUseCase
 import com.souiid.demoproject.firebase.domain.usecase.user.GetFollowingUserIdsUseCase
 import com.souiid.demoproject.firebase.domain.usecase.user.ObserveCurrentUserUseCase
 import com.souiid.demoproject.firebase.domain.usecase.user.UnfollowUserUseCase
-import com.souiid.demoproject.ui.screens.app.firebase.feed.FirebaseFeedViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -18,7 +17,7 @@ class FollowViewModel(
     private val followUserUseCase: FollowUserUseCase,
     private val unfollowUserUseCase: UnfollowUserUseCase,
     private val getFollowingUserIdsUseCase: GetFollowingUserIdsUseCase,
-    private val observeCurrentUserUseCase: ObserveCurrentUserUseCase,
+    private val observeCurrentUserUseCase: ObserveCurrentUserUseCase
 ) : ViewModel() {
 
     private val _followingUserIds = MutableStateFlow<Set<String>>(emptySet())

@@ -31,7 +31,6 @@ import com.souiid.demoproject.ui.components.text.TTextStyle
 import com.souiid.demoproject.ui.theme.Dimens
 import demoproject.shared.generated.resources.Res
 import demoproject.shared.generated.resources.createPost
-import demoproject.shared.generated.resources.feed
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 

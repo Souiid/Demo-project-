@@ -23,7 +23,7 @@ import kotlin.time.Duration.Companion.milliseconds
 class FriendsViewModel(
     private val searchUsersUseCase: SearchUsersUseCase,
     private val getFollowingUsersUseCase: GetFollowingUsersUseCase,
-    private val observeCurrentUserUseCase: ObserveCurrentUserUseCase,
+    observeCurrentUserUseCase: ObserveCurrentUserUseCase,
     private val followViewModel: FollowViewModel,
 ) : ViewModel() {
 

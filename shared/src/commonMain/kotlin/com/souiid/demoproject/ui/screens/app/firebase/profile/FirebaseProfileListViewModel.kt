@@ -16,7 +16,6 @@ import com.souiid.demoproject.firebase.domain.usecase.user.FetchUserUseCase
 import com.souiid.demoproject.firebase.domain.usecase.user.GetFollowerUserIdsUseCase
 import com.souiid.demoproject.firebase.domain.usecase.user.GetFollowingUsersUseCase
 import com.souiid.demoproject.firebase.domain.usecase.user.ObserveCurrentUserUseCase
-import com.souiid.demoproject.firebase.domain.usecase.user.ObserveProfileFollowsUseCase
 import com.souiid.demoproject.ui.screens.app.firebase.feed.FirebaseFeedViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -25,7 +24,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.time.Duration.Companion.milliseconds
-
 
 class FirebaseProfileListViewModel(
     private val getUserPostsUseCase: GetUserPostsUseCase,
@@ -37,7 +35,7 @@ class FirebaseProfileListViewModel(
     private val getLikedPostIdsUseCase: GetLikedPostIdsUseCase,
     private val deletePostUseCase: DeletePostUseCase,
     private val feedViewModel: FirebaseFeedViewModel,
-    private val observeCurrentUserUseCase: ObserveCurrentUserUseCase
+    observeCurrentUserUseCase: ObserveCurrentUserUseCase
 ) : ViewModel() {
 
     val currentUser = observeCurrentUserUseCase()
@@ -261,8 +259,8 @@ class FirebaseProfileListViewModel(
     }
 
     fun deletePost(postId: String) {
-        val post = _posts.value.find { it.id == postId } ?: return
-        if (_posts.value.none { it.id == postId } || postId in _deletingPostIds.value) return
+        _posts.value.find { it.id == postId } ?: return
+        if (postId in _deletingPostIds.value) return
 
         _deletingPostIds.value += postId
         val currentGeneration = generation
@@ -277,8 +275,6 @@ class FirebaseProfileListViewModel(
                             _posts.value = _posts.value.filterNot { it.id == postId }
                             _likedPostIds.value -= postId
                         }
-
-                        feedViewModel.notifyPostDeleted(post.authorId)
                         feedViewModel.refreshPosts()
                     }
                     is AppResult.Failure -> {
@@ -292,5 +288,4 @@ class FirebaseProfileListViewModel(
             }
         }
     }
-
 }
