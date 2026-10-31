@@ -34,4 +34,11 @@ object Dimens {
     val mealCategoryIndicatorWidth = 32.dp
     val mealCategoryIndicatorThickness = 2.dp
     val mealLoadingHeight = 300.dp
+
+    val signInModuleSize = 100.dp
+    val signInModuleSpacing = 12.dp
+    val signInModuleRadius = 24.dp
+    val signInModuleBorder = 6.dp
+
+    val signUpProgressHeight = 8.dp
 }
