@@ -96,20 +96,17 @@ fun PostItem(
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(Dimens.tinySpace)
+                horizontalArrangement = Arrangement.spacedBy(Dimens.smallSpace)
             ) {
-                IconButton(
-                    onClick = onLike,
-                    enabled = !isDeleting,
-                    modifier = Modifier.size(Dimens.iconButtonSize)
-                ) {
-                    Icon(
-                        imageVector = if (isLiked) AppIcon.Favorite else AppIcon.FavoriteBorder,
-                        contentDescription = if (isLiked) "Unlike" else "Like",
-                        modifier = Modifier.size(Dimens.standardIconSize),
-                        tint = if (isLiked) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
+                Icon(
+                    imageVector = if (isLiked) AppIcon.Favorite else AppIcon.FavoriteBorder,
+                    contentDescription = if (isLiked) "Unlike" else "Like",
+                    modifier = Modifier
+                        .size(Dimens.standardIconSize)
+                        .clickable(enabled = !isDeleting) { onLike() },
+                    tint = if (isLiked) MaterialTheme.colorScheme.error
+                    else MaterialTheme.colorScheme.onSurfaceVariant
+                )
 
                 TText(
                     text = post.likesCount.toString(),
