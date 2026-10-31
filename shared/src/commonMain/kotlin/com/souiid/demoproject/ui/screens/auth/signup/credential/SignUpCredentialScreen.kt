@@ -1,20 +1,22 @@
 package com.souiid.demoproject.ui.screens.auth.signup.credential
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.input.ImeAction
 import com.souiid.demoproject.firebase.domain.model.AppError
-import com.souiid.demoproject.ui.components.button.TButton
-import com.souiid.demoproject.ui.components.others.TScreen
+import com.souiid.demoproject.ui.components.others.SignUpScreen
 import com.souiid.demoproject.ui.components.text.TText
 import com.souiid.demoproject.ui.components.text.TTextStyle
 import com.souiid.demoproject.ui.components.textfield.TTextField
 import com.souiid.demoproject.ui.components.textfield.TTextFieldType
 import com.souiid.demoproject.ui.utils.appErrorMessage
-import demoproject.shared.generated.resources.*
+import demoproject.shared.generated.resources.Res
+import demoproject.shared.generated.resources.confirmPassword
+import demoproject.shared.generated.resources.createYourAccount
+import demoproject.shared.generated.resources.email
+import demoproject.shared.generated.resources.password
+import demoproject.shared.generated.resources.signUp
 import org.jetbrains.compose.resources.stringResource
-import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -23,7 +25,12 @@ fun SignUpCredentialScreen() {
     val validationError = viewModel.error as? AppError.Validation
     val generalError = viewModel.error?.takeUnless { it is AppError.Validation }
 
-    TScreen(verticalArrangement = Arrangement.Center) {
+    SignUpScreen(
+        title = stringResource(Res.string.createYourAccount),
+        buttonText = stringResource(Res.string.signUp),
+        onContinueClick = { viewModel.signUp() },
+        isLoading = viewModel.isLoading
+    ) {
         TTextField(
             labelTitle = stringResource(Res.string.email),
             value = viewModel.email,
@@ -73,11 +80,5 @@ fun SignUpCredentialScreen() {
                 color = MaterialTheme.colorScheme.error
             )
         }
-
-        TButton(
-            text = stringResource(Res.string.signUp),
-            onClick = { viewModel.signUp() },
-            isLoading = viewModel.isLoading
-        )
     }
 }

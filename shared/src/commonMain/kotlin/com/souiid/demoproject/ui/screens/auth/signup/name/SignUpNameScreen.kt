@@ -1,29 +1,29 @@
 package com.souiid.demoproject.ui.screens.auth.signup.name
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.input.ImeAction
 import com.souiid.demoproject.firebase.domain.model.AppError
-import com.souiid.demoproject.ui.components.button.TButton
-import com.souiid.demoproject.ui.components.others.TScreen
+import com.souiid.demoproject.ui.components.others.SignUpScreen
 import com.souiid.demoproject.ui.components.textfield.TTextField
 import com.souiid.demoproject.ui.components.textfield.TTextFieldType
 import com.souiid.demoproject.ui.utils.appErrorMessage
 import demoproject.shared.generated.resources.Res
-import demoproject.shared.generated.resources.continueLabel
 import demoproject.shared.generated.resources.firstName
 import demoproject.shared.generated.resources.lastName
+import demoproject.shared.generated.resources.whatIsYourName
 import org.jetbrains.compose.resources.stringResource
-import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun SignUpNameScreen(
-    onContinueClick: () -> Unit
-) {
+fun SignUpNameScreen(onContinueClick: () -> Unit) {
     val viewModel: SignUpNameViewModel = koinViewModel()
 
-    TScreen(verticalArrangement = Arrangement.Center) {
+    SignUpScreen(
+        title = stringResource(Res.string.whatIsYourName),
+        onContinueClick = {
+            if (viewModel.updateName()) onContinueClick()
+        }
+    ) {
         TTextField(
             labelTitle = stringResource(Res.string.firstName),
             value = viewModel.firstName,
@@ -50,15 +50,6 @@ fun SignUpNameScreen(
             errorMessage = viewModel.error
                 ?.takeIf { it.field == AppError.Field.LAST_NAME }
                 ?.let { appErrorMessage(it) }
-        )
-
-        TButton(
-            text = stringResource(Res.string.continueLabel),
-            onClick = {
-                if (viewModel.updateName()) {
-                    onContinueClick()
-                }
-            }
         )
     }
 }

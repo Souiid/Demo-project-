@@ -39,8 +39,8 @@
     <string name="december">December</string>
 
     <string name="date_format">%1$s %2$d %3$s</string>
-    <string name="signIn">Sign In</string>
-    <string name="signUp">SignUp</string>
+    <string name="signIn">Sign in</string>
+    <string name="signUp">Sign up</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
     <string name="firstName">First name</string>
@@ -109,5 +109,8 @@
     <string name="profileLoadError">Unable to load profile</string>
     <string name="retry">Retry</string>
     <string name="noNotifications">No notifications yet</string>
+    <string name="whatIsYourName">What is your name ?</string>
+    <string name="tellUsAboutYourself">Tell us about yourself</string>
+    <string name="createYourAccount">Create you account</string>
 
 </resources>
