@@ -10,13 +10,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import com.souiid.demoproject.firebase.domain.model.User
 import com.souiid.demoproject.ui.components.button.TButton
 import com.souiid.demoproject.ui.components.button.TButtonType
 import com.souiid.demoproject.ui.components.others.TKamelImage
 import com.souiid.demoproject.ui.components.text.TText
 import com.souiid.demoproject.ui.components.text.TTextStyle
+import com.souiid.demoproject.ui.theme.Dimens
 import demoproject.shared.generated.resources.Res
 import demoproject.shared.generated.resources.follow
 import demoproject.shared.generated.resources.unfollow
@@ -32,13 +32,13 @@ fun UserItem(
     onFollowClick: () -> Unit
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+        modifier = Modifier.fillMaxWidth().padding(vertical = Dimens.smallSpace),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(12.dp)
+        horizontalArrangement = Arrangement.spacedBy(Dimens.mediumSpace)
     ) {
         TKamelImage(
             imageUrl = user.photoUrl,
-            modifier = Modifier.size(48.dp).clickable(onClick = onUserClick)
+            modifier = Modifier.size(Dimens.avatarSize).clickable(onClick = onUserClick)
         ) {
             TText(
                 text = "${user.firstName.firstOrNull() ?: ""}${user.lastName.firstOrNull() ?: ""}",
@@ -46,14 +46,19 @@ fun UserItem(
             )
         }
 
-        Column(modifier = Modifier.weight(1f).clickable(onClick = onUserClick)) {
-            TText(text = "${user.firstName} ${user.lastName}", style = TTextStyle.SUBTITLE)
+        Column(
+            modifier = Modifier.weight(1f).clickable(onClick = onUserClick)
+        ) {
+            TText(
+                text = "${user.firstName} ${user.lastName}",
+                style = TTextStyle.ITEM_TITLE
+            )
         }
 
         if (!isCurrentUser) {
             TButton(
                 text = stringResource(if (isFollowing) Res.string.unfollow else Res.string.follow),
-                type = if (isFollowing) TButtonType.REFUSE else TButtonType.PRIMARY,
+                type = if (isFollowing) TButtonType.NEUTRAL else TButtonType.PRIMARY,
                 isLoading = isUpdating,
                 enabled = !isUpdating,
                 onClick = onFollowClick
