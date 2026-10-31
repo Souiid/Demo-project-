@@ -1,5 +1,8 @@
-package com.souiid.demoproject.firebase.data
+package com.souiid.demoproject.firebase.data.repository
 
+import com.souiid.demoproject.firebase.data.utils.FirebaseConstants
+import com.souiid.demoproject.firebase.data.utils.likesCollection
+import com.souiid.demoproject.firebase.data.utils.postsCollection
 import com.souiid.demoproject.firebase.domain.model.AppError
 import com.souiid.demoproject.firebase.domain.model.AppResult
 import com.souiid.demoproject.firebase.domain.model.Post
@@ -17,27 +20,29 @@ import kotlinx.coroutines.flow.map
 
 class PostRepository : IPostRepository {
 
-    private val functions = Firebase.functions("europe-west1")
+    private val functions = Firebase.functions(FirebaseConstants.REGION)
     private val firestore = Firebase.firestore
 
     override suspend fun createPost(content: String): AppResult<Unit> {
         return try {
-            functions.httpsCallable("createPost").invoke(mapOf("content" to content))
+            functions.httpsCallable(FirebaseConstants.Functions.CREATE_POST)
+                .invoke(mapOf(FirebaseConstants.Fields.CONTENT to content))
             AppResult.Success(Unit)
         } catch (e: CancellationException) {
             throw e
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             AppResult.Failure(AppError.Unknown())
         }
     }
 
     override suspend fun deletePost(postId: String): AppResult<Unit> {
         return try {
-            functions.httpsCallable("deletePost").invoke(mapOf("postId" to postId))
+            functions.httpsCallable(FirebaseConstants.Functions.DELETE_POST)
+                .invoke(mapOf(FirebaseConstants.Fields.POST_ID to postId))
             AppResult.Success(Unit)
         } catch (e: CancellationException) {
             throw e
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             AppResult.Failure(AppError.Unknown())
         }
     }
@@ -49,17 +54,17 @@ class PostRepository : IPostRepository {
             val posts = mutableListOf<Post>()
 
             authorIds.distinct().chunked(30).forEach { ids ->
-                val snapshot = firestore.collection("posts")
-                    .where { "authorId" inArray ids }
+                val snapshot = firestore.postsCollection()
+                    .where { FirebaseConstants.Fields.AUTHOR_ID inArray ids }
                     .get()
 
                 posts.addAll(snapshot.documents.map { document ->
                     Post(
                         id = document.id,
-                        authorId = document.get("authorId"),
-                        content = document.get("content"),
-                        createdAt = document.get<Timestamp>("createdAt").seconds * 1000,
-                        likesCount = document.get("likesCount")
+                        authorId = document.get(FirebaseConstants.Fields.AUTHOR_ID),
+                        content = document.get(FirebaseConstants.Fields.CONTENT),
+                        createdAt = document.get<Timestamp>(FirebaseConstants.Fields.CREATED_AT).seconds * 1000,
+                        likesCount = document.get(FirebaseConstants.Fields.LIKES_COUNT)
                     )
                 })
             }
@@ -67,7 +72,7 @@ class PostRepository : IPostRepository {
             AppResult.Success(posts.sortedByDescending { it.createdAt })
         } catch (e: CancellationException) {
             throw e
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             AppResult.Failure(AppError.Unknown())
         }
     }
@@ -78,18 +83,20 @@ class PostRepository : IPostRepository {
 
     override suspend fun likePost(postId: String): AppResult<Unit> {
         return try {
-            functions.httpsCallable("likePost").invoke(mapOf("postId" to postId))
+            functions.httpsCallable(FirebaseConstants.Functions.LIKE_POST)
+                .invoke(mapOf(FirebaseConstants.Fields.POST_ID to postId))
             AppResult.Success(Unit)
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             AppResult.Failure(AppError.Unknown())
         }
     }
 
     override suspend fun unlikePost(postId: String): AppResult<Unit> {
         return try {
-            functions.httpsCallable("unlikePost").invoke(mapOf("postId" to postId))
+            functions.httpsCallable(FirebaseConstants.Functions.UNLIKE_POST)
+                .invoke(mapOf(FirebaseConstants.Fields.POST_ID to postId))
             AppResult.Success(Unit)
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             AppResult.Failure(AppError.Unknown())
         }
     }
@@ -102,10 +109,7 @@ class PostRepository : IPostRepository {
             val likedPostIds = mutableSetOf<String>()
 
             for (postId in postIds.distinct()) {
-                val like = Firebase.firestore
-                    .collection("posts")
-                    .document(postId)
-                    .collection("likes")
+                val like = firestore.likesCollection(postId)
                     .document(userId)
                     .get()
 
@@ -113,7 +117,7 @@ class PostRepository : IPostRepository {
             }
 
             AppResult.Success(likedPostIds)
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             AppResult.Failure(AppError.Unknown())
         }
     }
@@ -122,17 +126,17 @@ class PostRepository : IPostRepository {
         if (authorIds.isEmpty()) return flowOf(emptyList())
 
         val flows = authorIds.distinct().chunked(30).map { ids ->
-            firestore.collection("posts")
-                .where { "authorId" inArray ids }
+            firestore.postsCollection()
+                .where { FirebaseConstants.Fields.AUTHOR_ID inArray ids }
                 .snapshots
                 .map { snapshot ->
                     snapshot.documents.map { document ->
                         Post(
                             id = document.id,
-                            authorId = document.get("authorId"),
-                            content = document.get("content"),
-                            createdAt = document.get<Timestamp>("createdAt").seconds * 1000,
-                            likesCount = document.get("likesCount")
+                            authorId = document.get(FirebaseConstants.Fields.AUTHOR_ID),
+                            content = document.get(FirebaseConstants.Fields.CONTENT),
+                            createdAt = document.get<Timestamp>(FirebaseConstants.Fields.CREATED_AT).seconds * 1000,
+                            likesCount = document.get(FirebaseConstants.Fields.LIKES_COUNT)
                         )
                     }
                 }

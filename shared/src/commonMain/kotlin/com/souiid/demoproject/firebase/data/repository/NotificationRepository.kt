@@ -1,5 +1,8 @@
-package com.souiid.demoproject.firebase.data
+package com.souiid.demoproject.firebase.data.repository
 
+import com.souiid.demoproject.firebase.data.utils.FirebaseConstants
+import com.souiid.demoproject.firebase.data.utils.notificationsCollection
+import com.souiid.demoproject.firebase.data.utils.userDocument
 import com.souiid.demoproject.firebase.domain.model.AppNotification
 import com.souiid.demoproject.firebase.domain.repository.INotificationRepository
 import dev.gitlive.firebase.Firebase
@@ -14,6 +17,7 @@ class NotificationRepository : INotificationRepository {
 
     private val messaging = Firebase.messaging
     private val firestore = Firebase.firestore
+    private val tokenField = FirebaseConstants.Fields.FCM_TOKEN
 
     override suspend fun getToken(): String = messaging.getToken()
 
@@ -21,51 +25,49 @@ class NotificationRepository : INotificationRepository {
         val token = messaging.getToken()
         if (token.isBlank()) return
 
-        firestore.collection("users").document(userId).updateFields {
-            "fcmToken" to token
+        firestore.userDocument(userId).updateFields {
+            tokenField to token
         }
     }
 
     override suspend fun deleteToken(userId: String) {
-        firestore.collection("users").document(userId).updateFields {
-            "fcmToken" to FieldValue.delete
+        firestore.userDocument(userId).updateFields {
+            tokenField to FieldValue.delete
         }
     }
 
     override fun observeNotifications(userId: String): Flow<List<AppNotification>> {
-        return firestore.collection("users").document(userId)
-            .collection("notifications")
-            .orderBy("createdAt")
+        return firestore.notificationsCollection(userId)
+            .orderBy(FirebaseConstants.Fields.CREATED_AT)
             .snapshots
             .map { snapshot ->
                 snapshot.documents.map { document ->
                     AppNotification(
                         id = document.id,
-                        type = document.get("type"),
-                        title = document.get("title"),
-                        body = document.get("body"),
-                        userId = document.get("userId"),
-                        postId = document.get("postId"),
-                        createdAt = document.get<Timestamp>("createdAt").seconds,
-                        isRead = document.get<Boolean?>("isRead") ?: false
+                        type = document.get(FirebaseConstants.Fields.TYPE),
+                        title = document.get(FirebaseConstants.Fields.TITLE),
+                        body = document.get(FirebaseConstants.Fields.BODY),
+                        userId = document.get(FirebaseConstants.Fields.USER_ID),
+                        postId = document.get(FirebaseConstants.Fields.POST_ID),
+                        createdAt = document.get<Timestamp>(FirebaseConstants.Fields.CREATED_AT).seconds,
+                        isRead = document.get<Boolean?>(FirebaseConstants.Fields.IS_READ) ?: false
                     )
                 }.sortedByDescending { it.createdAt }
             }
     }
 
     override suspend fun markNotificationsAsRead(userId: String) {
-        val notifications = firestore.collection("users").document(userId)
-            .collection("notifications").get()
+        val notifications = firestore.notificationsCollection(userId).get()
 
         notifications.documents
-            .filter { it.get<Boolean?>("isRead") != true }
+            .filter { it.get<Boolean?>(FirebaseConstants.Fields.IS_READ) != true }
             .chunked(400)
             .forEach { documents ->
                 val batch = firestore.batch()
 
                 documents.forEach { document ->
                     batch.updateFields(document.reference) {
-                        "isRead" to true
+                        FirebaseConstants.Fields.IS_READ to true
                     }
                 }
 

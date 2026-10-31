@@ -1,4 +1,4 @@
-package com.souiid.demoproject.firebase.data
+package com.souiid.demoproject.firebase.data.utils
 
 import com.souiid.demoproject.firebase.domain.model.SignUpInfo
 import kotlinx.coroutines.flow.MutableStateFlow

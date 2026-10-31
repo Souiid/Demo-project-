@@ -2,6 +2,7 @@ package com.souiid.demoproject.ktor.data.mapper
 
 import com.souiid.demoproject.ktor.data.dto.response.MealCategoryDTO
 import com.souiid.demoproject.ktor.data.dto.MealDTO
+import com.souiid.demoproject.ktor.data.remote.MealApiConstants
 import com.souiid.demoproject.ktor.domain.model.Meal
 import com.souiid.demoproject.ktor.domain.model.MealCategory
 import com.souiid.demoproject.ktor.domain.model.MealIngredient
@@ -34,9 +35,9 @@ fun MealCategoryDTO.toDomain() = MealCategory(
 fun JsonObject.toMealDetail(): Meal {
     val dto = json.decodeFromJsonElement<MealDTO>(this)
 
-    val ingredients = (1..20).mapNotNull { index ->
-        val name = this["strIngredient$index"]?.jsonPrimitive?.contentOrNull?.trim()
-        val measure = this["strMeasure$index"]?.jsonPrimitive?.contentOrNull?.trim().orEmpty()
+    val ingredients = (1..MealApiConstants.MAX_INGREDIENTS).mapNotNull { index ->
+        val name = this["${MealApiConstants.Fields.INGREDIENT}$index"]?.jsonPrimitive?.contentOrNull?.trim()
+        val measure = this["${MealApiConstants.Fields.MEASURE}$index"]?.jsonPrimitive?.contentOrNull?.trim().orEmpty()
 
         name?.takeIf { it.isNotEmpty() }?.let {
             MealIngredient(name = it, measure = measure)

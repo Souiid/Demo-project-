@@ -1,11 +1,11 @@
 package com.souiid.demoproject.di
 
-import com.souiid.demoproject.firebase.data.AuthRepository
-import com.souiid.demoproject.firebase.data.NotificationRepository
-import com.souiid.demoproject.firebase.data.PostRepository
-import com.souiid.demoproject.firebase.data.SignUpInfoStore
-import com.souiid.demoproject.firebase.data.SignUpRepository
-import com.souiid.demoproject.firebase.data.UserRepository
+import com.souiid.demoproject.firebase.data.repository.AuthRepository
+import com.souiid.demoproject.firebase.data.repository.NotificationRepository
+import com.souiid.demoproject.firebase.data.repository.PostRepository
+import com.souiid.demoproject.firebase.data.utils.SignUpInfoStore
+import com.souiid.demoproject.firebase.data.repository.SignUpRepository
+import com.souiid.demoproject.firebase.data.repository.UserRepository
 import com.souiid.demoproject.firebase.domain.repository.IAuthRepository
 import com.souiid.demoproject.firebase.domain.repository.INotificationRepository
 import com.souiid.demoproject.firebase.domain.repository.IPostRepository

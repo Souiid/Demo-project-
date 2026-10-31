@@ -1,5 +1,6 @@
-package com.souiid.demoproject.firebase.data
+package com.souiid.demoproject.firebase.data.repository
 
+import com.souiid.demoproject.firebase.data.utils.userDocument
 import com.souiid.demoproject.firebase.domain.repository.IAuthRepository
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.FirebaseAuth
@@ -12,6 +13,7 @@ import kotlinx.coroutines.flow.map
 class AuthRepository : IAuthRepository {
 
     private val auth: FirebaseAuth = Firebase.auth
+    private val firestore = Firebase.firestore
 
     override val authState: Flow<FirebaseUser?> = auth.authStateChanged
     override val currentAuthUser: FirebaseUser? = auth.currentUser
@@ -25,7 +27,7 @@ class AuthRepository : IAuthRepository {
     }
 
     override fun observeUserProfile(userId: String): Flow<Boolean> {
-        return Firebase.firestore.collection("users").document(userId)
+        return firestore.userDocument(userId)
             .snapshots
             .map { it.exists }
     }

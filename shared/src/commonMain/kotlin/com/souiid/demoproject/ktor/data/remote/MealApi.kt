@@ -11,27 +11,26 @@ import io.ktor.client.request.parameter
 class MealApi(
     private val client: HttpClient
 ) {
-    private val baseUrl = "https://www.themealdb.com/api/json/v1/1"
 
     suspend fun searchMeals(query: String): MealResponseDTO {
-        return client.get("$baseUrl/search.php") {
-            parameter("s", query)
+        return client.get(MealApiConstants.Endpoints.SEARCH) {
+            parameter(MealApiConstants.Parameters.SEARCH, query)
         }.body()
     }
 
     suspend fun getCategories(): MealCategoryResponseDTO {
-        return client.get("$baseUrl/categories.php").body()
+        return client.get(MealApiConstants.Endpoints.CATEGORIES).body()
     }
 
     suspend fun getMealsByCategory(category: String): MealResponseDTO {
-        return client.get("$baseUrl/filter.php") {
-            parameter("c", category)
+        return client.get(MealApiConstants.Endpoints.FILTER) {
+            parameter(MealApiConstants.Parameters.CATEGORY, category)
         }.body()
     }
 
     suspend fun getMealById(mealId: String): MealDetailResponseDTO {
-        return client.get("$baseUrl/lookup.php") {
-            parameter("i", mealId)
+        return client.get(MealApiConstants.Endpoints.LOOKUP) {
+            parameter(MealApiConstants.Parameters.ID, mealId)
         }.body()
     }
 }

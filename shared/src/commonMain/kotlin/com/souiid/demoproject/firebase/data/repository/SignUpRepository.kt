@@ -1,5 +1,7 @@
-package com.souiid.demoproject.firebase.data
+package com.souiid.demoproject.firebase.data.repository
 
+import com.souiid.demoproject.firebase.data.utils.SignUpInfoStore
+import com.souiid.demoproject.firebase.data.utils.userDocument
 import com.souiid.demoproject.firebase.domain.model.User
 import com.souiid.demoproject.firebase.domain.repository.ISignUpRepository
 import dev.gitlive.firebase.Firebase
@@ -31,7 +33,7 @@ class SignUpRepository(
             description = info.description
         )
 
-        firestore.collection("users").document(uid).set(user)
+        firestore.userDocument(uid).set(user)
         clear()
     }
 }
