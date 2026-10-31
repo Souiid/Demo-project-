@@ -9,19 +9,20 @@ private val LightColorScheme = lightColorScheme(
     onPrimary = White,
     primaryContainer = GreenLight,
     onPrimaryContainer = Black,
+
     background = White,
     onBackground = Black,
     surface = White,
     onSurface = Black,
-    surfaceVariant = LightGray,
+    surfaceVariant = VeryLightGray,
     onSurfaceVariant = Gray,
-    outline = LightGray
+
+    outline = LightGray,
+    outlineVariant = DividerGray
 )
 
 @Composable
-fun AppTheme(
-    content: @Composable () -> Unit
-) {
+fun AppTheme(content: @Composable () -> Unit) {
     MaterialTheme(
         colorScheme = LightColorScheme,
         typography = AppTypography,

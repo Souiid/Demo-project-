@@ -71,7 +71,8 @@ fun TButton(
                 } else {
                     TText(
                         text = text,
-                        style = TTextStyle.BUTTON
+                        style = TTextStyle.BUTTON,
+                        color = if (isEnabled) contentColor else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
                     )
                 }
             }
@@ -97,7 +98,7 @@ fun TButton(
                         TText(
                             text = text,
                             style = TTextStyle.LITTLE,
-                            color = color,
+                            color = if (isEnabled) color else color.copy(alpha = 0.5f),
                             textDecoration = if (isUnderlined) TextDecoration.Underline else null
                         )
                     }

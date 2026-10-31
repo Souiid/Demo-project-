@@ -7,5 +7,7 @@ val GreenLight = Color(0xFFDCFCE7)
 
 val White = Color(0xFFFFFFFF)
 val Black = Color(0xFF171717)
-val LightGray = Color(0xFFD4D4D4)
 val Gray = Color(0xFF525252)
+val LightGray = Color(0xFFD4D4D4)
+val VeryLightGray = Color(0xFFF5F5F5)
+val DividerGray = Color(0xFFE5E5E5)

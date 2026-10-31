@@ -7,6 +7,7 @@ object Dimens {
     val smallSpace = 8.dp
     val mediumSpace = 12.dp
     val largeSpace = 18.dp
+    val extraLargeSpace = 24.dp
 
     val mediumRadius = 12.dp
     val largeRadius = 16.dp
@@ -18,4 +19,5 @@ object Dimens {
     val progressStrokeSize = 2.dp
 
     val standardIconSize = 18.dp
+    val avatarSize = 44.dp
 }
