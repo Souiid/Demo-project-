@@ -142,4 +142,8 @@ class PostRepository : IPostRepository {
             results.flatMap { it }.sortedByDescending { it.createdAt }
         }
     }
+
+    override fun observeUserPosts(userId: String): Flow<List<Post>> {
+        return observeFeedPosts(listOf(userId))
+    }
 }

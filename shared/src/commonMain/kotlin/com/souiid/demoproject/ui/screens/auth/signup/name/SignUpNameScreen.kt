@@ -15,12 +15,13 @@ import demoproject.shared.generated.resources.firstName
 import demoproject.shared.generated.resources.lastName
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun SignUpNameScreen(
     onContinueClick: () -> Unit
 ) {
-    val viewModel: SignUpNameViewModel = koinInject()
+    val viewModel: SignUpNameViewModel = koinViewModel()
 
     TScreen(verticalArrangement = Arrangement.Center) {
         TTextField(

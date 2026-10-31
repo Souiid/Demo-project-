@@ -14,7 +14,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.souiid.demoproject.firebase.domain.usecase.user.ObserveCurrentUserUseCase
 import com.souiid.demoproject.ui.components.item.firebase.PostItem
 import com.souiid.demoproject.ui.components.item.firebase.UserItem
 import com.souiid.demoproject.ui.components.others.TDialog
@@ -32,6 +31,7 @@ import demoproject.shared.generated.resources.followings
 import demoproject.shared.generated.resources.posts
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun FirebaseProfileListScreen(
@@ -39,9 +39,8 @@ fun FirebaseProfileListScreen(
     type: ProfileListType,
     onUserClick: (String) -> Unit
 ) {
-    val viewModel: FirebaseProfileListViewModel = koinInject()
+    val viewModel: FirebaseProfileListViewModel = koinViewModel()
     val followViewModel: FollowViewModel = koinInject()
-    val observeCurrentUserUseCase: ObserveCurrentUserUseCase = koinInject()
 
     val posts by viewModel.posts.collectAsStateWithLifecycle()
     val users by viewModel.users.collectAsStateWithLifecycle()
@@ -50,7 +49,7 @@ fun FirebaseProfileListScreen(
     val likedPostIds by viewModel.likedPostIds.collectAsStateWithLifecycle()
     val deletingPostIds by viewModel.deletingPostIds.collectAsStateWithLifecycle()
 
-    val currentUser by observeCurrentUserUseCase().collectAsStateWithLifecycle()
+    val currentUser by viewModel.currentUser.collectAsStateWithLifecycle()
     val followingUserIds by followViewModel.followingUserIds.collectAsStateWithLifecycle()
     val updatingUserIds by followViewModel.updatingUserIds.collectAsStateWithLifecycle()
     val isFollowingLoading by followViewModel.isLoading.collectAsStateWithLifecycle()

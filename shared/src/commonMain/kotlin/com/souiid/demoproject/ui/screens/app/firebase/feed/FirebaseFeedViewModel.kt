@@ -19,6 +19,7 @@ import com.souiid.demoproject.firebase.domain.usecase.post.ObserveFeedPostsUseCa
 import com.souiid.demoproject.firebase.domain.usecase.post.UnlikePostUseCase
 import com.souiid.demoproject.firebase.domain.usecase.user.FetchUserUseCase
 import com.souiid.demoproject.firebase.domain.usecase.user.ObserveCurrentUserUseCase
+import com.souiid.demoproject.ui.screens.app.firebase.FollowViewModel
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.auth
 import kotlinx.coroutines.CancellationException
@@ -37,6 +38,7 @@ class FirebaseFeedViewModel(
     private val createPostUseCase: CreatePostUseCase,
     private val observeFeedPostsUseCase: ObserveFeedPostsUseCase,
     observeCurrentUserUseCase: ObserveCurrentUserUseCase,
+    private val followViewModel: FollowViewModel,
     private val likePostUseCase: LikePostUseCase,
     private val unlikePostUseCase: UnlikePostUseCase,
     private val getLikedPostIdsUseCase: GetLikedPostIdsUseCase,
@@ -136,7 +138,7 @@ class FirebaseFeedViewModel(
             error = null
 
             try {
-                observeFeedPostsUseCase()
+                observeFeedPostsUseCase(followViewModel.followingUserIds)
                     .catch { exception ->
                         if (exception is CancellationException) throw exception
                         if (generation == feedGeneration) error = AppError.Unknown()

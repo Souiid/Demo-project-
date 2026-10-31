@@ -24,8 +24,10 @@ class FriendsViewModel(
     private val searchUsersUseCase: SearchUsersUseCase,
     private val getFollowingUsersUseCase: GetFollowingUsersUseCase,
     private val observeCurrentUserUseCase: ObserveCurrentUserUseCase,
-    private val followViewModel: FollowViewModel
+    private val followViewModel: FollowViewModel,
 ) : ViewModel() {
+
+    val currentUser = observeCurrentUserUseCase()
 
     private val _searchQuery = MutableStateFlow("")
     val searchQuery = _searchQuery.asStateFlow()
@@ -83,7 +85,7 @@ class FriendsViewModel(
     }
 
     private suspend fun loadFollowingUsers() {
-        val userId = observeCurrentUserUseCase().value?.id ?: return
+        val userId = currentUser.value?.id ?: return
         _isFollowingUsersLoading.value = true
 
         try {

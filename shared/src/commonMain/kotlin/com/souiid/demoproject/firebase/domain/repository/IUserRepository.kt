@@ -2,6 +2,7 @@ package com.souiid.demoproject.firebase.domain.repository
 
 import com.souiid.demoproject.firebase.domain.model.AppResult
 import com.souiid.demoproject.firebase.domain.model.User
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 
 interface IUserRepository {
@@ -16,4 +17,6 @@ interface IUserRepository {
     suspend fun getFollowingUsers(userId: String): AppResult<List<User>>
     suspend fun getFollowerUserIds(userId: String): AppResult<Set<String>>
 
+    fun observeFollowerUserIds(userId: String): Flow<Set<String>>
+    fun observeFollowingUserIds(userId: String): Flow<Set<String>>
 }

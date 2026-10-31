@@ -1,4 +1,3 @@
-
 package com.souiid.demoproject.ui.screens.app.firebase.profile
 
 import androidx.compose.runtime.getValue
@@ -11,13 +10,14 @@ import com.souiid.demoproject.firebase.domain.model.AppResult
 import com.souiid.demoproject.firebase.domain.model.ProfileStats
 import com.souiid.demoproject.firebase.domain.model.User
 import com.souiid.demoproject.firebase.domain.usecase.auth.SignOutUseCase
+import com.souiid.demoproject.firebase.domain.usecase.post.ObserveUserPostsUseCase
 import com.souiid.demoproject.firebase.domain.usecase.user.FetchUserUseCase
-import com.souiid.demoproject.firebase.domain.usecase.user.GetProfileStatsUseCase
 import com.souiid.demoproject.firebase.domain.usecase.user.ObserveCurrentUserUseCase
-import com.souiid.demoproject.ui.screens.app.firebase.FollowViewModel
-import com.souiid.demoproject.ui.screens.app.firebase.feed.FirebaseFeedViewModel
+import com.souiid.demoproject.firebase.domain.usecase.user.ObserveProfileFollowsUseCase
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import kotlin.coroutines.cancellation.CancellationException
 
@@ -25,12 +25,16 @@ class FirebaseProfileViewModel(
     private val fetchUserUseCase: FetchUserUseCase,
     private val observeCurrentUserUseCase: ObserveCurrentUserUseCase,
     private val signOutUseCase: SignOutUseCase,
-    private val getProfileStatsUseCase: GetProfileStatsUseCase,
-    private val followViewModel: FollowViewModel,
-    private val feedViewModel: FirebaseFeedViewModel
+    private val observeProfileFollowsUseCase: ObserveProfileFollowsUseCase,
+    private val observeUserPostsUseCase: ObserveUserPostsUseCase
 ) : ViewModel() {
 
     val currentUser = observeCurrentUserUseCase()
+
+    private var loadedUserId: String? = null
+    private var loadJob: Job? = null
+    private var statsJob: Job? = null
+    private var generation = 0
 
     private val _displayedUser = MutableStateFlow<User?>(null)
     val displayedUser = _displayedUser.asStateFlow()
@@ -38,84 +42,106 @@ class FirebaseProfileViewModel(
     private val _profileStats = MutableStateFlow(ProfileStats())
     val profileStats = _profileStats.asStateFlow()
 
-    private var appliedDeletionCount = 0
-
-    var isLoadingStats by mutableStateOf(false)
+    var hasLoadedStats by mutableStateOf(false)
         private set
 
-    var error by mutableStateOf<AppError?>(null)
+    var isLoadingStats by mutableStateOf(false)
         private set
 
     var isLoading by mutableStateOf(false)
         private set
 
+    var error by mutableStateOf<AppError?>(null)
+        private set
+
     init {
         viewModelScope.launch {
-            feedViewModel.deletedPostCounts.collect { counts ->
-                val userId = _displayedUser.value?.id ?: return@collect
-                val total = counts[userId] ?: 0
-                val difference = total - appliedDeletionCount
-
-                if (difference > 0 && !isLoadingStats) {
-                    _profileStats.value = _profileStats.value.copy(
-                        posts = (_profileStats.value.posts - difference).coerceAtLeast(0)
-                    )
+            currentUser.collect { user ->
+                if (user != null && _displayedUser.value?.id == user.id) {
+                    _displayedUser.value = user
                 }
-
-                appliedDeletionCount = total
             }
         }
     }
 
-    fun loadUser(userId: String?) {
-        if (isLoading) return
+    fun loadUser(userId: String?, forceRefresh: Boolean = false) {
+        val targetUserId = userId ?: currentUser.value?.id ?: return
+        if (!forceRefresh && loadedUserId == targetUserId && _displayedUser.value != null) return
 
-        viewModelScope.launch {
-            isLoading = true
-            error = null
+        val currentGeneration = ++generation
+        loadJob?.cancel()
+        statsJob?.cancel()
+
+        val isDifferentUser = loadedUserId != targetUserId
+
+        if (isDifferentUser) {
+            loadedUserId = null
             _displayedUser.value = null
             _profileStats.value = ProfileStats()
-            appliedDeletionCount = feedViewModel.deletedPostCounts.value[userId ?: currentUser.value?.id] ?: 0
+            hasLoadedStats = false
+        }
 
+        isLoading = _displayedUser.value == null
+        isLoadingStats = !hasLoadedStats
+        error = null
+
+        loadJob = viewModelScope.launch {
             try {
                 val user = currentUser.value
-
-                if (user != null && (userId == null || userId == user.id)) {
-                    _displayedUser.value = user
-                    loadProfileStats(user.id)
-                } else if (userId != null) {
-                    when (val result = fetchUserUseCase(userId)) {
-                        is AppResult.Success -> {
-                            _displayedUser.value = result.data
-                            loadProfileStats(result.data.id)
-                        }
-                        is AppResult.Failure -> error = result.error
-                    }
+                val result = if (user != null && user.id == targetUserId) {
+                    AppResult.Success(user)
                 } else {
-                    error = AppError.Unknown()
+                    fetchUserUseCase(targetUserId)
                 }
-            } finally {
-                isLoading = false
-            }
-        }
-    }
 
-    private fun loadProfileStats(userId: String) {
-        viewModelScope.launch {
-            isLoadingStats = true
+                if (currentGeneration != generation) return@launch
 
-            try {
-                when (val result = getProfileStatsUseCase(userId)) {
+                when (result) {
                     is AppResult.Success -> {
-                        if (_displayedUser.value?.id == userId) {
-                            _profileStats.value = result.data
-                            appliedDeletionCount = feedViewModel.deletedPostCounts.value[userId] ?: 0
-                        }
+                        _displayedUser.value = result.data
+                        loadedUserId = targetUserId
+                        observeProfileStats(targetUserId, currentGeneration)
                     }
                     is AppResult.Failure -> error = result.error
                 }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (_: Exception) {
+                if (currentGeneration == generation) error = AppError.Unknown()
             } finally {
-                isLoadingStats = false
+                if (currentGeneration == generation) isLoading = false
+            }
+        }
+    }
+
+    private fun observeProfileStats(userId: String, currentGeneration: Int) {
+        statsJob?.cancel()
+
+        statsJob = viewModelScope.launch {
+            try {
+                combine(
+                    observeProfileFollowsUseCase(userId),
+                    observeUserPostsUseCase(userId)
+                ) { follows, posts ->
+                    ProfileStats(
+                        posts = posts.size,
+                        followers = follows.first,
+                        following = follows.second
+                    )
+                }.collect { stats ->
+                    if (currentGeneration != generation || _displayedUser.value?.id != userId) return@collect
+
+                    _profileStats.value = stats
+                    hasLoadedStats = true
+                    isLoadingStats = false
+                }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (_: Exception) {
+                if (currentGeneration == generation) {
+                    error = AppError.Unknown()
+                    isLoadingStats = false
+                }
             }
         }
     }
@@ -124,10 +150,21 @@ class FirebaseProfileViewModel(
         viewModelScope.launch {
             try {
                 signOutUseCase()
-                feedViewModel.clear()
+
+                generation++
+                loadJob?.cancel()
+                statsJob?.cancel()
+
+                loadedUserId = null
+                _displayedUser.value = null
+                _profileStats.value = ProfileStats()
+                hasLoadedStats = false
+                isLoading = false
+                isLoadingStats = false
+                error = null
             } catch (e: CancellationException) {
                 throw e
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 error = AppError.Unknown()
             }
         }

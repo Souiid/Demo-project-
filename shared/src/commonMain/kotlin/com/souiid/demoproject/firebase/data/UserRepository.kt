@@ -12,8 +12,10 @@ import dev.gitlive.firebase.firestore.firestore
 import dev.gitlive.firebase.functions.functions
 import dev.gitlive.firebase.storage.storage
 import dev.gitlive.firebase.storage.storageMetadata
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
 import kotlin.coroutines.cancellation.CancellationException
 
 class UserRepository : IUserRepository {
@@ -180,4 +182,12 @@ class UserRepository : IUserRepository {
             AppResult.Failure(AppError.Unknown())
         }
     }
+
+    override fun observeFollowerUserIds(userId: String): Flow<Set<String>> =
+        firestore.collection("users").document(userId).collection("followers")
+            .snapshots.map { snapshot -> snapshot.documents.map { it.id }.toSet() }
+
+    override fun observeFollowingUserIds(userId: String): Flow<Set<String>> =
+        firestore.collection("users").document(userId).collection("following")
+            .snapshots.map { snapshot -> snapshot.documents.map { it.id }.toSet() }
 }

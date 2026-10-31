@@ -18,10 +18,11 @@ import com.souiid.demoproject.ui.components.text.TText
 import com.souiid.demoproject.ui.components.text.TTextStyle
 import com.souiid.demoproject.ui.theme.Dimens
 import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun NotificationCenterScreen() {
-    val viewModel: NotificationCenterViewModel = koinInject()
+    val viewModel: NotificationCenterViewModel = koinViewModel()
     val notifications by viewModel.notifications.collectAsStateWithLifecycle()
     val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
 

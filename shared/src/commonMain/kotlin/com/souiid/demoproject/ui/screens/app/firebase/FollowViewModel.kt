@@ -19,7 +19,6 @@ class FollowViewModel(
     private val unfollowUserUseCase: UnfollowUserUseCase,
     private val getFollowingUserIdsUseCase: GetFollowingUserIdsUseCase,
     private val observeCurrentUserUseCase: ObserveCurrentUserUseCase,
-    private val feedViewModel: FirebaseFeedViewModel
 ) : ViewModel() {
 
     private val _followingUserIds = MutableStateFlow<Set<String>>(emptySet())
@@ -73,7 +72,6 @@ class FollowViewModel(
                 when (result) {
                     is AppResult.Success -> {
                         _followingUserIds.value = if (wasFollowing) _followingUserIds.value - userId else _followingUserIds.value + userId
-                        feedViewModel.refreshPosts()
                     }
                     is AppResult.Failure -> _error.value = result.error
                 }

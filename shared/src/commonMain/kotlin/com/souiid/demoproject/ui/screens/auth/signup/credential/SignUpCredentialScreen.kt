@@ -15,10 +15,11 @@ import com.souiid.demoproject.ui.utils.appErrorMessage
 import demoproject.shared.generated.resources.*
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun SignUpCredentialScreen() {
-    val viewModel: SignUpCredentialViewModel = koinInject()
+    val viewModel: SignUpCredentialViewModel = koinViewModel()
     val validationError = viewModel.error as? AppError.Validation
     val generalError = viewModel.error?.takeUnless { it is AppError.Validation }
 

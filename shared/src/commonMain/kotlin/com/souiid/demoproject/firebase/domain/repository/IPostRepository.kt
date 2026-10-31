@@ -13,4 +13,5 @@ interface IPostRepository {
     suspend fun getLikedPostIds(postIds: List<String>): AppResult<Set<String>>
     fun observeFeedPosts(authorIds: List<String>): Flow<List<Post>>
     suspend fun deletePost(postId: String): AppResult<Unit>
+    fun observeUserPosts(userId: String): Flow<List<Post>>
 }

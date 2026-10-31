@@ -7,7 +7,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.souiid.demoproject.firebase.domain.usecase.user.ObserveCurrentUserUseCase
 import com.souiid.demoproject.ui.components.item.firebase.UserItem
 import com.souiid.demoproject.ui.components.others.TScreen
 import com.souiid.demoproject.ui.components.text.TText
@@ -22,14 +21,14 @@ import demoproject.shared.generated.resources.results
 import demoproject.shared.generated.resources.noResults
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun FriendsScreen(
     onUserClick: (String) -> Unit
 ) {
-    val viewModel: FriendsViewModel = koinInject()
+    val viewModel: FriendsViewModel = koinViewModel()
     val followViewModel: FollowViewModel = koinInject()
-    val observeCurrentUserUseCase: ObserveCurrentUserUseCase = koinInject()
 
     val search by viewModel.searchQuery.collectAsStateWithLifecycle()
     val users by viewModel.users.collectAsStateWithLifecycle()
@@ -37,7 +36,7 @@ fun FriendsScreen(
     val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
     val isFollowingUsersLoading by viewModel.isFollowingUsersLoading.collectAsStateWithLifecycle()
 
-    val currentUser by observeCurrentUserUseCase().collectAsStateWithLifecycle()
+    val currentUser by viewModel.currentUser.collectAsStateWithLifecycle()
     val followingUserIds by followViewModel.followingUserIds.collectAsStateWithLifecycle()
     val updatingUserIds by followViewModel.updatingUserIds.collectAsStateWithLifecycle()
     val isFollowingLoading by followViewModel.isLoading.collectAsStateWithLifecycle()

@@ -24,6 +24,7 @@ import com.souiid.demoproject.firebase.domain.usecase.post.GetLikedPostIdsUseCas
 import com.souiid.demoproject.firebase.domain.usecase.post.GetUserPostsUseCase
 import com.souiid.demoproject.firebase.domain.usecase.post.LikePostUseCase
 import com.souiid.demoproject.firebase.domain.usecase.post.ObserveFeedPostsUseCase
+import com.souiid.demoproject.firebase.domain.usecase.post.ObserveUserPostsUseCase
 import com.souiid.demoproject.firebase.domain.usecase.post.UnlikePostUseCase
 import com.souiid.demoproject.firebase.domain.usecase.signup.ObserveSignUpInfoUseCase
 import com.souiid.demoproject.firebase.domain.usecase.signup.UpdateSignUpNameUseCase
@@ -36,6 +37,7 @@ import com.souiid.demoproject.firebase.domain.usecase.user.GetFollowingUserIdsUs
 import com.souiid.demoproject.firebase.domain.usecase.user.GetFollowingUsersUseCase
 import com.souiid.demoproject.firebase.domain.usecase.user.GetProfileStatsUseCase
 import com.souiid.demoproject.firebase.domain.usecase.user.ObserveCurrentUserUseCase
+import com.souiid.demoproject.firebase.domain.usecase.user.ObserveProfileFollowsUseCase
 import com.souiid.demoproject.firebase.domain.usecase.user.SearchUsersUseCase
 import com.souiid.demoproject.firebase.domain.usecase.user.UnfollowUserUseCase
 import com.souiid.demoproject.firebase.domain.usecase.user.UpdateUserUseCase
@@ -54,7 +56,7 @@ import com.souiid.demoproject.ui.screens.auth.signup.credential.SignUpCredential
 import com.souiid.demoproject.ui.screens.auth.signup.description.SignUpDescriptionViewModel
 import com.souiid.demoproject.ui.screens.auth.signup.name.SignUpNameViewModel
 import org.koin.dsl.module
-
+import org.koin.core.module.dsl.viewModelOf
 val firebaseModule = module {
 
     //REPOSITORY
@@ -102,27 +104,29 @@ val firebaseModule = module {
     factory { LikePostUseCase(get()) }
     factory { UnlikePostUseCase(get()) }
     factory { GetLikedPostIdsUseCase(get()) }
-    factory { ObserveFeedPostsUseCase(get(), get(), get()) }
+    factory { ObserveFeedPostsUseCase(get(), get()) }
     factory { SaveNotificationTokenUseCase(get()) }
     factory { ObserveNotificationsUseCase(get()) }
     factory { MarkNotificationsAsReadUseCase(get()) }
     factory { DeletePostUseCase(get()) }
+    factory { ObserveProfileFollowsUseCase(get()) }
+    factory { ObserveUserPostsUseCase(get()) }
 
 //________________________________________________________
 
     //VIEWMODEL
 
-    single { FirebaseFeedViewModel(get(), get(), get(), get(), get(), get(), get(), get()) }
-    factory { AuthGateViewModel(get()) }
-    factory { SignUpNameViewModel(get(), get()) }
-    factory { SignUpDescriptionViewModel(get(), get()) }
-    factory { SignUpCredentialViewModel(get()) }
-    factory { SignInViewModel(get()) }
-    factory { FirebaseProfileViewModel(get(), get(), get(), get(), get(), get()) }
-    factory { EditProfileViewModel(get(), get(), get()) }
-    factory { FriendsViewModel(get(), get(), get(), get()) }
-    factory { FirebaseProfileListViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get()) }
-    factory { NotificationCenterViewModel(get(), get()) }
-    factory { NotificationBadgeViewModel(get(), get(), get()) }
-    single { FollowViewModel(get(), get(), get(), get(), get()) }
+    viewModelOf(::FirebaseFeedViewModel)
+    viewModelOf(::AuthGateViewModel)
+    viewModelOf(::SignInViewModel)
+    viewModelOf(::SignUpNameViewModel)
+    viewModelOf(::SignUpDescriptionViewModel)
+    viewModelOf(::SignUpCredentialViewModel)
+    viewModelOf(::FirebaseProfileViewModel)
+    viewModelOf(::EditProfileViewModel)
+    viewModelOf(::FriendsViewModel)
+    viewModelOf(::FirebaseProfileListViewModel)
+    viewModelOf(::NotificationCenterViewModel)
+    viewModelOf(::NotificationBadgeViewModel)
+    single { FollowViewModel(get(), get(), get(), get()) }
 }

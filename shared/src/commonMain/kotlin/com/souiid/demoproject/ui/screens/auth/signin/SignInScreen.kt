@@ -20,12 +20,13 @@ import demoproject.shared.generated.resources.signIn
 import demoproject.shared.generated.resources.signUp
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun SignInScreen(
     onSignUpClick: () -> Unit
 ) {
-    val viewModel: SignInViewModel = koinInject()
+    val viewModel: SignInViewModel = koinViewModel()
     val validationError = viewModel.error as? AppError.Validation
     val generalError = viewModel.error?.takeUnless { it is AppError.Validation }
 

@@ -38,10 +38,11 @@ import demoproject.shared.generated.resources.modifyPhoto
 import demoproject.shared.generated.resources.save
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun EditProfileScreen() {
-    val viewModel: EditProfileViewModel = koinInject()
+    val viewModel: EditProfileViewModel = koinViewModel()
     val currentUser by viewModel.currentUser.collectAsState()
 
     TScreen(horizontalAlignment = Alignment.CenterHorizontally) {

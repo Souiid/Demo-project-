@@ -13,6 +13,7 @@ import com.souiid.demoproject.room.domain.usecase.RemoveFavoriteMealUseCase
 import com.souiid.demoproject.ui.screens.app.room.FavoriteMealsViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
+import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
 val databaseModule = module {
@@ -31,7 +32,7 @@ val databaseModule = module {
     factory { ObserveIsFavoriteUseCase(get()) }
     factory { AddFavoriteMealUseCase(get()) }
     factory { RemoveFavoriteMealUseCase(get()) }
-    factory { FavoriteMealsViewModel(get()) }
+    viewModelOf(::FavoriteMealsViewModel)
     factory { GetFavoriteMealByIdUseCase(get()) }
 
 }

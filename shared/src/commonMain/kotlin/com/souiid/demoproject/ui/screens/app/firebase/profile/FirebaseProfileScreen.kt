@@ -12,6 +12,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -28,22 +29,22 @@ import com.souiid.demoproject.ui.components.text.TTextStyle
 import com.souiid.demoproject.ui.screens.app.firebase.FollowViewModel
 import demoproject.shared.generated.resources.Res
 import demoproject.shared.generated.resources.follow
-import demoproject.shared.generated.resources.signOut
-import org.jetbrains.compose.resources.stringResource
-import org.koin.compose.koinInject
-import demoproject.shared.generated.resources.posts
 import demoproject.shared.generated.resources.followers
 import demoproject.shared.generated.resources.followings
+import demoproject.shared.generated.resources.posts
+import demoproject.shared.generated.resources.signOut
 import demoproject.shared.generated.resources.unfollow
+import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun FirebaseProfileScreen(
     userId: String? = null,
     goToEditProfile: () -> Unit,
     onStatClick: (String, ProfileListType) -> Unit
-
 ) {
-    val viewModel: FirebaseProfileViewModel = koinInject()
+    val viewModel: FirebaseProfileViewModel = koinViewModel()
     val followViewModel: FollowViewModel = koinInject()
 
     val displayedUser by viewModel.displayedUser.collectAsStateWithLifecycle()
@@ -64,18 +65,22 @@ fun FirebaseProfileScreen(
             }
 
             displayedUser != null -> {
-                ProfileContent(
-                    user = displayedUser!!,
-                    stats = profileStats,
-                    isLoadingStats = viewModel.isLoadingStats,
-                    isCurrentUser = currentUser?.id != null && displayedUser?.id == currentUser?.id,
-                    isFollowing = displayedUser!!.id in followingUserIds,
-                    isUpdatingFollow = isFollowingLoading || displayedUser!!.id in updatingUserIds,
-                    onFollowClick = { followViewModel.toggleFollow(displayedUser!!.id) },
-                    goToEditProfile = goToEditProfile,
-                    onSignOut = viewModel::signOut,
-                    onStatClick = onStatClick
-                )
+                val user = displayedUser!!
+
+                key(user.id) {
+                    ProfileContent(
+                        user = user,
+                        stats = profileStats,
+                        hasLoadedStats = viewModel.hasLoadedStats,
+                        isCurrentUser = currentUser?.id == user.id,
+                        isFollowing = user.id in followingUserIds,
+                        isUpdatingFollow = isFollowingLoading || user.id in updatingUserIds,
+                        onFollowClick = { followViewModel.toggleFollow(user.id) },
+                        goToEditProfile = goToEditProfile,
+                        onSignOut = viewModel::signOut,
+                        onStatClick = onStatClick
+                    )
+                }
             }
 
             viewModel.error != null -> {
@@ -86,7 +91,7 @@ fun FirebaseProfileScreen(
 
                 TButton(
                     text = "Retry",
-                    onClick = { viewModel.loadUser(userId) }
+                    onClick = { viewModel.loadUser(userId, forceRefresh = true) }
                 )
             }
         }
@@ -97,7 +102,7 @@ fun FirebaseProfileScreen(
 private fun ProfileContent(
     user: User,
     stats: ProfileStats,
-    isLoadingStats: Boolean,
+    hasLoadedStats: Boolean,
     isCurrentUser: Boolean,
     isFollowing: Boolean,
     isUpdatingFollow: Boolean,
@@ -138,9 +143,7 @@ private fun ProfileContent(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        if (isLoadingStats) {
-            CircularProgressIndicator()
-        } else {
+        if (hasLoadedStats) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly
@@ -163,6 +166,8 @@ private fun ProfileContent(
                     onClick = { onStatClick(user.id, ProfileListType.FOLLOWING) }
                 )
             }
+        } else {
+            CircularProgressIndicator()
         }
 
         Spacer(modifier = Modifier.height(24.dp))

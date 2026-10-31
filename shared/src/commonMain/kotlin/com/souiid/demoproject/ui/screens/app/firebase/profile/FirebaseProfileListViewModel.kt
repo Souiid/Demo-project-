@@ -15,6 +15,8 @@ import com.souiid.demoproject.firebase.domain.usecase.post.UnlikePostUseCase
 import com.souiid.demoproject.firebase.domain.usecase.user.FetchUserUseCase
 import com.souiid.demoproject.firebase.domain.usecase.user.GetFollowerUserIdsUseCase
 import com.souiid.demoproject.firebase.domain.usecase.user.GetFollowingUsersUseCase
+import com.souiid.demoproject.firebase.domain.usecase.user.ObserveCurrentUserUseCase
+import com.souiid.demoproject.firebase.domain.usecase.user.ObserveProfileFollowsUseCase
 import com.souiid.demoproject.ui.screens.app.firebase.feed.FirebaseFeedViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -34,8 +36,11 @@ class FirebaseProfileListViewModel(
     private val unlikePostUseCase: UnlikePostUseCase,
     private val getLikedPostIdsUseCase: GetLikedPostIdsUseCase,
     private val deletePostUseCase: DeletePostUseCase,
-    private val feedViewModel: FirebaseFeedViewModel
+    private val feedViewModel: FirebaseFeedViewModel,
+    private val observeCurrentUserUseCase: ObserveCurrentUserUseCase
 ) : ViewModel() {
+
+    val currentUser = observeCurrentUserUseCase()
 
     private val _posts = MutableStateFlow<List<Post>>(emptyList())
     val posts = _posts.asStateFlow()

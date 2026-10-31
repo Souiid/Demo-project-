@@ -13,12 +13,13 @@ import demoproject.shared.generated.resources.description
 import demoproject.shared.generated.resources.put_profile_description
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun SignUpDescriptionScreen(
     onContinueClick: () -> Unit
 ) {
-    val viewModel: SignUpDescriptionViewModel = koinInject()
+    val viewModel: SignUpDescriptionViewModel = koinViewModel()
 
     TScreen(verticalArrangement = Arrangement.Center) {
         TTextField(

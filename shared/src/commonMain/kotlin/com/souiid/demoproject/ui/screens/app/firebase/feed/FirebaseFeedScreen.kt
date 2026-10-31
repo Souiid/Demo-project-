@@ -34,13 +34,14 @@ import demoproject.shared.generated.resources.createPost
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import demoproject.shared.generated.resources.feed
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun FirebaseFeedScreen(
     postId: String? = null,
     onUserClick: (String) -> Unit
 ) {
-    val viewModel: FirebaseFeedViewModel = koinInject()
+    val viewModel: FirebaseFeedViewModel = koinViewModel()
 
     val currentUser by viewModel.currentUser.collectAsStateWithLifecycle()
     var showCreatePostSheet by remember { mutableStateOf(false) }
