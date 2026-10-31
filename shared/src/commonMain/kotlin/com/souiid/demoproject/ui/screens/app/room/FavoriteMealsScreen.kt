@@ -1,26 +1,23 @@
 package com.souiid.demoproject.ui.screens.app.room
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import com.souiid.demoproject.ui.components.others.TKamelImage
+import com.souiid.demoproject.ui.components.item.ktor.MealItem
 import com.souiid.demoproject.ui.components.others.TScreen
 import com.souiid.demoproject.ui.components.text.TText
+import com.souiid.demoproject.ui.components.text.TTextStyle
+import com.souiid.demoproject.ui.theme.Dimens
 import demoproject.shared.generated.resources.Res
+import demoproject.shared.generated.resources.noFavoriteMeals
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
-import demoproject.shared.generated.resources.noFavoriteMeals
 
 @Composable
 fun FavoriteMealsScreen(
@@ -31,29 +28,22 @@ fun FavoriteMealsScreen(
 
     TScreen {
         if (favoriteMeals.isEmpty()) {
-            TText(text = stringResource(Res.string.noFavoriteMeals))
+            TText(
+                text = stringResource(Res.string.noFavoriteMeals),
+                style = TTextStyle.BODY
+            )
         } else {
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                modifier = Modifier.fillMaxSize(),
+                horizontalArrangement = Arrangement.spacedBy(Dimens.mediumSpace),
+                verticalArrangement = Arrangement.spacedBy(Dimens.standardPadding)
             ) {
                 items(favoriteMeals, key = { it.id }) { meal ->
-                    Column(
-                        modifier = Modifier.fillMaxWidth()
-                            .clickable { onMealClick(meal.id) }
-                    ) {
-                        TKamelImage(
-                            imageUrl = meal.imageUrl,
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(12.dp)
-                        )
-
-                        TText(
-                            text = meal.name,
-                            modifier = Modifier.padding(top = 8.dp)
-                        )
-                    }
+                    MealItem(
+                        meal = meal,
+                        onClick = { onMealClick(meal.id) }
+                    )
                 }
             }
         }
