@@ -1,4 +1,4 @@
-package com.souiid.demoproject.domain.auth
+package com.souiid.demoproject.firebase.domain.auth
 
 import com.souiid.demoproject.firebase.domain.model.AppError
 import com.souiid.demoproject.firebase.domain.model.AppResult
@@ -10,8 +10,10 @@ import dev.mokkery.everySuspend
 import dev.mokkery.mock
 import dev.mokkery.verifySuspend
 import kotlinx.coroutines.test.runTest
+import kotlin.coroutines.cancellation.CancellationException
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertIs
 
 class SignInUseCaseTest {
@@ -76,5 +78,16 @@ class SignInUseCaseTest {
             ),
             result
         )
+    }
+
+    @Test
+    fun signInCancellationPropagatesException() = runTest {
+        everySuspend {
+            repository.signIn("test@example.com", "password123")
+        } throws CancellationException("Cancelled")
+
+        assertFailsWith<CancellationException> {
+            useCase("test@example.com", "password123")
+        }
     }
 }

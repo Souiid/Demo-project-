@@ -1,4 +1,4 @@
-package com.souiid.demoproject.data
+package com.souiid.demoproject.firebase.data
 
 import com.souiid.demoproject.firebase.data.utils.SignUpInfoStore
 import com.souiid.demoproject.firebase.domain.model.SignUpInfo

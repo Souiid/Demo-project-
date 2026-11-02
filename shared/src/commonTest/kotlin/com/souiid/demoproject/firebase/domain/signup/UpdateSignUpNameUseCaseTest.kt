@@ -1,4 +1,4 @@
-package com.souiid.demoproject.domain.signup
+package com.souiid.demoproject.firebase.domain.signup
 
 import com.souiid.demoproject.firebase.domain.model.AppError
 import com.souiid.demoproject.firebase.domain.model.AppResult
