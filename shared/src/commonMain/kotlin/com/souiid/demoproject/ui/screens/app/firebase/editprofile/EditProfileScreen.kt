@@ -103,8 +103,7 @@ private fun EditProfileFields(viewModel: EditProfileViewModel) {
             viewModel.clearError()
             viewModel.description = it
         },
-        type = TTextFieldType.TEXT,
-        imeAction = ImeAction.Done
+        type = TTextFieldType.DESCRIPTION
     )
 }
 
