@@ -92,6 +92,13 @@ kotlin {
         getByName("androidHostTest").dependencies {
             implementation(libs.mockk)
         }
+
+        getByName("androidDeviceTest").dependencies {
+            implementation(libs.kotlin.test)
+            implementation(libs.androidx.test.core)
+            implementation(libs.androidx.test.runner)
+            implementation(libs.androidx.testExt.junit)
+        }
     }
 }
 

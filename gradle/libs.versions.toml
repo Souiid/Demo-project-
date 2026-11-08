@@ -29,6 +29,7 @@ ktor = "3.6.0"
 room = "2.8.4"
 sqlite = "2.6.2"
 ksp = "2.3.12"
+androidx-test = "1.7.0"
 
 [libraries]
 kamel-image = { module = "media.kamel:kamel-image", version.ref = "kamelImage" }
@@ -73,6 +74,8 @@ ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 androidx-sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqlite" }
+androidx-test-core = { module = "androidx.test:core", version.ref = "androidx-test" }
+androidx-test-runner = { module = "androidx.test:runner", version.ref = "androidx-test" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

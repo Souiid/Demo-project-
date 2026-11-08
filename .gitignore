@@ -41,3 +41,11 @@ firebase-debug.*.log
 .env
 .env.*
 !.env.example
+
+# AI agents
+.agents/
+.claude/
+/skills-lock.json
+
+# Firebase Emulator logs
+*-debug.log
