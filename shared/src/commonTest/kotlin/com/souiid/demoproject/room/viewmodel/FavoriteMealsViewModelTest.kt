@@ -1,4 +1,4 @@
-package com.souiid.demoproject.ktor.viewmodel
+package com.souiid.demoproject.room.viewmodel
 
 import com.souiid.demoproject.ktor.domain.model.Meal
 import com.souiid.demoproject.room.domain.repository.IFavoriteMealRepository
