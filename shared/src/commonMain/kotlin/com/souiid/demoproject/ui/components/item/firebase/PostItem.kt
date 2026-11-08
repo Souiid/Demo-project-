@@ -109,7 +109,11 @@ fun PostItem(
                     contentDescription = if (isLiked) "Unlike" else "Like",
                     modifier = Modifier
                         .size(Dimens.standardIconSize)
-                        .clickable(enabled = !isDeleting) { onLike() },
+                        .clickable(
+                            enabled = !isDeleting,
+                            interactionSource = null,
+                            indication = null
+                        ) { onLike() },
                     tint = if (isLiked) MaterialTheme.colorScheme.error
                     else MaterialTheme.colorScheme.onSurfaceVariant
                 )

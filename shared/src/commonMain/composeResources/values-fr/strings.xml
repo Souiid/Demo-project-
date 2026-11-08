@@ -71,7 +71,7 @@
     <string name="deletePhoto">Supprimer la photo</string>
 
     <string name="searchUsers">Rechercher un utilisateur</string>
-    <string name="following">Abonné</string>
+    <string name="following">Abonnements</string>
     <string name="follow">Suivre</string>
     <string name="unfollow">Ne plus suivre</string>
     <string name="followers">Abonnés</string>
