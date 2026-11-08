@@ -114,7 +114,10 @@
     <string name="createYourAccount">Create you account</string>
     <string name="finalStep">Final step</string>
     <string name="stepOf">Step %1$d of %2$d</string>
-    <string name="unknowUser">Unknow user</string>">
+    <string name="unknowUser">Unknow user</string>
+    <string name="no_posts_yet">No posts yet... 😒</string>
+    <string name="no_followers_yet">No followers yet... 😒</string>
+    <string name="no_following_yet">Not following anyone yet... 😒</string>
 
 
 </resources>

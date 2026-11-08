@@ -31,6 +31,7 @@ import com.souiid.demoproject.ui.components.text.TTextStyle
 import com.souiid.demoproject.ui.theme.Dimens
 import demoproject.shared.generated.resources.Res
 import demoproject.shared.generated.resources.createPost
+import demoproject.shared.generated.resources.no_posts_yet
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -74,8 +75,8 @@ fun FirebaseFeedScreen(
 
                 viewModel.posts.isEmpty() -> {
                     TText(
-                        text = "No posts yet",
-                        style = TTextStyle.DESCRIPTION,
+                        text = stringResource(Res.string.no_posts_yet),
+                        style = TTextStyle.SUBTITLE,
                         modifier = Modifier.align(Alignment.Center)
                     )
                 }

@@ -121,4 +121,8 @@
     <string name="finalStep">Dernière étape</string>
     <string name="stepOf">Étape %1$d sur %2$d</string>
     <string name="unknowUser">Utilisateur inconnu</string>
+
+    <string name="no_posts_yet">Aucun posts ici pour l’instant... 😒</string>
+    <string name="no_followers_yet">Aucun abonné... 😒</string>
+    <string name="no_following_yet">Aucun abonnement... 😒</string>
 </resources>

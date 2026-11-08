@@ -1,5 +1,6 @@
 package com.souiid.demoproject.ui.screens.app.firebase.profile
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -12,6 +13,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.souiid.demoproject.ui.components.button.TButtonType
@@ -19,6 +21,8 @@ import com.souiid.demoproject.ui.components.item.firebase.PostItem
 import com.souiid.demoproject.ui.components.item.firebase.UserItem
 import com.souiid.demoproject.ui.components.others.TDialog
 import com.souiid.demoproject.ui.components.others.TScreen
+import com.souiid.demoproject.ui.components.text.TText
+import com.souiid.demoproject.ui.components.text.TTextStyle
 import com.souiid.demoproject.ui.screens.app.firebase.FollowViewModel
 import com.souiid.demoproject.ui.theme.Dimens
 import demoproject.shared.generated.resources.Res
@@ -26,9 +30,12 @@ import demoproject.shared.generated.resources.cancel
 import demoproject.shared.generated.resources.delete
 import demoproject.shared.generated.resources.delete_post
 import demoproject.shared.generated.resources.delete_post_confirmation
+import demoproject.shared.generated.resources.no_followers_yet
+import demoproject.shared.generated.resources.no_following_yet
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
+import demoproject.shared.generated.resources.no_posts_yet
 
 @Composable
 fun FirebaseProfileListScreen(
@@ -64,43 +71,60 @@ fun FirebaseProfileListScreen(
         } else {
             when (type) {
                 ProfileListType.POSTS -> {
-                    LazyColumn(modifier = Modifier.fillMaxSize()) {
-                        items(posts, key = { it.id }) { post ->
-                            PostItem(
-                                post = post,
-                                author = author,
-                                isLiked = post.id in likedPostIds,
-                                isCurrentUser = post.authorId == currentUser?.id,
-                                isDeleting = post.id in deletingPostIds,
-                                onLike = { viewModel.toggleLike(post.id) },
-                                onDelete = { postToDelete = post.id },
-                                onAuthorClick = onUserClick
-                            )
+                    if (posts.isEmpty()) {
+                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            TText(text = stringResource(Res.string.no_posts_yet))
+                        }
+                    } else {
+                        LazyColumn(modifier = Modifier.fillMaxSize()) {
+                            items(posts, key = { it.id }) { post ->
+                                PostItem(
+                                    post = post,
+                                    author = author,
+                                    isLiked = post.id in likedPostIds,
+                                    isCurrentUser = post.authorId == currentUser?.id,
+                                    isDeleting = post.id in deletingPostIds,
+                                    onLike = { viewModel.toggleLike(post.id) },
+                                    onDelete = { postToDelete = post.id },
+                                    onAuthorClick = onUserClick
+                                )
 
-                            HorizontalDivider(
-                                color = MaterialTheme.colorScheme.outlineVariant,
-                                thickness = Dimens.dividerThickness
-                            )
+                                HorizontalDivider(
+                                    color = MaterialTheme.colorScheme.outlineVariant,
+                                    thickness = Dimens.dividerThickness
+                                )
+                            }
                         }
                     }
                 }
 
                 ProfileListType.FOLLOWERS, ProfileListType.FOLLOWING -> {
-                    LazyColumn(modifier = Modifier.fillMaxSize()) {
-                        items(users, key = { it.id }) { user ->
-                            UserItem(
-                                user = user,
-                                isFollowing = user.id in followingUserIds,
-                                isUpdating = isFollowingLoading || user.id in updatingUserIds,
-                                isCurrentUser = user.id == currentUser?.id,
-                                onUserClick = { onUserClick(user.id) },
-                                onFollowClick = { followViewModel.toggleFollow(user.id) }
-                            )
+                    if (users.isEmpty()) {
+                        val message = when (type) {
+                            ProfileListType.FOLLOWERS -> Res.string.no_followers_yet
+                            ProfileListType.FOLLOWING -> Res.string.no_following_yet
+                        }
 
-                            HorizontalDivider(
-                                color = MaterialTheme.colorScheme.outlineVariant,
-                                thickness = Dimens.dividerThickness
-                            )
+                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            TText(text = stringResource(message), style = TTextStyle.SUBTITLE)
+                        }
+                    } else {
+                        LazyColumn(modifier = Modifier.fillMaxSize()) {
+                            items(users, key = { it.id }) { user ->
+                                UserItem(
+                                    user = user,
+                                    isFollowing = user.id in followingUserIds,
+                                    isUpdating = isFollowingLoading || user.id in updatingUserIds,
+                                    isCurrentUser = user.id == currentUser?.id,
+                                    onUserClick = { onUserClick(user.id) },
+                                    onFollowClick = { followViewModel.toggleFollow(user.id) }
+                                )
+
+                                HorizontalDivider(
+                                    color = MaterialTheme.colorScheme.outlineVariant,
+                                    thickness = Dimens.dividerThickness
+                                )
+                            }
                         }
                     }
                 }
