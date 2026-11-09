@@ -20,7 +20,7 @@ L'objectif n'était pas de créer une application commerciale, mais de construir
 | Architecture | MVVM, Clean Architecture |
 | Injection de dépendances | Koin |
 | Asynchrone | Coroutines, Flow, StateFlow |
-| Backend | Firebase Auth, Firestore, Cloud Functions, Storage |
+| Backend | Firebase Auth, Firestore, Cloud Functions, Storage, Messaging |
 | API REST | Ktor Client, Kotlinx Serialization |
 | Base de données locale | Room |
 | Navigation | Navigation Compose |
@@ -46,10 +46,11 @@ Le premier onglet présente un petit réseau social utilisant plusieurs services
 - Consultation des abonnés et abonnements
 - Statistiques des profils
 - Actualisation des données avec Kotlin Flow
+- Notification push lors des interractions avec les aboonements, posts et likes
 
-Cette partie m'a permis de travailler sur la gestion des utilisateurs, les interactions entre plusieurs comptes et la synchronisation des données distantes.
+Cette partie montre la gestion des utilisateurs, les interactions entre plusieurs comptes et la synchronisation des données distantes.
 
-**Technologies principales :** Firebase Authentication, Cloud Firestore, Cloud Functions et Firebase Storage, intégrés avec la bibliothèque [firebase-kotlin-sdk](https://github.com/GitLiveApp/firebase-kotlin-sdk) de GitLive.
+**Technologies principales :** Firebase Authentication, Cloud Firestore, Cloud Functions, Firebase Storage et Messaging (intégrés avec la bibliothèque [firebase-kotlin-sdk](https://github.com/GitLiveApp/firebase-kotlin-sdk) de GitLive).
 
 ### 2. Ktor — Recherche de recettes
 
@@ -89,6 +90,22 @@ Les `Flow` permettent d'observer les modifications de la base de données et de 
 
 **Technologies principales :** Room, SQLite et Kotlin Flow.
 
+## Comptes de démonstration
+
+Pour faciliter la découverte de l'application, quatre comptes de test sont disponibles.
+
+Ils permettent de tester les différentes fonctionnalités du réseau social : publications, likes, abonnements et consultation des profils.
+
+| Utilisateur | Adresse e-mail | Mot de passe |
+|---|---|---|
+| John Doe | `test@mail.com` | `test123456` |
+| Jane Doe | `test2@mail.com` | `test123456` |
+| Robert De Niro | `test3@mail.com` | `test123456` |
+| Zinedine Zidane | `test4@mail.com` | `test123456` |
+
+Les fichiers de configuration Firebase sont déjà inclus dans le projet pour Android et iOS. Aucune configuration Firebase supplémentaire n'est normalement nécessaire pour utiliser les comptes de démonstration.
+
+Ces comptes sont uniquement destinés aux tests. Les données étant partagées, les publications et les interactions peuvent évoluer au fil des utilisations.
 
 ## Architecture
 
